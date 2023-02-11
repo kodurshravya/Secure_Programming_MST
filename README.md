@@ -15,7 +15,7 @@
 - V3. Borůvka’s algorithm
 - V4. reverse-delete algorithm
 
-## Users
+## Devs
 
 - Shravya Kodur
 - Ashwinkumar Ajithkumar Pillai
