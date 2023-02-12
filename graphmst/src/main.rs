@@ -1,3 +1,5 @@
+mod graphs;
+
 fn main() {
-    println!("Hello, world!");
+    let g: graphs::Graph<i32, i32> = graphs::Graph::new();
 }
