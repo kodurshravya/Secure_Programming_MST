@@ -1,17 +1,26 @@
 //Contains definition of graph structures.
 
-use std::collections::HashMap;
-
 //Basic undirected graph.
-struct Graph {
-    vertices: vec<Vertex>
-    edges: vec<Edges>;
+pub struct Graph<V, E> {
+    vertices: Vec<Vertex<V>>,
+    edges: Vec<Edge<E>>,
+}
+
+impl<V, E> Graph<V, E> {
+    pub fn new() -> Graph<V, E> {
+        let v: Vec<Vertex<V>> = Vec::new();
+        let e: Vec<Edge<E>> = Vec::new();
+        Graph::<V, E> {
+            vertices: v,
+            edges: e,
+        }
+    }
 }
 
 struct Vertex<T> {
-    value: <T>,
+    value: T,
 }
 
 struct Edge<T> {
-    value: <T>,
+    weight: T,
 }
