@@ -22,7 +22,7 @@ impl<V, E> Graph<V, E> {
     
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
-        if self.vertices.iter().any(|g| g.label.eq(&label)){
+        if self.contains_vertex(&label) {// self.vertices.iter().any(|vert| vert.label.eq(&label)){
             //TODO: Create more sophosticated handling.
             println!("Vertex '{}' already in graph", label);
         } else {
@@ -35,7 +35,7 @@ impl<V, E> Graph<V, E> {
         }
     }
     
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E) {
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E){
         if self.contains_edge(&e) {
             println!("Edge '{}'-'{}' already in graph", e.0, e.1);
         } else if
@@ -48,15 +48,40 @@ impl<V, E> Graph<V, E> {
                     }
                 )
         }
-        /*
-        if self.contains_vertex(&e.0) && self.contains_vertex(&e.1) {
-            println!("{}, {}", e.0, e.1);
-
-        } else {
-            println!("Edge '{}'-'{}' already in graph", e.0, e.1);
-        }
-        */
     }
+    
+    
+    pub fn get_neighbors(&self, label: &VLT) -> Vec<VLT> {
+        //Input a vertex label.
+        //Returns a vector of vertex labels which correspond to the neighbors of the input vertex.
+        let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
+        for edge in &self.edges {
+            if (edge.endpoints.0).eq(label) && !neighbors.contains(&edge.endpoints.1) {
+                neighbors.push(edge.endpoints.1.clone())
+            } else if (edge.endpoints.1).eq(label) && !neighbors.contains(&edge.endpoints.0) {
+                neighbors.push(edge.endpoints.0.clone())
+            }
+        }
+        neighbors
+    }
+    
+    
+    //todo: Make this return result.
+    fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
+        //Input vertex label and return reference to vertex.
+        
+        if self.contains_vertex(label) {
+            for vert in &self.vertices {
+                if vert.label.eq(label) {
+                    return Ok(vert)
+                }
+            }
+        }
+        
+        //Ok(&Vertex { label: String::from("TEST"), value: val })
+        Err(String::from("Vertex not in graph."))
+    }
+    
     
     fn contains_vertex(&self, label: &VLT) -> bool {
         //Check if graph contain vertex with label.
@@ -77,13 +102,12 @@ struct Vertex<T> {
     value: T
 }
 
-/*
-impl PartialEq for Vertex {
+impl<V> PartialEq for Vertex<V> {
+    //Two vertices are equal if they have the same label.
     fn eq(&self, other: &Self) -> bool {
-        self.isbn == other.isbn
+        self.label == other.label
     }
 }
-*/
 
 struct Edge<T> {
     //endpoints: &'a (Vertex<V>, Vertex<V>),
