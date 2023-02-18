@@ -36,6 +36,8 @@ impl<V, E> Graph<V, E> {
     }
     
     pub fn add_edge(&mut self, e: (VLT, VLT), weight: E){
+        // Adds an edge to the graph.
+        // Endpoint vertices must be present in graph.
         if self.contains_edge(&e) {
             println!("Edge '{}'-'{}' already in graph", e.0, e.1);
         } else if
@@ -48,6 +50,15 @@ impl<V, E> Graph<V, E> {
                     }
                 )
         }
+    }
+    
+    pub fn remove_edge(&mut self, e: (VLT, VLT)){
+        // Removes an edge from a graph.
+        // Endpoint vertices are not affected.
+        self.edges.remove(
+            self.edges.iter()
+            .position(|x| (x.endpoints.0).eq(&e.0) && (x.endpoints.1).eq(&e.1))
+            .expect(format!("Edge '{}'-'{}' should be in graph", e.0, e.1).as_str()));
     }
     
     
