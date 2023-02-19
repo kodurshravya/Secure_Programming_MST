@@ -80,7 +80,7 @@ impl<V, E> Graph<V, E> {
             self.edges.iter()
             .position(|x|
                 ((x.endpoints.0).eq(&e.0) && (x.endpoints.1).eq(&e.1))
-                || (x.endpoints.1).eq(&e.1) && (x.endpoints.0).eq(&e.0)
+                    || (x.endpoints.1).eq(&e.1) && (x.endpoints.0).eq(&e.0)
             )
             .expect(format!("Edge '{}'-'{}' should be in graph", e.0, e.1).as_str()));
     }
@@ -150,4 +150,13 @@ struct Edge<T> {
         // This requires adding lifetimes.
     endpoints: (VLT, VLT),
     weight: T
+}
+
+impl<T> PartialEq for Edge<T> {
+    fn eq(&self, e: &Edge<T>) -> bool {
+        let ends1 = &self.endpoints;
+        let ends2 = &e.endpoints;
+        ((ends1.0).eq(&ends2.0) && (ends1.1).eq(&ends2.1))
+                || (ends1.1).eq(&ends2.1) && (ends1.0).eq(&ends2.0)
+    }
 }
