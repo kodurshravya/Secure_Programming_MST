@@ -35,6 +35,27 @@ impl<V, E> Graph<V, E> {
         }
     }
     
+    pub fn remove_vertex(&mut self, label: VLT) {
+        // Remove vertex and all of its adjacent edges.
+        
+        // Find position of vertex in vector.
+        let idx = self.vertices.iter()
+            .position(|x| (x.label).eq(&label))
+            .expect(format!("Vertex '{}' should be in graph", label).as_str());
+            
+        // Fine all neighbors.
+        let neighbors = self.get_neighbors(&label);
+        
+        // Remove all edges, regardless of direction.
+        // TODO: Decide on handling of directed vs undirected graphs.
+        for vert_label in &neighbors {
+            self.remove_edge((label.clone(), vert_label.to_string()));
+        }
+        
+        //Remove vertex.
+        self.vertices.remove(idx);
+    }
+    
     pub fn add_edge(&mut self, e: (VLT, VLT), weight: E){
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
@@ -57,7 +78,10 @@ impl<V, E> Graph<V, E> {
         // Endpoint vertices are not affected.
         self.edges.remove(
             self.edges.iter()
-            .position(|x| (x.endpoints.0).eq(&e.0) && (x.endpoints.1).eq(&e.1))
+            .position(|x|
+                ((x.endpoints.0).eq(&e.0) && (x.endpoints.1).eq(&e.1))
+                || (x.endpoints.1).eq(&e.1) && (x.endpoints.0).eq(&e.0)
+            )
             .expect(format!("Edge '{}'-'{}' should be in graph", e.0, e.1).as_str()));
     }
     
