@@ -1,7 +1,8 @@
 mod graphs;
 
 fn main() {
-    let mut g: graphs::Graph<i32, i32> = graphs::Graph::new();
+    let mut g: graphs::Graph<i32, i32> = graphs::Graph::new(true);
+    
     g.add_vertex(String::from("A"), 0);
     g.add_vertex(String::from("B"), 1);
     g.add_vertex(String::from("B"), 0);
@@ -18,4 +19,6 @@ fn main() {
     //g.remove_edge((String::from("x"), String::from('y')));
     g.remove_edge((String::from("b"), String::from('A')));
     //g.remove_edge((String::from("b"), String::from('A')));
+    
+    g.remove_vertex(String::from("A"));
 }

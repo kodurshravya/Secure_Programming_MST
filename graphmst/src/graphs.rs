@@ -4,8 +4,8 @@ use std::collections::HashMap;
 type VLT = String; //vertex_label_type
 
 enum EdgeType {
-    directed,
-    undirected
+    Directed,
+    Undirected
 }
 
 //Basic undirected graph.
@@ -16,14 +16,15 @@ pub struct Graph<V, E> {
 }
 
 impl<V, E> Graph<V, E> {
-    pub fn new() -> Graph<V, E> {
+    pub fn new(directed: bool) -> Graph<V, E> {
         //Create an empty graph.
         let v: HashMap<VLT, Vertex<V>> = HashMap::new();
         let e: HashMap<(VLT, VLT), Edge<E>> = HashMap::new();
+        let edge_type = if directed {EdgeType::Directed} else {EdgeType::Undirected};
         Graph::<V, E> {
             vertices: v,
             edges: e,
-            edge_type: EdgeType::undirected
+            edge_type: edge_type
         }
     }
     
@@ -67,11 +68,11 @@ impl<V, E> Graph<V, E> {
         } else if
             self.contains_vertex(&e.0)
             && self.contains_vertex(&e.1) {
-                self.edges.insert(e.clone(), 
+                self.edges.insert(e.clone(),
                     Edge {
                         endpoints: e,
                         weight: weight,
-                        edge_type: EdgeType::undirected
+                        edge_type: EdgeType::Undirected
                     }
                 );
         }
@@ -83,10 +84,10 @@ impl<V, E> Graph<V, E> {
         let target_edge = self.edges.get(&e);
         match target_edge {
             Some(te) => match te.edge_type {
-                EdgeType::directed => if self.edges.contains_key(&e) {
+                EdgeType::Directed => if self.edges.contains_key(&e) {
                         self.edges.remove(&e);
                     },
-                EdgeType::undirected => {
+                EdgeType::Undirected => {
                     let re = (e.1.clone(), e.0.clone()); //reverse_edge
                     if self.edges.contains_key(&e) || self.edges.contains_key(&re) {
                             self.edges.remove(&e);
@@ -94,7 +95,7 @@ impl<V, E> Graph<V, E> {
                     }
                 }
             },
-            None => println!("Edge '{}'-'{}' not in graph", e.0, e.1);
+            None => println!("Edge '{}'-'{}' not in graph", e.0, e.1),
         }
     }
     
@@ -102,7 +103,7 @@ impl<V, E> Graph<V, E> {
         //Input a vertex label.
         //Returns a vector of vertex labels which correspond to the neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
-        for (edge_labels, edge) in self.edges.iter() {
+        for (edge_labels, _edge) in self.edges.iter() {
             if (label).eq(&edge_labels.0) {
                 neighbors.push(edge_labels.1.clone())
             } else if (label).eq(&edge_labels.1) {
@@ -117,7 +118,7 @@ impl<V, E> Graph<V, E> {
         //Returns a vector of vertex labels which correspond
         //to the outgoing neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
-        for (edge_labels, edge) in self.edges.iter() {
+        for (edge_labels,_edge) in self.edges.iter() {
             if (label).eq(&edge_labels.0) {
                 neighbors.push(edge_labels.1.clone())
             }
@@ -128,9 +129,9 @@ impl<V, E> Graph<V, E> {
     pub fn get_in_neighbors(&self, label: &VLT) -> Vec<VLT> {
         //Input a vertex label.
         //Returns a vector of vertex labels which correspond
-        //to the outgoing neighbors of the input vertex.
+        //to the incoming neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
-        for (edge_labels, edge) in self.edges.iter() {
+        for (edge_labels, _edge) in self.edges.iter() {
             if (label).eq(&edge_labels.1) {
                 neighbors.push(edge_labels.0.clone())
             }
@@ -141,6 +142,8 @@ impl<V, E> Graph<V, E> {
     /*
     fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
         //Input vertex label and return reference to vertex.
+        
+        self.vertices.get(label);
         
         if self.contains_vertex(label) {
             for vert in &self.vertices {
@@ -155,7 +158,6 @@ impl<V, E> Graph<V, E> {
         Err(String::from("Vertex not in graph."))
     }
     */
-    
     
     fn contains_vertex(&self, label: &VLT) -> bool {
         //Check if graph contain vertex with label.
@@ -193,8 +195,8 @@ impl<T> PartialEq for Edge<T> {
         let ends1 = &self.endpoints;
         let ends2 = &e.endpoints;
         match self.edge_type {
-            EdgeType::directed => ((ends1.0).eq(&ends2.0) && (ends1.1).eq(&ends2.1)),
-            EdgeType::undirected => ((ends1.0).eq(&ends2.0) && (ends1.1).eq(&ends2.1))
+            EdgeType::Directed => (ends1.0).eq(&ends2.0) && (ends1.1).eq(&ends2.1),
+            EdgeType::Undirected => (ends1.0).eq(&ends2.0) && (ends1.1).eq(&ends2.1)
                 || (ends1.1).eq(&ends2.1) && (ends1.0).eq(&ends2.0)
         }
         
