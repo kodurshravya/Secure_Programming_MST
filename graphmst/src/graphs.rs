@@ -3,20 +3,27 @@
 
 type VLT = String; //vertex_label_type
 
+enum EdgeType {
+    directed,
+    undirected
+}
+
 //Basic undirected graph.
 pub struct Graph<V, E> {
-    vertices: Vec<Vertex<V>>,
-    edges: Vec<Edge<E>>
+    vertices: HashMap<VLT, Vertex<V>>,
+    edges: HashMap<(VLT, VLT), Edge<E>>,
+    edge_type: EdgeType
 }
 
 impl<V, E> Graph<V, E> {
     pub fn new() -> Graph<V, E> {
         //Create an empty graph.
-        let v: Vec<Vertex<V>> = Vec::new();
-        let e: Vec<Edge<E>> = Vec::new();
+        let v: HashMap<VLT, Vertex<V>> = HashMap::new();
+        let e: HashMap<(VLT, VLT), Edge<E>> = HashMap::new();
         Graph::<V, E> {
             vertices: v,
-            edges: e
+            edges: e,
+            edge_type: EdgeType::undirected
         }
     }
     
@@ -26,7 +33,7 @@ impl<V, E> Graph<V, E> {
             //TODO: Create more sophosticated handling.
             println!("Vertex '{}' already in graph", label);
         } else {
-            self.vertices.push(
+            self.vertices.insert(label.clone(),
                 Vertex {
                     label: label,
                     value: value
@@ -37,23 +44,19 @@ impl<V, E> Graph<V, E> {
     
     pub fn remove_vertex(&mut self, label: VLT) {
         // Remove vertex and all of its adjacent edges.
-        
-        // Find position of vertex in vector.
-        let idx = self.vertices.iter()
-            .position(|x| (x.label).eq(&label))
-            .expect(format!("Vertex '{}' should be in graph", label).as_str());
             
-        // Fine all neighbors.
-        let neighbors = self.get_neighbors(&label);
+        // Find all neighbors.
+        let neighbors = self.get_labels_of_neighbors(&label);
         
         // Remove all edges, regardless of direction.
         // TODO: Decide on handling of directed vs undirected graphs.
-        for vert_label in &neighbors {
+        for vert_label in neighbors.into_iter() {
             self.remove_edge((label.clone(), vert_label.to_string()));
+            self.remove_edge((vert_label.to_string(), label.clone()));
         }
         
-        //Remove vertex.
-        self.vertices.remove(idx);
+        //Remove central vertex.
+        self.vertices.remove(&label);
     }
     
     pub fn add_edge(&mut self, e: (VLT, VLT), weight: E){
@@ -64,44 +67,40 @@ impl<V, E> Graph<V, E> {
         } else if
             self.contains_vertex(&e.0)
             && self.contains_vertex(&e.1) {
-                self.edges.push(
+                self.edges.insert(e.clone(), 
                     Edge {
                         endpoints: e,
-                        weight: weight
+                        weight: weight,
+                        edge_type: EdgeType::undirected
                     }
-                )
+                );
         }
     }
     
     pub fn remove_edge(&mut self, e: (VLT, VLT)){
         // Removes an edge from a graph.
         // Endpoint vertices are not affected.
-        self.edges.remove(
-            self.edges.iter()
-            .position(|x|
-                ((x.endpoints.0).eq(&e.0) && (x.endpoints.1).eq(&e.1))
-                    || (x.endpoints.1).eq(&e.1) && (x.endpoints.0).eq(&e.0)
-            )
-            .expect(format!("Edge '{}'-'{}' should be in graph", e.0, e.1).as_str()));
+        if self.edges.contains_key(&e) {
+            self.edges.remove(&e);
+        }
     }
     
-    
-    pub fn get_neighbors(&self, label: &VLT) -> Vec<VLT> {
+    pub fn get_labels_of_neighbors(&self, label: &VLT) -> Vec<VLT> {
         //Input a vertex label.
         //Returns a vector of vertex labels which correspond to the neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
-        for edge in &self.edges {
-            if (edge.endpoints.0).eq(label) && !neighbors.contains(&edge.endpoints.1) {
-                neighbors.push(edge.endpoints.1.clone())
-            } else if (edge.endpoints.1).eq(label) && !neighbors.contains(&edge.endpoints.0) {
-                neighbors.push(edge.endpoints.0.clone())
+        for (edge_labels, edge) in self.edges.iter() {
+            println!("{}-{}", edge_labels.0, edge_labels.1);
+            if (label).eq(&edge_labels.0) {
+                neighbors.push(edge_labels.1.clone())
+            } else if (label).eq(&edge_labels.1) {
+                neighbors.push(edge_labels.0.clone())
             }
         }
         neighbors
     }
     
-    
-    //todo: Make this return result.
+    /*
     fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
         //Input vertex label and return reference to vertex.
         
@@ -114,19 +113,20 @@ impl<V, E> Graph<V, E> {
         }
         
         //Ok(&Vertex { label: String::from("TEST"), value: val })
+        //todo: Return proper error.
         Err(String::from("Vertex not in graph."))
     }
+    */
     
     
     fn contains_vertex(&self, label: &VLT) -> bool {
         //Check if graph contain vertex with label.
-        self.vertices.iter().any(|vert| vert.label.eq(label))
+        self.vertices.contains_key(label)
     }
     
     fn contains_edge(&self, e: &(VLT, VLT)) -> bool {
         //Check if graph contain an edge.
-        self.edges.iter().any(|edg| (edg.endpoints.0).eq(&e.0)
-        && (edg.endpoints.1).eq(&e.1))
+        self.edges.contains_key(e)
     }
     
     //TODO: Add function to print graph.
@@ -145,11 +145,9 @@ impl<V> PartialEq for Vertex<V> {
 }
 
 struct Edge<T> {
-    //endpoints: &'a (Vertex<V>, Vertex<V>),
-    //TODO: Change endpoints from vertex labels to vertex references.
-        // This requires adding lifetimes.
     endpoints: (VLT, VLT),
-    weight: T
+    weight: T,
+    edge_type: EdgeType
 }
 
 impl<T> PartialEq for Edge<T> {
