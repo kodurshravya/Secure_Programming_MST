@@ -1,5 +1,5 @@
 //Contains definition of graph structures.
-
+use std::collections::HashMap;
 
 type VLT = String; //vertex_label_type
 
