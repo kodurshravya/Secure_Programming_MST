@@ -1,4 +1,5 @@
 mod graphs;
+mod algos;
 
 fn main() {
     let mut g: graphs::Graph<i32, i32> = graphs::Graph::new(true);
@@ -21,4 +22,6 @@ fn main() {
     //g.remove_edge((String::from("b"), String::from('A')));
     
     g.remove_vertex(String::from("A"));
+    
+    algos::Dijkstra(g);
 }
