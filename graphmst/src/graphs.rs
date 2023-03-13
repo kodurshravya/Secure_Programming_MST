@@ -28,6 +28,10 @@ impl<V, E> Graph<V, E> {
         }
     }
     
+    pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
+        &mut self.vertices
+    }
+    
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {// self.vertices.iter().any(|vert| vert.label.eq(&label)){
@@ -139,6 +143,10 @@ impl<V, E> Graph<V, E> {
         neighbors
     }
     
+    
+    pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex<V>> {
+        self.vertices.get_mut(label)
+    }
     /*
     fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
         //Input vertex label and return reference to vertex.
@@ -172,9 +180,22 @@ impl<V, E> Graph<V, E> {
     //TODO: Add function to print graph.
 }
 
-struct Vertex<T> {
+pub struct Vertex<T> {
     label: VLT,
     value: T
+}
+
+// FIXME: This is here for debugging.
+impl Vertex<f64> {
+    pub fn get_value(&self) -> f64 {
+        self.value
+    }
+}
+
+impl<V> Vertex<V> {
+    pub fn set_value(&mut self, new_value: V) {
+        self.value = new_value;
+    }
 }
 
 impl<V> PartialEq for Vertex<V> {
@@ -184,7 +205,7 @@ impl<V> PartialEq for Vertex<V> {
     }
 }
 
-struct Edge<T> {
+pub struct Edge<T> {
     endpoints: (VLT, VLT),
     weight: T,
     edge_type: EdgeType
