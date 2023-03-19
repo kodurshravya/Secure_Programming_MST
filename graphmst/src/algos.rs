@@ -114,16 +114,19 @@ where
             // If they are in different sets then we join them using union and also use the edge in MST
             mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
             mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+            mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
             set.union(&u, &v);
         }
-
-        // check if MST is successfull
-        if mst.edges.len() != mst.vertices.len() - 1 {
-            return Err(String::from(
-                "MST doesn't exist for this graph since it is not connected",
-            ));
-        }
     }
+
+    // check if MST is successfull
+    if mst.edges.len() != mst.vertices.len() - 1 {
+        return Err(String::from(
+            "MST doesn't exist for this graph since it is not connected",
+        ));
+    }
+
+    println!("\nMST: \n");
 
     for (_, edge) in &mst.edges {
         println!(
@@ -133,6 +136,8 @@ where
             edge.endpoints.1.clone()
         );
     }
+
+    println!("");
 
     Ok(mst)
 }
