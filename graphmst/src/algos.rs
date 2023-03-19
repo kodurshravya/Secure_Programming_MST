@@ -5,6 +5,10 @@ use crate::graphs::EdgeType;
 use super::graphs::Graph;
 use super::graphs::Vertex;
 use std::collections::HashMap;
+use std::fmt::Debug;
+use std::fmt::Display;
+
+use super::util::DisjointSet;
 //use std::collections::BinaryHeap;
 
 type VLT = String; //vertex label type
@@ -54,7 +58,7 @@ where
 
 pub fn Kruskals<V, E>(mut g: Graph<V, E>, num_edges: i32) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::Ord, // E will have int or float values so we need to mark the Ord to compare them
+    E: Clone + std::cmp::Ord + Display, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
@@ -64,6 +68,7 @@ where
     };
 
     // return error if the graph has directed edges
+
     if is_directed {
         return Err(String::from(
             "Kruskals only work properly on undirected graphs!",
@@ -79,9 +84,55 @@ where
     }
 
     edges.sort_by(|a, b| a.weight.cmp(&b.weight));
-    // edges.sort(); // Sort the edges - we need to pick the smallest edge first and so on
 
-    let mut mst = graphs::Graph::new(true);
+    // println!("Edges in Sorted Order: \n");
+    // let mut count = 0;
+    // for i in &edges {
+    //     println!("{count}.: {}", i.weight);
+    //     count += 1;
+    // }
+
+    // The graph that we are going to return
+    let mut mst = graphs::Graph::new(false);
+
+    // Use Disjoint set for union find algorithm
+    let mut set = DisjointSet::new();
+
+    // Add all the vertices to the disjoint set
+    for (node, _) in &g.vertices {
+        set.set_insert(node.clone());
+    }
+
+    while !edges.is_empty() {
+        let edge = edges.pop().unwrap(); // get the current smallest weight edge
+        let u = edge.endpoints.0.clone(); // get the first vertex of the edge
+        let v = edge.endpoints.1.clone(); // get the second vertex of the edge
+        set.find(&u); // Find parent of u
+
+        // check if they are in different sets
+        if set.find(&u) != set.find(&v) {
+            // If they are in different sets then we join them using union and also use the edge in MST
+            mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+            mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+            set.union(&u, &v);
+        }
+
+        // check if MST is successfull
+        if mst.edges.len() != mst.vertices.len() - 1 {
+            return Err(String::from(
+                "MST doesn't exist for this graph since it is not connected",
+            ));
+        }
+    }
+
+    for (_, edge) in &mst.edges {
+        println!(
+            "({}) -------{}------- ({})",
+            edge.endpoints.0.clone(),
+            edge.weight,
+            edge.endpoints.1.clone()
+        );
+    }
 
     Ok(mst)
 }

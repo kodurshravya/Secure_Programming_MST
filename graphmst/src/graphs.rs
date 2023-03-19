@@ -196,8 +196,8 @@ where
 }
 
 pub struct Vertex<T> {
-    label: VLT,
-    value: T,
+    pub label: VLT,
+    pub value: T,
 }
 
 // FIXME: This is here for debugging.
