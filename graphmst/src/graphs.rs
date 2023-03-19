@@ -41,6 +41,44 @@ where
         }
     }
 
+    pub fn get_topological_order(&mut self) -> Vec<String> {
+        let mut g: Graph<f64, f64> = Graph::new(true);
+        let nodes = g.get_vertices().keys();
+        // let nodes =  g.edges;
+        let mut order: Vec<String> = vec![];
+        let mut visited_vertex: HashMap<String, bool> = HashMap::new();
+
+        for node in nodes {
+            if visited_vertex.get(node) == None {
+            self.get_order(node, &mut order);
+            }
+        }
+        order.reverse();
+        println!("{:?}", order);
+        return order;
+    }
+
+    pub fn get_order(&mut self, node: &String, order: &mut Vec<String>) {
+
+        let mut g: Graph<f64, f64> = Graph::new(true);
+        //let coming_nodes = self.get_vertices().get(node);
+        let coming_nodes = g.get_vertices().keys();
+
+        for value in coming_nodes{
+            self.get_order(node, order)
+        }
+        // if new_graph.get(node) == None {
+        // if coming_nodes != None {
+        //     for value in coming_nodes. {
+        //         self.get_order(value, order);
+        //     }
+        // }
+        if !order.contains(node) {
+            order.push(node.to_string());
+        }
+    }
+
+
     pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
         &mut self.vertices
     }
@@ -79,22 +117,58 @@ where
         self.vertices.remove(&label);
     }
 
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E) {
+    pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String){
+        (e.0, e.1)
+    }
+
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E, edge_type: EdgeType){
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
+
+        let isUnDirected = match edge_type {
+            EdgeType::Directed => false,
+            EdgeType::Undirected => true,
+        };
+
         if self.contains_edge(&e) {
             println!("Edge '{}'-'{}' already in graph", e.0, e.1);
-        } else if self.contains_vertex(&e.0) && self.contains_vertex(&e.1) {
-            self.edges.insert(
-                e.clone(),
+            return;
+        }
+
+        if isUnDirected{
+            let rev = (e.1.clone(), e.0.clone());
+            if self.contains_edge(&rev){
+                println!("Edge '{}'-'{}' already in graph", e.1, e.0);
+            }
+            return;
+        }
+
+        if self.contains_vertex(&e.0) && self.contains_vertex(&e.1) {
+                    self.edges.entry(e.clone()).or_insert(
+                        Edge {
+                            endpoints: e,
+                            weight: weight,
+                            edge_type,
+                        }
+                    );
+            }         
+    }   
+
+    pub fn update_edge(&mut self, e: (VLT, VLT), weight: E){
+        // Update the weight of an edge to the graph.
+        // Edge must be present in graph.
+        if self.contains_edge(&e)  {
+            self.edges.insert(e.clone(),
                 Edge {
                     endpoints: e,
                     weight: weight,
-                    edge_type: EdgeType::Undirected,
-                },
+                    edge_type: EdgeType::Undirected
+                }
             );
+
         }
     }
+
 
     pub fn remove_edge(&mut self, e: (VLT, VLT)) {
         // Removes an edge from a graph.
