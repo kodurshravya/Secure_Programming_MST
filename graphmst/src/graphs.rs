@@ -1,5 +1,7 @@
 //Contains definition of graph structures.
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::{BufRead, BufReader, Error};
 
 type VLT = String; //vertex_label_type
 
@@ -138,6 +140,52 @@ impl<V, E> Graph<V, E> {
         }
         neighbors
     }
+
+    // Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>.
+    pub fn read_adjacency_matrix(filename: &str) -> Result<Vec<Vec<u32>>, Error> {
+        // Open the file for reading.
+        let file = File::open(filename)?;
+        // Create a buffered reader to read the file line by line.
+        let reader = BufReader::new(file);
+        // Initialize an empty vector to hold the matrix.
+        let mut matrix: Vec<Vec<u32>> = Vec::new();
+        // Iterate over each line in the file.
+        for line in reader.lines() {
+            // Parse each line as a vector of u32 values.
+            let row: Vec<u32> = line?
+                .split_whitespace() // Split the line by space.
+                .map(|s| s.parse().unwrap()) // Parse each value as u32
+                .collect(); // Collect the values into a vector.
+            // Add the row to the matrix.
+            matrix.push(row);
+        }
+
+        // Return the completed matrix.
+        Ok(matrix)
+    }
+
+    // Writes an adjacency matrix to a file.
+    pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
+    // Open the file for writing.
+    let mut file = File::create(filename)?;
+
+    // Iterate over each row in the matrix.
+    for row in matrix.iter() {
+        // Convert the row to a string, separating each value with a space.
+        let row_str = row
+            .iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join(" ");
+
+        // Write the row string to the file, followed by a newline character.
+        writeln!(file, "{}", row_str)?;
+    }
+
+    // Return success.
+    Ok(())
+}
+
     
     /*
     fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
