@@ -10,8 +10,8 @@
 
 ## Releases
 
-- V1. Basic graph structure and Prim’s algorithm.
-- V2. Kruskal’s algorithm
+- V1. Basic graph structure and Kruskal’s algorithm.
+- V2. Prim’s algorithm
 - V3. Borůvka’s algorithm
 - V4. reverse-delete algorithm
 
