@@ -103,8 +103,8 @@ where
         set.set_insert(node.clone());
     }
 
-    while !edges.is_empty() {
-        let edge = edges.pop().unwrap(); // get the current smallest weight edge
+    // iterate over edges - smallest weight to largest weight
+    for edge in edges {
         let u = edge.endpoints.0.clone(); // get the first vertex of the edge
         let v = edge.endpoints.1.clone(); // get the second vertex of the edge
         set.find(&u); // Find parent of u
