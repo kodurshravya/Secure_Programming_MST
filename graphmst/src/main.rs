@@ -98,7 +98,8 @@ fn main() {
     println!("\n\n----KRUSKALS START -----\n\n");
     let mst_kruskals = algos::Kruskals(g);
     match mst_kruskals {
-        Ok(g) => println!("MST generated successfully!"),
+        // Ok(g) => println!("MST generated successfully!"),
+        Ok(g) => g.print(),
         Err(e) => println!("{}", e),
     }
     println!("\n\n----KRUSKALS END -----\n\n");

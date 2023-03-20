@@ -18,7 +18,7 @@ const INF: f64 = f64::INFINITY;
 type TMPV = f64; //Should be V, but I'm being specific so I can debug.
 pub fn Dijkstra<E>(mut g: Graph<TMPV, E>, start_vertex: VLT)
 where
-    E: Clone,
+    E: Clone + Debug,
 {
     println!("Beginning Dikstra's algorithm.");
 
@@ -58,8 +58,8 @@ where
 
 pub fn Kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::Ord + Display, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone,
+    E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    V: Clone + Debug,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -150,8 +150,8 @@ where
 
 pub fn boruvka<V, E>(mut g: Graph<V, E>, mut edge_weight: i32) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::Ord, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone,
+    E: Clone + std::cmp::Ord + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    V: Clone + Debug,
 {
     // vector to collect all edge values
     let mut edge_weight: Vec<Edge<E>> = Vec::new();
