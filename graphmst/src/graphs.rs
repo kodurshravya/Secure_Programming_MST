@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
+use std::io::Write;
 
 type VLT = String; //vertex_label_type
 
@@ -253,27 +254,27 @@ where
         Ok(matrix)
     }
 
-    // // Writes an adjacency matrix to a file.
-    // pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
-    //     // Open the file for writing.
-    //     let mut file = File::create(filename)?;
+    // Writes an adjacency matrix to a file.
+    pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
+    // Open the file for writing.
+    let mut file = File::create(filename)?;
 
-    //     // Iterate over each row in the matrix.
-    //     for row in matrix.iter() {
-    //         // Convert the row to a string, separating each value with a space.
-    //         let row_str = row
-    //             .iter()
-    //             .map(|x| x.to_string())
-    //             .collect::<Vec<String>>()
-    //             .join(" ");
+    // Iterate over each row in the matrix.
+    for row in matrix.iter() {
+        // Convert the row to a string, separating each value with a space.
+        let row_str = row
+            .iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>()
+            .join(" ");
 
-    //         // Write the row string to the file, followed by a newline character.
-    //         writeln!(file, "{}", row_str)?;
-    //     }
+        // Write the row string to the file, followed by a newline character.
+        writeln!(file, "{}", row_str)?;
+    }
 
-    //     // Return success.
-    //     Ok(())
-    // }
+    // Return success.
+    Ok(())
+}
 
     pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex<V>> {
         self.vertices.get_mut(label)
