@@ -28,6 +28,18 @@ where
     E: Clone,
     V: Clone,
 {
+    //pub fn print(&self) {
+        //println!("Vertices:");
+        //for (id, vertex) in &self.vertices {
+            //println!("{:?}: {:?}", id, vertex);
+        //}
+
+        //println!("Edges:");
+        //for ((src,dst), edge) in &self.edges {
+            //println!("({:?}, {:?}) -> {:?}", src, dst, edge);
+        //}    }
+    
+
     pub fn new(directed: bool) -> Graph<V, E> {
         //Create an empty graph.
         let v: HashMap<VLT, Vertex<V>> = HashMap::new();
