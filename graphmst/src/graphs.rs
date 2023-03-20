@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
+use std::io::Write;
 
 type VLT = String; //vertex_label_type
 
@@ -164,7 +165,7 @@ impl<V, E> Graph<V, E> {
         Ok(matrix)
     }
 
-    // Writes an adjacency matrix to a file.
+    Writes an adjacency matrix to a file.
     pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
     // Open the file for writing.
     let mut file = File::create(filename)?;
@@ -182,7 +183,7 @@ impl<V, E> Graph<V, E> {
         writeln!(file, "{}", row_str)?;
     }
 
-    // Return success.
+    Return success.
     Ok(())
 }
 
