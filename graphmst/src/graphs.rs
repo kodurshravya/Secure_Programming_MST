@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
 
-
 type VLT = String; //vertex_label_type
 
 #[derive(Debug, Copy, Clone)]
@@ -53,7 +52,7 @@ where
 
         for node in nodes {
             if visited_vertex.get(node) == None {
-            self.get_order(node, &mut order);
+                self.get_order(node, &mut order);
             }
         }
         order.reverse();
@@ -62,12 +61,11 @@ where
     }
 
     pub fn get_order(&mut self, node: &String, order: &mut Vec<String>) {
-
         let mut g: Graph<f64, f64> = Graph::new(true);
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
 
-        for value in coming_nodes{
+        for value in coming_nodes {
             self.get_order(node, order)
         }
         // if new_graph.get(node) == None {
@@ -80,7 +78,6 @@ where
             order.push(node.to_string());
         }
     }
-
 
     pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
         &mut self.vertices
@@ -120,11 +117,11 @@ where
         self.vertices.remove(&label);
     }
 
-    pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String){
+    pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
         (e.0, e.1)
     }
 
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E, edge_type: EdgeType){
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E, edge_type: EdgeType) {
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
 
@@ -138,40 +135,37 @@ where
             return;
         }
 
-        if isUnDirected{
+        if isUnDirected {
             let rev = (e.1.clone(), e.0.clone());
-            if self.contains_edge(&rev){
+            if self.contains_edge(&rev) {
                 println!("Edge '{}'-'{}' already in graph", e.1, e.0);
+                return;
             }
-            return;
         }
 
         if self.contains_vertex(&e.0) && self.contains_vertex(&e.1) {
-                    self.edges.entry(e.clone()).or_insert(
-                        Edge {
-                            endpoints: e,
-                            weight: weight,
-                            edge_type,
-                        }
-                    );
-            }         
-    }   
-
-    pub fn update_edge(&mut self, e: (VLT, VLT), weight: E){
-        // Update the weight of an edge to the graph.
-        // Edge must be present in graph.
-        if self.contains_edge(&e)  {
-            self.edges.insert(e.clone(),
-                Edge {
-                    endpoints: e,
-                    weight: weight,
-                    edge_type: EdgeType::Undirected
-                }
-            );
-
+            self.edges.entry(e.clone()).or_insert(Edge {
+                endpoints: e,
+                weight: weight,
+                edge_type,
+            });
         }
     }
 
+    pub fn update_edge(&mut self, e: (VLT, VLT), weight: E) {
+        // Update the weight of an edge to the graph.
+        // Edge must be present in graph.
+        if self.contains_edge(&e) {
+            self.edges.insert(
+                e.clone(),
+                Edge {
+                    endpoints: e,
+                    weight: weight,
+                    edge_type: EdgeType::Undirected,
+                },
+            );
+        }
+    }
 
     pub fn remove_edge(&mut self, e: (VLT, VLT)) {
         // Removes an edge from a graph.
@@ -251,7 +245,7 @@ where
                 .split_whitespace() // Split the line by space.
                 .map(|s| s.parse().unwrap()) // Parse each value as u32
                 .collect(); // Collect the values into a vector.
-            // Add the row to the matrix.
+                            // Add the row to the matrix.
             matrix.push(row);
         }
 
@@ -259,28 +253,27 @@ where
         Ok(matrix)
     }
 
-    // Writes an adjacency matrix to a file.
-    pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
-    // Open the file for writing.
-    let mut file = File::create(filename)?;
+    // // Writes an adjacency matrix to a file.
+    // pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
+    //     // Open the file for writing.
+    //     let mut file = File::create(filename)?;
 
-    // Iterate over each row in the matrix.
-    for row in matrix.iter() {
-        // Convert the row to a string, separating each value with a space.
-        let row_str = row
-            .iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<String>>()
-            .join(" ");
+    //     // Iterate over each row in the matrix.
+    //     for row in matrix.iter() {
+    //         // Convert the row to a string, separating each value with a space.
+    //         let row_str = row
+    //             .iter()
+    //             .map(|x| x.to_string())
+    //             .collect::<Vec<String>>()
+    //             .join(" ");
 
-        // Write the row string to the file, followed by a newline character.
-        writeln!(file, "{}", row_str)?;
-    }
+    //         // Write the row string to the file, followed by a newline character.
+    //         writeln!(file, "{}", row_str)?;
+    //     }
 
-    // Return success.
-    Ok(())
-}
-
+    //     // Return success.
+    //     Ok(())
+    // }
 
     pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex<V>> {
         self.vertices.get_mut(label)

@@ -56,7 +56,7 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
-pub fn Kruskals<V, E>(mut g: Graph<V, E>, num_edges: i32) -> Result<Graph<V, E>, String>
+pub fn Kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
     E: Clone + std::cmp::Ord + Display, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone,
@@ -75,11 +75,13 @@ where
         ));
     }
 
+    println!("{}", g.edges.len());
+
     // vector to collect all edge values
     let mut edges: Vec<Edge<E>> = Vec::new();
 
     // fill the vector with edges in graph
-    for (_, edge) in g.edges {
+    for (_, edge) in &g.edges {
         edges.push(edge.clone());
     }
 
@@ -114,7 +116,11 @@ where
             // If they are in different sets then we join them using union and also use the edge in MST
             mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
             mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-            mst.add_edge((u.clone(), v.clone()), edge.weight.clone(),graphs::EdgeType::Undirected);
+            mst.add_edge(
+                (u.clone(), v.clone()),
+                edge.weight.clone(),
+                graphs::EdgeType::Undirected,
+            );
             set.union(&u, &v);
         }
     }
@@ -142,7 +148,6 @@ where
     Ok(mst)
 }
 
-
 pub fn boruvka<V, E>(mut g: Graph<V, E>, mut edge_weight: i32) -> Result<Graph<V, E>, String>
 where
     E: Clone + std::cmp::Ord, // E will have int or float values so we need to mark the Ord to compare them
@@ -152,24 +157,21 @@ where
     let mut edge_weight: Vec<Edge<E>> = Vec::new();
 
     // fill the vector with edges in graph
-    for (_, edge) in g.edges {
+    for (_, edge) in &g.edges {
         edge_weight.push(edge.clone());
     }
 
-        for (_, edge) in g.edges {
-            edge_weight.push(edge.clone());
-        }
+    for (_, edge) in &g.edges {
+        edge_weight.push(edge.clone());
+    }
 
     let mut mst = graphs::Graph::new(true);
 
     loop {
-        // let mut min_edge_Weight: Vec<K> = vec![K::infinite(); 
+        // let mut min_edge_Weight: Vec<K> = vec![K::infinite();
         // g.get_vertices_count()];
         // let mut min_edge: Vec<Option<(usize, usize)>> = vec![None; g.get_vertices_count()];
-   
-
-        }
-
-    Ok(mst)    
     }
 
+    Ok(mst)
+}
