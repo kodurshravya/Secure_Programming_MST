@@ -15,6 +15,7 @@ fn main() {
     g.add_vertex(String::from("H"), 7);
     g.add_vertex(String::from("I"), 8);
 
+    // Integers - i32
     g.add_edge(
         (String::from("A"), String::from('B')),
         4,
@@ -86,13 +87,150 @@ fn main() {
         graphs::EdgeType::Undirected,
     );
 
-    // println!("Testing remove");
-    // g.remove_edge((String::from("b"), String::from('A')));
-    //g.remove_edge((String::from("x"), String::from('y')));
-    //g.remove_edge((String::from("b"), String::from('A')));
-    //g.remove_edge((String::from("b"), String::from('A')));
+    // Float values - f64
 
-    //g.remove_vertex(String::from("A"));
+    // g.add_edge(
+    //     (String::from("A"), String::from('B')),
+    //     4.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("B"), String::from('C')),
+    //     8.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('D')),
+    //     7.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("D"), String::from('E')),
+    //     9.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("E"), String::from('F')),
+    //     10.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("F"), String::from('G')),
+    //     2.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("G"), String::from('H')),
+    //     1.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("H"), String::from('I')),
+    //     7.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("H"), String::from('A')),
+    //     8.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("B"), String::from('H')),
+    //     11.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('I')),
+    //     2.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('F')),
+    //     4.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("D"), String::from('F')),
+    //     14.,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("G"), String::from('I')),
+    //     6.,
+    //     graphs::EdgeType::Undirected,
+    // );
+
+    // Negetive edge
+    // g.add_edge(
+    //     (String::from("A"), String::from('B')),
+    //     -4,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("B"), String::from('C')),
+    //     -8,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('D')),
+    //     -7,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("D"), String::from('E')),
+    //     -9,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("E"), String::from('F')),
+    //     1 - 0,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("F"), String::from('G')),
+    //     -2,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("G"), String::from('H')),
+    //     -1,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("H"), String::from('I')),
+    //     -7,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("H"), String::from('A')),
+    //     -8,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("B"), String::from('H')),
+    //     -11,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('I')),
+    //     -2,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("C"), String::from('F')),
+    //     -4,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("D"), String::from('F')),
+    //     -14,
+    //     graphs::EdgeType::Undirected,
+    // );
+    // g.add_edge(
+    //     (String::from("G"), String::from('I')),
+    //     -6,
+    //     graphs::EdgeType::Undirected,
+    // );
 
     // algos::Dijkstra(g, String::from("A"));
     println!("\n\n----KRUSKALS START -----\n\n");

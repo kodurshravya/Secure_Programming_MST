@@ -58,7 +58,7 @@ where
 
 pub fn Kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
@@ -85,7 +85,7 @@ where
         edges.push(edge.clone());
     }
 
-    edges.sort_by(|a, b| a.weight.cmp(&b.weight));
+    edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
     // println!("Edges in Sorted Order: \n");
     // let mut count = 0;
@@ -136,7 +136,7 @@ where
 
     for (_, edge) in &mst.edges {
         println!(
-            "({}) -------{}------- ({})",
+            "({}) -------[{}]------- ({})",
             edge.endpoints.0.clone(),
             edge.weight,
             edge.endpoints.1.clone()
@@ -150,7 +150,7 @@ where
 
 pub fn boruvka<V, E>(mut g: Graph<V, E>, mut edge_weight: i32) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::Ord + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    E: Clone + std::cmp::PartialOrd + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
     // vector to collect all edge values
