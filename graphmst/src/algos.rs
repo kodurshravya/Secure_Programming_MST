@@ -48,7 +48,7 @@ where
     //println!("{}", (*vertex).get_value());
 }
 
-pub fn BellmanFord<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
+pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
 where
     E: Clone,
     V: Clone,
@@ -56,7 +56,7 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
-pub fn Kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
+pub fn kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
     E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,

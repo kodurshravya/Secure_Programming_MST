@@ -57,12 +57,12 @@ where
         }
     }
 
-    pub fn get_topological_order(&mut self) -> Vec<String> {
+    pub fn get_topological_order(&mut self) -> Vec<VLT> {
         let mut g: Graph<f64, f64> = Graph::new(true);
         let nodes = g.get_vertices().keys();
         // let nodes =  g.edges;
-        let mut order: Vec<String> = vec![];
-        let mut visited_vertex: HashMap<String, bool> = HashMap::new();
+        let mut order: Vec<VLT> = vec![];
+        let mut visited_vertex: HashMap<VLT, bool> = HashMap::new();
 
         for node in nodes {
             if visited_vertex.get(node) == None {
@@ -74,7 +74,7 @@ where
         return order;
     }
 
-    pub fn get_order(&mut self, node: &String, order: &mut Vec<String>) {
+    pub fn get_order(&mut self, node: &VLT, order: &mut Vec<VLT>) {
         let mut g: Graph<f64, f64> = Graph::new(true);
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
@@ -89,7 +89,7 @@ where
         //     }
         // }
         if !order.contains(node) {
-            order.push(node.to_string());
+            order.push(node.to_string()); //FIXME: Is .to_string needed here?
         }
     }
 
@@ -122,7 +122,7 @@ where
 
         // Remove all edges, regardless of direction.
         // TODO: Decide on handling of directed vs undirected graphs.
-        for vert_label in neighbors.into_iter() {
+        for vert_label in neighbors.into_iter() { //FIXME: Keep an eye on these '.to_string' uses.
             self.remove_edge((label.clone(), vert_label.to_string()));
             self.remove_edge((vert_label.to_string(), label.clone()));
         }
@@ -131,6 +131,7 @@ where
         self.vertices.remove(&label);
     }
 
+    //FICME: VLT ~is~ a String. This function isn't needed.
     pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
         (e.0, e.1)
     }
@@ -379,7 +380,7 @@ mod graph_tests {
     //use graphs::Graph;
     use super::*;
     
-    fn get_test_graph1() -> Graph<f64, f64> {
+    fn get_test_graph_1() -> Graph<f64, f64> {
         let mut g: Graph<f64, f64> = Graph::new(false);
         g.add_vertex(String::from("A"), 0.);        
         g.add_vertex(String::from("B"), 1.);

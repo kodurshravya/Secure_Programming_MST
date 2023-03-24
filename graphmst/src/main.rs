@@ -234,7 +234,7 @@ fn main() {
 
     // algos::Dijkstra(g, String::from("A"));
     println!("\n\n----KRUSKALS START -----\n\n");
-    let mst_kruskals = algos::Kruskals(g);
+    let mst_kruskals = algos::kruskals(g);
     match mst_kruskals {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
