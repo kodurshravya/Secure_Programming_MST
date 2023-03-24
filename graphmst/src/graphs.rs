@@ -405,7 +405,7 @@ mod graph_tests {
     
     #[test]
     fn add_multiple_vertices() {
-        let mut g = get_test_graph1();        
+        let mut g = get_test_graph_1();        
         assert_eq!(g.get_vertices().len(), 9);
         assert_eq!(g.get_vertices().get("A").unwrap().label, "A");
         assert_eq!(g.get_vertices().get("A").unwrap().value, 0.);
@@ -422,7 +422,7 @@ mod graph_tests {
     
     #[test]
     fn remove_one_vertex() {
-        let mut g = get_test_graph1();
+        let mut g = get_test_graph_1();
         g.remove_vertex(String::from("F"));
         assert_eq!(g.get_vertices().len(), 8);
         assert_eq!(g.get_vertices().get("F").is_none(), true);
@@ -430,7 +430,7 @@ mod graph_tests {
     
     #[test]
     fn remove_multiple_vertices() {
-        let mut g = get_test_graph1();
+        let mut g = get_test_graph_1();
         g.remove_vertex(String::from("I"));
         g.remove_vertex(String::from("H"));
         assert_eq!(g.get_vertices().len(), 7);
@@ -443,7 +443,7 @@ mod graph_tests {
     
     #[test]
     fn remove_all_vertices() {
-        let mut g = get_test_graph1();
+        let mut g = get_test_graph_1();
         g.remove_vertex(String::from("I"));
         g.remove_vertex(String::from("H"));
         g.remove_vertex(String::from("G"));
