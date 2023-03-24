@@ -119,7 +119,6 @@ where
             mst.add_edge(
                 (u.clone(), v.clone()),
                 edge.weight.clone(),
-                graphs::EdgeType::Undirected,
             );
             set.union(&u, &v);
         }

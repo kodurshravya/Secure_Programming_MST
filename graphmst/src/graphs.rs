@@ -99,6 +99,10 @@ where
     pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
         &mut self.vertices
     }
+    
+    pub fn get_edges(&mut self) -> &mut HashMap<(VLT, VLT), Edge<E>> {
+        &mut self.edges
+    }
 
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
@@ -139,9 +143,11 @@ where
         (e.0, e.1)
     }
 
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E, edge_type: EdgeType) {
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E) {
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
+        
+        let edge_type = self.edge_type;
 
         let is_undirected = match edge_type {
             EdgeType::Directed => false,
@@ -433,31 +439,32 @@ mod graph_tests {
     
     #[test]
     fn remove_multiple_vertices() {
-        let mut g = get_test_graph_1();
-        g.remove_vertex(String::from("I"));
-        g.remove_vertex(String::from("H"));
-        assert_eq!(g.get_vertices().len(), 7);
-        g.remove_vertex(String::from("E"));
-        assert_eq!(g.get_vertices().len(), 6);
-        g.remove_vertex(String::from("A"));
-        g.remove_vertex(String::from("B"));
-        assert_eq!(g.get_vertices().len(), 4);
+        let mut G = get_test_graph_1();
+        G.remove_vertex(String::from("I"));
+        G.remove_vertex(String::from("H"));
+        assert_eq!(G.get_vertices().len(), 7);
+        G.remove_vertex(String::from("E"));
+        assert_eq!(G.get_vertices().len(), 6);
+        G.remove_vertex(String::from("A"));
+        G.remove_vertex(String::from("B"));
+        assert_eq!(G.get_vertices().len(), 4);
+        G.remove_vertex(String::from("I"));
+        assert_eq!(G.get_vertices().len(), 4);
+        G.remove_vertex(String::from("G"));
+        G.remove_vertex(String::from("F"));
+        G.remove_vertex(String::from("D"));
+        G.remove_vertex(String::from("C"));
+        assert_eq!(G.get_vertices().len(), 0);
     }
     
     #[test]
-    fn remove_all_vertices() {
-        let mut g = get_test_graph_1();
-        g.remove_vertex(String::from("I"));
-        g.remove_vertex(String::from("H"));
-        g.remove_vertex(String::from("G"));
-        g.remove_vertex(String::from("F"));
-        g.remove_vertex(String::from("E"));
-        g.remove_vertex(String::from("D"));
-        g.remove_vertex(String::from("C"));
-        g.remove_vertex(String::from("B"));
-        g.remove_vertex(String::from("A"));
-        assert_eq!(g.get_vertices().len(), 0);
-        g.remove_vertex(String::from("I"));
-        assert_eq!(g.get_vertices().len(), 0);
+    fn add_one_undirected_edge() {
+        let mut G = get_test_graph_1();
+        G.add_edge(
+            (String::from("A"), String::from('B')),
+            4.,
+        );
+        assert_eq!(G.get_edges().len(), 1);
     }
+        
 }
