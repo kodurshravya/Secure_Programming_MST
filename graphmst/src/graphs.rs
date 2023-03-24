@@ -58,12 +58,14 @@ where
     }
 
     pub fn get_topological_order(&mut self) -> Vec<VLT> {
+        //FIXME: Function not finished.
+        //TODO: Consider moving to utils.
         let mut g: Graph<f64, f64> = Graph::new(true);
         let nodes = g.get_vertices().keys();
         // let nodes =  g.edges;
         let mut order: Vec<VLT> = vec![];
         let mut visited_vertex: HashMap<VLT, bool> = HashMap::new();
-
+        
         for node in nodes {
             if visited_vertex.get(node) == None {
                 self.get_order(node, &mut order);
@@ -75,6 +77,7 @@ where
     }
 
     pub fn get_order(&mut self, node: &VLT, order: &mut Vec<VLT>) {
+        //TODO: Consider moving to utils.
         let mut g: Graph<f64, f64> = Graph::new(true);
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
@@ -140,7 +143,7 @@ where
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
 
-        let isUnDirected = match edge_type {
+        let is_undirected = match edge_type {
             EdgeType::Directed => false,
             EdgeType::Undirected => true,
         };
@@ -150,7 +153,7 @@ where
             return;
         }
 
-        if isUnDirected {
+        if is_undirected {
             let rev = (e.1.clone(), e.0.clone());
             if self.contains_edge(&rev) {
                 println!("Edge '{}'-'{}' already in graph", e.1, e.0);
@@ -399,24 +402,24 @@ mod graph_tests {
         let mut g: Graph<f64, f64> = Graph::new(false);
         g.add_vertex(String::from("A"), 0f64);
         assert_eq!(g.get_vertices().len(), 1);
-        assert_eq!(g.get_vertices().get("A").unwrap().label, "A");
-        assert_eq!(g.get_vertices().get("A").unwrap().value, 0f64);
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0f64);
     }
     
     #[test]
     fn add_multiple_vertices() {
         let mut g = get_test_graph_1();        
         assert_eq!(g.get_vertices().len(), 9);
-        assert_eq!(g.get_vertices().get("A").unwrap().label, "A");
-        assert_eq!(g.get_vertices().get("A").unwrap().value, 0.);
-        assert_eq!(g.get_vertices().get("C").unwrap().label, "C");
-        assert_eq!(g.get_vertices().get("C").unwrap().value, 2.);
-        assert_eq!(g.get_vertices().get("H").unwrap().label, "H");
-        assert_eq!(g.get_vertices().get("H").unwrap().value, 7.);
-        assert_eq!(g.get_vertices().get("H").unwrap().label, "H");
-        assert_eq!(g.get_vertices().get("H").unwrap().value, 7.);
-        assert_eq!(g.get_vertices().get("I").unwrap().label, "I");
-        assert_eq!(g.get_vertices().get("I").unwrap().value, 8.);
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0.);
+        assert_eq!(g.get_vertex(&String::from("C")).unwrap().label, "C");
+        assert_eq!(g.get_vertex(&String::from("C")).unwrap().get_value(), 2.);
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
+        assert_eq!(g.get_vertex(&String::from("I")).unwrap().label, "I");
+        assert_eq!(g.get_vertex(&String::from("I")).unwrap().get_value(), 8.);
     }
     
     

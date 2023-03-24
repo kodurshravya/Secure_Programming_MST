@@ -16,7 +16,7 @@ type VLT = String; //vertex label type
 const INF: f64 = f64::INFINITY;
 
 type TMPV = f64; //Should be V, but I'm being specific so I can debug.
-pub fn Dijkstra<E>(mut g: Graph<TMPV, E>, start_vertex: VLT)
+pub fn dijkstra<E>(mut g: Graph<TMPV, E>, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
@@ -56,7 +56,7 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
-pub fn kruskals<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
+pub fn kruskals<V, E>(g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
     E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
