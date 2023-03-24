@@ -371,3 +371,89 @@ impl<T> PartialEq for Edge<T> {
         }
     }
 }
+
+
+#[cfg(test)]
+mod graph_tests {
+    //extern crate graphs;
+    //use graphs::Graph;
+    use super::*;
+    
+    fn get_test_graph1() -> Graph<f64, f64> {
+        let mut g: Graph<f64, f64> = Graph::new(false);
+        g.add_vertex(String::from("A"), 0.);        
+        g.add_vertex(String::from("B"), 1.);
+        g.add_vertex(String::from("C"), 2.);
+        g.add_vertex(String::from("D"), 3.);
+        g.add_vertex(String::from("E"), 4.);
+        g.add_vertex(String::from("F"), 5.);
+        g.add_vertex(String::from("G"), 6.);
+        g.add_vertex(String::from("H"), 7.);
+        g.add_vertex(String::from("I"), 8.);
+        g
+    }
+
+    #[test]
+    fn add_one_vertex() {
+        let mut g: Graph<f64, f64> = Graph::new(false);
+        g.add_vertex(String::from("A"), 0f64);
+        assert_eq!(g.get_vertices().len(), 1);
+        assert_eq!(g.get_vertices().get("A").unwrap().label, "A");
+        assert_eq!(g.get_vertices().get("A").unwrap().value, 0f64);
+    }
+    
+    #[test]
+    fn add_multiple_vertices() {
+        let mut g = get_test_graph1();        
+        assert_eq!(g.get_vertices().len(), 9);
+        assert_eq!(g.get_vertices().get("A").unwrap().label, "A");
+        assert_eq!(g.get_vertices().get("A").unwrap().value, 0.);
+        assert_eq!(g.get_vertices().get("C").unwrap().label, "C");
+        assert_eq!(g.get_vertices().get("C").unwrap().value, 2.);
+        assert_eq!(g.get_vertices().get("H").unwrap().label, "H");
+        assert_eq!(g.get_vertices().get("H").unwrap().value, 7.);
+        assert_eq!(g.get_vertices().get("H").unwrap().label, "H");
+        assert_eq!(g.get_vertices().get("H").unwrap().value, 7.);
+        assert_eq!(g.get_vertices().get("I").unwrap().label, "I");
+        assert_eq!(g.get_vertices().get("I").unwrap().value, 8.);
+    }
+    
+    
+    #[test]
+    fn remove_one_vertex() {
+        let mut g = get_test_graph1();
+        g.remove_vertex(String::from("F"));
+        assert_eq!(g.get_vertices().len(), 8);
+        assert_eq!(g.get_vertices().get("F").is_none(), true);
+    }
+    
+    #[test]
+    fn remove_multiple_vertices() {
+        let mut g = get_test_graph1();
+        g.remove_vertex(String::from("I"));
+        g.remove_vertex(String::from("H"));
+        assert_eq!(g.get_vertices().len(), 7);
+        g.remove_vertex(String::from("E"));
+        assert_eq!(g.get_vertices().len(), 6);
+        g.remove_vertex(String::from("A"));
+        g.remove_vertex(String::from("B"));
+        assert_eq!(g.get_vertices().len(), 4);
+    }
+    
+    #[test]
+    fn remove_all_vertices() {
+        let mut g = get_test_graph1();
+        g.remove_vertex(String::from("I"));
+        g.remove_vertex(String::from("H"));
+        g.remove_vertex(String::from("G"));
+        g.remove_vertex(String::from("F"));
+        g.remove_vertex(String::from("E"));
+        g.remove_vertex(String::from("D"));
+        g.remove_vertex(String::from("C"));
+        g.remove_vertex(String::from("B"));
+        g.remove_vertex(String::from("A"));
+        assert_eq!(g.get_vertices().len(), 0);
+        g.remove_vertex(String::from("I"));
+        assert_eq!(g.get_vertices().len(), 0);
+    }
+}
