@@ -50,7 +50,7 @@ where
 
 use std::collections::VecDeque;
 //TODO: Test this function
-fn dfs<V: Clone + Debug, E: Clone + Debug>(mut G: Graph<V, E>, start_vertex: VLT) -> VecDeque<Vertex<V>> {
+fn dfs<V: Clone + Debug, E: Clone + Debug>(mut G: Graph<V, E>, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
@@ -66,7 +66,7 @@ fn dfs<V: Clone + Debug, E: Clone + Debug>(mut G: Graph<V, E>, start_vertex: VLT
             }
         }
     }
-    stack
+    visited
 } 
 
 pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
@@ -194,4 +194,111 @@ where
     }
 
     Ok(mst)
+}
+
+#[cfg(test)]
+mod algos_tests {
+    use super::*;
+    
+    fn get_test_graph_1() -> Graph<i32, i32>  {
+        let mut G: Graph<i32, i32> = Graph::new(false);
+        G.add_vertex(String::from("A"), 0);
+        G.add_vertex(String::from("B"), 1);
+        G.add_vertex(String::from("C"), 2);
+        G.add_vertex(String::from("D"), 3);
+        G.add_vertex(String::from("E"), 4);
+        G.add_vertex(String::from("F"), 5);
+        G.add_vertex(String::from("G"), 6);
+        G.add_vertex(String::from("H"), 7);
+        G.add_vertex(String::from("I"), 8);
+
+        // Integers - i32
+        G.add_edge(
+            (String::from("A"), String::from('B')), 4
+        );
+        G.add_edge(
+            (String::from("B"), String::from('C')), 8
+        );
+        G.add_edge(
+            (String::from("C"), String::from('D')), 7
+        );
+        G.add_edge(
+            (String::from("D"), String::from('E')), 9
+        );
+        G.add_edge(
+            (String::from("E"), String::from('F')), 10
+        );
+        G.add_edge(
+            (String::from("F"), String::from('G')), 2
+        );
+        G.add_edge(
+            (String::from("G"), String::from('H')), 1
+        );
+        G.add_edge(
+            (String::from("H"), String::from('I')), 7
+        );
+        G.add_edge(
+            (String::from("H"), String::from('A')), 8
+        );
+        G.add_edge(
+            (String::from("B"), String::from('H')), 11
+        );
+        G.add_edge(
+            (String::from("C"), String::from('I')), 2 
+        );
+        G.add_edge(
+            (String::from("C"), String::from('F')), 4
+        );
+        G.add_edge(
+            (String::from("D"), String::from('F')), 14
+        );
+        G.add_edge(
+            (String::from("G"), String::from('I')), 6  
+        );
+        G
+    }
+    
+    fn get_test_graph_2() -> Graph<i32, i32>  {
+        //Generates a graph with 2 connected components.
+        let mut G: Graph<i32, i32> = Graph::new(false);
+        G.add_vertex(String::from("A"), 0);
+        G.add_vertex(String::from("B"), 1);
+        G.add_vertex(String::from("C"), 2);
+        G.add_vertex(String::from("D"), 3);
+        G.add_vertex(String::from("E"), 4);
+        G.add_vertex(String::from("F"), 5);
+        G.add_vertex(String::from("G"), 6);
+        G.add_vertex(String::from("H"), 7);
+
+        // Integers - i32
+        G.add_edge((String::from("A"), String::from('B')), 4);
+        G.add_edge((String::from("C"), String::from('D')), 7);
+        G.add_edge((String::from("D"), String::from('E')), 9);
+        G.add_edge((String::from("E"), String::from('F')), 10);
+        G.add_edge((String::from("G"), String::from('H')), 1);
+        G.add_edge((String::from("H"), String::from('I')), 7);
+        G.add_edge((String::from("H"), String::from('A')), 8);
+        G.add_edge((String::from("B"), String::from('H')), 11);
+        G.add_edge((String::from("C"), String::from('I')), 2 );
+        G.add_edge((String::from("C"), String::from('F')), 4);
+        G.add_edge((String::from("D"), String::from('F')), 14);
+        G.add_edge((String::from("G"), String::from('I')), 6);
+        G
+    }
+    
+    #[test]
+    fn run_dfs_on_connected() {
+        let mut G = get_test_graph_1();
+        let res = dfs(G, String::from("A"));
+        assert!(res.values().all(|&x| x));
+        println!("dfs result: {:?}", res);
+    }
+    
+    #[test]
+    fn run_dfs() {
+        let mut G = get_test_graph_2();
+        let res = dfs(G, String::from("A"));
+        assert!(res.get(&String::from("G")).unwrap());
+        assert!(!res.get(&String::from("E")).unwrap());
+    }
 }
