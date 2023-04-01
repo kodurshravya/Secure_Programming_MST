@@ -48,6 +48,27 @@ where
     //println!("{}", (*vertex).get_value());
 }
 
+use std::collections::VecDeque;
+//TODO: Test this function
+fn dfs<V: Clone + Debug, E: Clone + Debug>(mut G: Graph<V, E>, start_vertex: VLT) -> VecDeque<Vertex<V>> {
+    let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
+    let mut visited: HashMap<VLT, bool> = HashMap::new();
+    for (lbl, _) in G.get_vertices().iter() {
+        visited.insert((*lbl).clone(), false);
+    }
+    stack.push_front(G.get_vertex(&start_vertex).unwrap().clone());
+    while !stack.is_empty() {
+        let V = stack.pop_front().unwrap();
+        if !visited.get(&V.label).unwrap() {
+            visited.insert(V.label.clone(), true);
+            for neighbor in G.get_neighbors(&V.label).iter() {
+                stack.push_front((*G.get_vertex(neighbor).unwrap()).clone());
+            }
+        }
+    }
+    stack
+} 
+
 pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
 where
     E: Clone,
