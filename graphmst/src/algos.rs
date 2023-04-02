@@ -213,6 +213,12 @@ where
     if G.get_vertices().len() <= 1 {
         return Ok(G);
     }
+    
+    // Check for connected graph
+    let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+    if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
+        return Err(String::from("Graph is not connected."));
+    }
 
     // vector to collect all edge values
     let mut edges: Vec<Edge<E>> = Vec::new();
@@ -229,7 +235,7 @@ where
     for edge in edges.iter() {        
         let w = G.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
         G.remove_edge(edge.endpoints.clone());
-        let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+        let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone();
         if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
             G.add_edge(edge.endpoints.clone(), w);
         }
