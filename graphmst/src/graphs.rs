@@ -103,6 +103,10 @@ where
     pub fn get_edges(&mut self) -> &mut HashMap<(VLT, VLT), Edge<E>> {
         &mut self.edges
     }
+    
+    //pub fn get_edge(&mut self, e: (VLT, VLT)) -> &mut Edge<E> {
+    //    &mut self.edges.get(&e).unwrap()
+    //}
 
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.

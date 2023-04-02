@@ -5,6 +5,7 @@ use crate::graphs::EdgeType;
 use super::graphs::Graph;
 use super::graphs::Vertex;
 use std::collections::HashMap;
+use std::collections::VecDeque;
 use std::fmt::Debug;
 use std::fmt::Display;
 
@@ -48,9 +49,8 @@ where
     //println!("{}", (*vertex).get_value());
 }
 
-use std::collections::VecDeque;
 //TODO: Test this function
-fn dfs<V: Clone + Debug, E: Clone + Debug>(mut G: Graph<V, E>, start_vertex: VLT) -> HashMap<VLT, bool> {
+pub fn dfs<V: Clone + Debug, E: Clone + Debug>(G: &mut Graph<V, E>, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
@@ -196,6 +196,58 @@ where
     Ok(mst)
 }
 
+pub fn reverse_delete<V, E>(mut G: Graph<V, E>) -> Result<Graph<V, E>, String>
+where
+    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    V: Clone + Debug,
+{
+    // Reverse delete only works for undirected graphs.
+    let is_directed = match G.edge_type {
+        EdgeType::Directed => return Err(String::from(
+            "Reverse delete only work on undirected graphs!",
+        )),
+        EdgeType::Undirected => {},
+    };
+    
+    // Check for empty or trivial graph
+    if G.get_vertices().len() <= 1 {
+        return Ok(G);
+    }
+
+    // vector to collect all edge values
+    let mut edges: Vec<Edge<E>> = Vec::new();
+
+    // fill the vector with edges in graph
+    for (_, edge) in G.get_edges().iter() {
+        edges.push(edge.clone());
+    }
+
+    edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
+    edges.reverse(); //Instead of reversing here, could use a reverse iterator. Not sure which is faster.
+
+    // iterate over edges - largest to smallest weight
+    for edge in edges.iter() {        
+        let w = G.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
+        G.remove_edge(edge.endpoints.clone());
+        let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+        if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
+            G.add_edge(edge.endpoints.clone(), w);
+        }
+    }
+
+    println!("\nMST: \n");
+    for (_, edge) in &G.edges {
+        println!(
+            "({}) -------[{}]------- ({})",
+            edge.endpoints.0.clone(),
+            edge.weight,
+            edge.endpoints.1.clone()
+        );
+    }
+
+    Ok(G)
+}
+
 #[cfg(test)]
 mod algos_tests {
     use super::*;
@@ -289,7 +341,7 @@ mod algos_tests {
     #[test]
     fn run_dfs_on_connected() {
         let mut G = get_test_graph_1();
-        let res = dfs(G, String::from("A"));
+        let res = dfs(&mut G, String::from("A"));
         assert!(res.values().all(|&x| x));
         println!("dfs result: {:?}", res);
     }
@@ -297,7 +349,7 @@ mod algos_tests {
     #[test]
     fn run_dfs() {
         let mut G = get_test_graph_2();
-        let res = dfs(G, String::from("A"));
+        let res = dfs(&mut G, String::from("A"));
         assert!(res.get(&String::from("G")).unwrap());
         assert!(!res.get(&String::from("E")).unwrap());
     }
