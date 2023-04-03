@@ -215,6 +215,7 @@ where
     }
     
     // Check for connected graph
+    //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
     let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
     if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
         return Err(String::from("Graph is not connected."));
@@ -258,8 +259,9 @@ where
 mod algos_tests {
     use super::*;
     
-    fn get_test_graph_1() -> Graph<i32, i32>  {
-        let mut G: Graph<i32, i32> = Graph::new(false);
+    fn get_test_graph_1(directed: bool) -> Graph<i32, i32>  {
+        // Generate a connected undirected graph.
+        let mut G: Graph<i32, i32> = Graph::new(directed);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
         G.add_vertex(String::from("C"), 2);
@@ -271,52 +273,33 @@ mod algos_tests {
         G.add_vertex(String::from("I"), 8);
 
         // Integers - i32
-        G.add_edge(
-            (String::from("A"), String::from('B')), 4
-        );
-        G.add_edge(
-            (String::from("B"), String::from('C')), 8
-        );
-        G.add_edge(
-            (String::from("C"), String::from('D')), 7
-        );
-        G.add_edge(
-            (String::from("D"), String::from('E')), 9
-        );
-        G.add_edge(
-            (String::from("E"), String::from('F')), 10
-        );
-        G.add_edge(
-            (String::from("F"), String::from('G')), 2
-        );
-        G.add_edge(
-            (String::from("G"), String::from('H')), 1
-        );
-        G.add_edge(
-            (String::from("H"), String::from('I')), 7
-        );
-        G.add_edge(
-            (String::from("H"), String::from('A')), 8
-        );
-        G.add_edge(
-            (String::from("B"), String::from('H')), 11
-        );
-        G.add_edge(
-            (String::from("C"), String::from('I')), 2 
-        );
-        G.add_edge(
-            (String::from("C"), String::from('F')), 4
-        );
-        G.add_edge(
-            (String::from("D"), String::from('F')), 14
-        );
-        G.add_edge(
-            (String::from("G"), String::from('I')), 6  
-        );
+        G.add_edge((String::from("A"), String::from('B')), 4);
+        G.add_edge((String::from("B"), String::from('C')), 8);
+        G.add_edge((String::from("C"), String::from('D')), 7);
+        G.add_edge((String::from("D"), String::from('E')), 10);
+        G.add_edge((String::from("E"), String::from('F')), 11);
+        G.add_edge((String::from("F"), String::from('G')), 2);
+        G.add_edge((String::from("G"), String::from('H')), 1);
+        G.add_edge((String::from("H"), String::from('I')), 7);
+        G.add_edge((String::from("H"), String::from('A')), 9);
+        G.add_edge((String::from("B"), String::from('H')), 12);
+        G.add_edge((String::from("C"), String::from('I')), 2);
+        G.add_edge((String::from("C"), String::from('F')), 4);
+        G.add_edge((String::from("D"), String::from('F')), 14);
+        G.add_edge((String::from("G"), String::from('I')), 6);
         G
     }
     
-    fn get_test_graph_2() -> Graph<i32, i32>  {
+    fn get_test_graph_2(directed: bool) -> Graph<i32, i32>  {
+        //Generates a graph with 2 connected components.
+        let mut G = get_test_graph_1(directed);
+        G.remove_vertex(String::from("I"));
+        G.remove_edge((String::from("B"), String::from('C')));
+        G.remove_edge((String::from("F"), String::from('G')));
+        G
+    }
+    
+    fn get_mst_of_graph_1() -> Graph<i32, i32>  {
         //Generates a graph with 2 connected components.
         let mut G: Graph<i32, i32> = Graph::new(false);
         G.add_vertex(String::from("A"), 0);
@@ -327,36 +310,72 @@ mod algos_tests {
         G.add_vertex(String::from("F"), 5);
         G.add_vertex(String::from("G"), 6);
         G.add_vertex(String::from("H"), 7);
-
-        // Integers - i32
+        G.add_vertex(String::from("I"), 8);
         G.add_edge((String::from("A"), String::from('B')), 4);
+        G.add_edge((String::from("B"), String::from('C')), 8);
         G.add_edge((String::from("C"), String::from('D')), 7);
-        G.add_edge((String::from("D"), String::from('E')), 9);
-        G.add_edge((String::from("E"), String::from('F')), 10);
+        G.add_edge((String::from("D"), String::from('E')), 10);
+        G.add_edge((String::from("F"), String::from('G')), 2);
         G.add_edge((String::from("G"), String::from('H')), 1);
-        G.add_edge((String::from("H"), String::from('I')), 7);
-        G.add_edge((String::from("H"), String::from('A')), 8);
-        G.add_edge((String::from("B"), String::from('H')), 11);
-        G.add_edge((String::from("C"), String::from('I')), 2 );
+        G.add_edge((String::from("C"), String::from('I')), 2);
         G.add_edge((String::from("C"), String::from('F')), 4);
-        G.add_edge((String::from("D"), String::from('F')), 14);
-        G.add_edge((String::from("G"), String::from('I')), 6);
         G
     }
     
+    //Test depth-first search.
     #[test]
-    fn run_dfs_on_connected() {
-        let mut G = get_test_graph_1();
+    fn test_dfs_on_connected() {
+        let mut G = get_test_graph_1(false);
         let res = dfs(&mut G, String::from("A"));
         assert!(res.values().all(|&x| x));
         println!("dfs result: {:?}", res);
     }
     
     #[test]
-    fn run_dfs() {
-        let mut G = get_test_graph_2();
+    fn test_dfs() {
+        let mut G = get_test_graph_2(false);
         let res = dfs(&mut G, String::from("A"));
         assert!(res.get(&String::from("G")).unwrap());
         assert!(!res.get(&String::from("E")).unwrap());
+    }
+    
+    //Test reverse delete algorithm.
+    #[test]
+    fn test_reverse_delete_on_directed() {
+        let mut G = get_test_graph_1(true);
+        //TODO: Figure out how to check assertion error.
+        assert!(reverse_delete(G).is_err());
+        //assert_eq!(reverse_delete(G).unwrap_err(), "Reverse delete only work on undirected graphs!");
+    }
+    
+    #[test]
+    fn test_reverse_delete_on_empty() {
+        let mut G: Graph<i32, i32> = Graph::new(false);
+        //TODO: Come up with a better check.
+        assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 0);
+    }
+    
+    #[test]
+    fn test_reverse_delete_on_trivial() {
+        let mut G: Graph<i32, i32> = Graph::new(false);
+        G.add_vertex(String::from("Banana"), 0);
+        //TODO: Come up with a better check.
+        assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 1);
+    }
+    
+    #[test]
+    fn test_reverse_delete_disconnected() {
+        let mut G = get_test_graph_2(false);
+        assert!(reverse_delete(G).is_err());
+    }
+    
+    #[test]
+    fn test_reverse_delete_on_non_trivial() {
+        let mut G = get_test_graph_1(false);
+        let mut mst = reverse_delete(G).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        println!("{:?}", mst.get_edges().keys());
+        println!("{:?}", solution.get_edges().keys());
+        assert!(mst.get_edges().keys().all(|x| solution.get_edges().contains_key(x)));
     }
 }
