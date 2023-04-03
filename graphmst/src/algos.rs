@@ -50,7 +50,10 @@ where
 }
 
 //TODO: Test this function
-pub fn dfs<V: Clone + Debug, E: Clone + Debug>(G: &mut Graph<V, E>, start_vertex: VLT) -> HashMap<VLT, bool> {
+pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
+    G: &mut Graph<V, E>,
+    start_vertex: VLT,
+) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
@@ -67,7 +70,7 @@ pub fn dfs<V: Clone + Debug, E: Clone + Debug>(G: &mut Graph<V, E>, start_vertex
         }
     }
     visited
-} 
+}
 
 pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
 where
@@ -137,10 +140,7 @@ where
             // If they are in different sets then we join them using union and also use the edge in MST
             mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
             mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-            mst.add_edge(
-                (u.clone(), v.clone()),
-                edge.weight.clone(),
-            );
+            mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
             set.union(&u, &v);
         }
     }
@@ -152,7 +152,7 @@ where
         ));
     }
 
-    println!("\nMST: \n");
+    println!("\nMST generated using Kruskal's algorithm: \n");
 
     for (_, edge) in &mst.edges {
         println!(
@@ -203,17 +203,19 @@ where
 {
     // Reverse delete only works for undirected graphs.
     let is_directed = match G.edge_type {
-        EdgeType::Directed => return Err(String::from(
-            "Reverse delete only work on undirected graphs!",
-        )),
-        EdgeType::Undirected => {},
+        EdgeType::Directed => {
+            return Err(String::from(
+                "Reverse delete only work on undirected graphs!",
+            ))
+        }
+        EdgeType::Undirected => {}
     };
-    
+
     // Check for empty or trivial graph
     if G.get_vertices().len() <= 1 {
         return Ok(G);
     }
-    
+
     // Check for connected graph
     //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
     let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
@@ -233,7 +235,7 @@ where
     edges.reverse(); //Instead of reversing here, could use a reverse iterator. Not sure which is faster.
 
     // iterate over edges - largest to smallest weight
-    for edge in edges.iter() {        
+    for edge in edges.iter() {
         let w = G.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
         G.remove_edge(edge.endpoints.clone());
         let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone();
@@ -258,7 +260,6 @@ where
 #[cfg(test)]
 mod algos_tests {
     use super::*;
-    
     fn get_test_graph_1(directed: bool) -> Graph<i32, i32>  {
         // Generate a connected undirected graph.
         let mut G: Graph<i32, i32> = Graph::new(directed);
@@ -300,7 +301,7 @@ mod algos_tests {
     }
     
     fn get_mst_of_graph_1() -> Graph<i32, i32>  {
-        //Generates a graph with 2 connected components.
+        //Generate solution to test graph 1.
         let mut G: Graph<i32, i32> = Graph::new(false);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
@@ -330,7 +331,7 @@ mod algos_tests {
         assert!(res.values().all(|&x| x));
         println!("dfs result: {:?}", res);
     }
-    
+
     #[test]
     fn test_dfs() {
         let mut G = get_test_graph_2(false);
@@ -338,7 +339,7 @@ mod algos_tests {
         assert!(res.get(&String::from("G")).unwrap());
         assert!(!res.get(&String::from("E")).unwrap());
     }
-    
+
     //Test reverse delete algorithm.
     #[test]
     fn test_reverse_delete_on_directed() {
