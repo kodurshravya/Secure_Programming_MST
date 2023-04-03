@@ -50,7 +50,10 @@ where
 }
 
 //TODO: Test this function
-pub fn dfs<V: Clone + Debug, E: Clone + Debug>(G: &mut Graph<V, E>, start_vertex: VLT) -> HashMap<VLT, bool> {
+pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
+    G: &mut Graph<V, E>,
+    start_vertex: VLT,
+) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
@@ -67,7 +70,7 @@ pub fn dfs<V: Clone + Debug, E: Clone + Debug>(G: &mut Graph<V, E>, start_vertex
         }
     }
     visited
-} 
+}
 
 pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
 where
@@ -137,10 +140,7 @@ where
             // If they are in different sets then we join them using union and also use the edge in MST
             mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
             mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-            mst.add_edge(
-                (u.clone(), v.clone()),
-                edge.weight.clone(),
-            );
+            mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
             set.union(&u, &v);
         }
     }
@@ -152,7 +152,7 @@ where
         ));
     }
 
-    println!("\nMST: \n");
+    println!("\nMST generated using Kruskal's algorithm: \n");
 
     for (_, edge) in &mst.edges {
         println!(
@@ -203,17 +203,19 @@ where
 {
     // Reverse delete only works for undirected graphs.
     let is_directed = match G.edge_type {
-        EdgeType::Directed => return Err(String::from(
-            "Reverse delete only work on undirected graphs!",
-        )),
-        EdgeType::Undirected => {},
+        EdgeType::Directed => {
+            return Err(String::from(
+                "Reverse delete only work on undirected graphs!",
+            ))
+        }
+        EdgeType::Undirected => {}
     };
-    
+
     // Check for empty or trivial graph
     if G.get_vertices().len() <= 1 {
         return Ok(G);
     }
-    
+
     // Check for connected graph
     let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
     if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
@@ -232,7 +234,7 @@ where
     edges.reverse(); //Instead of reversing here, could use a reverse iterator. Not sure which is faster.
 
     // iterate over edges - largest to smallest weight
-    for edge in edges.iter() {        
+    for edge in edges.iter() {
         let w = G.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
         G.remove_edge(edge.endpoints.clone());
         let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone();
@@ -257,8 +259,8 @@ where
 #[cfg(test)]
 mod algos_tests {
     use super::*;
-    
-    fn get_test_graph_1() -> Graph<i32, i32>  {
+
+    fn get_test_graph_1() -> Graph<i32, i32> {
         let mut G: Graph<i32, i32> = Graph::new(false);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
@@ -271,52 +273,24 @@ mod algos_tests {
         G.add_vertex(String::from("I"), 8);
 
         // Integers - i32
-        G.add_edge(
-            (String::from("A"), String::from('B')), 4
-        );
-        G.add_edge(
-            (String::from("B"), String::from('C')), 8
-        );
-        G.add_edge(
-            (String::from("C"), String::from('D')), 7
-        );
-        G.add_edge(
-            (String::from("D"), String::from('E')), 9
-        );
-        G.add_edge(
-            (String::from("E"), String::from('F')), 10
-        );
-        G.add_edge(
-            (String::from("F"), String::from('G')), 2
-        );
-        G.add_edge(
-            (String::from("G"), String::from('H')), 1
-        );
-        G.add_edge(
-            (String::from("H"), String::from('I')), 7
-        );
-        G.add_edge(
-            (String::from("H"), String::from('A')), 8
-        );
-        G.add_edge(
-            (String::from("B"), String::from('H')), 11
-        );
-        G.add_edge(
-            (String::from("C"), String::from('I')), 2 
-        );
-        G.add_edge(
-            (String::from("C"), String::from('F')), 4
-        );
-        G.add_edge(
-            (String::from("D"), String::from('F')), 14
-        );
-        G.add_edge(
-            (String::from("G"), String::from('I')), 6  
-        );
+        G.add_edge((String::from("A"), String::from('B')), 4);
+        G.add_edge((String::from("B"), String::from('C')), 8);
+        G.add_edge((String::from("C"), String::from('D')), 7);
+        G.add_edge((String::from("D"), String::from('E')), 9);
+        G.add_edge((String::from("E"), String::from('F')), 10);
+        G.add_edge((String::from("F"), String::from('G')), 2);
+        G.add_edge((String::from("G"), String::from('H')), 1);
+        G.add_edge((String::from("H"), String::from('I')), 7);
+        G.add_edge((String::from("H"), String::from('A')), 8);
+        G.add_edge((String::from("B"), String::from('H')), 11);
+        G.add_edge((String::from("C"), String::from('I')), 2);
+        G.add_edge((String::from("C"), String::from('F')), 4);
+        G.add_edge((String::from("D"), String::from('F')), 14);
+        G.add_edge((String::from("G"), String::from('I')), 6);
         G
     }
-    
-    fn get_test_graph_2() -> Graph<i32, i32>  {
+
+    fn get_test_graph_2() -> Graph<i32, i32> {
         //Generates a graph with 2 connected components.
         let mut G: Graph<i32, i32> = Graph::new(false);
         G.add_vertex(String::from("A"), 0);
@@ -337,13 +311,13 @@ mod algos_tests {
         G.add_edge((String::from("H"), String::from('I')), 7);
         G.add_edge((String::from("H"), String::from('A')), 8);
         G.add_edge((String::from("B"), String::from('H')), 11);
-        G.add_edge((String::from("C"), String::from('I')), 2 );
+        G.add_edge((String::from("C"), String::from('I')), 2);
         G.add_edge((String::from("C"), String::from('F')), 4);
         G.add_edge((String::from("D"), String::from('F')), 14);
         G.add_edge((String::from("G"), String::from('I')), 6);
         G
     }
-    
+
     #[test]
     fn run_dfs_on_connected() {
         let mut G = get_test_graph_1();
@@ -351,7 +325,7 @@ mod algos_tests {
         assert!(res.values().all(|&x| x));
         println!("dfs result: {:?}", res);
     }
-    
+
     #[test]
     fn run_dfs() {
         let mut G = get_test_graph_2();
