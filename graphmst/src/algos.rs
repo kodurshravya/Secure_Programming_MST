@@ -6,6 +6,7 @@ use super::graphs::Graph;
 use super::graphs::Vertex;
 use std::collections::HashMap;
 use std::collections::VecDeque;
+use std::f32::INFINITY;
 use std::fmt::Debug;
 use std::fmt::Display;
 
@@ -168,30 +169,123 @@ where
     Ok(mst)
 }
 
-pub fn boruvka<V, E>(mut g: Graph<V, E>, mut edge_weight: i32) -> Result<Graph<V, E>, String>
+pub fn boruvka<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
 where
-    E: Clone + std::cmp::PartialOrd + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
+    // check if graph has directed edges - Kruskals work on undirected graph and not directed
+    let is_directed = match g.edge_type {
+        EdgeType::Directed => true,
+        EdgeType::Undirected => false,
+    };
+
+    // return error if the graph has directed edges
+
+    if is_directed {
+        return Err(String::from(
+            "Kruskals only work properly on undirected graphs!",
+        ));
+    }
+
+    println!("{}", g.edges.len());
+
     // vector to collect all edge values
-    let mut edge_weight: Vec<Edge<E>> = Vec::new();
+    let mut edges: Vec<Edge<E>> = Vec::new();
+
+    //
+    let mut added_edges: Vec<Edge<E>> = Vec::new();
 
     // fill the vector with edges in graph
     for (_, edge) in &g.edges {
-        edge_weight.push(edge.clone());
+        edges.push(edge.clone());
     }
 
-    for (_, edge) in &g.edges {
-        edge_weight.push(edge.clone());
+
+    edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
+
+    // println!("Edges in Sorted Order: \n");
+    // let mut count = 0;
+    // for i in &edges {
+    //     println!("{count}.: {}", i.weight);
+    //     count += 1;
+    // }
+
+    // Use Disjoint set for union find algorithm
+    let mut set = DisjointSet::new();
+
+    // Add all the vertices to the disjoint set
+    for (node, _) in &g.vertices {
+        set.set_insert(node.clone());
     }
 
     let mut mst = graphs::Graph::new(true);
 
-    loop {
-        // let mut min_edge_Weight: Vec<K> = vec![K::infinite();
-        // g.get_vertices_count()];
-        // let mut min_edge: Vec<Option<(usize, usize)>> = vec![None; g.get_vertices_count()];
+
+   let edges1 = edges.clone();
+   for (vertex, _) in &g.vertices{
+    // iterate over edges - smallest weight to largest weight
+    for edge in &edges1 {
+        let u = edge.endpoints.0.clone(); // get the first vertex of the edge
+        let v = edge.endpoints.1.clone();
+        
+      if(u.eq(vertex) || v.eq(vertex)){ // get the second vertex of the edge
+        // set.find(&u); // Find parent of u
+        // check if they are in different sets
+        if set.find(&u) != set.find(&v) {
+            // If they are in different sets then we join them using union and also use the edge in MST
+            mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+            mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+            mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
+            added_edges.push(edge.clone());
+            set.union(&u, &v);
+        }
+      }
     }
+   } 
+ 
+   let mut remaining_edges: Vec<Edge<E>> = Vec::new();
+   for iter in added_edges{
+       if edges.contains(&iter){
+        continue;
+       } else{
+        remaining_edges.push(iter);
+       }
+   }
+
+   remaining_edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
+
+   for in_between in remaining_edges{
+       let u = in_between.endpoints.0.clone(); // get the first vertex of the edge
+       let v = in_between.endpoints.1.clone();
+       if set.find(&u) != set.find(&v) {
+        // If they are in different sets then we join them using union and also use the edge in MST
+        mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+        mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+        mst.add_edge((u.clone(), v.clone()), in_between.weight.clone());
+        set.union(&u, &v);
+    }
+   }
+
+    // check if MST is successfull
+    if mst.edges.len() != mst.vertices.len() - 1 {
+        return Err(String::from(
+            "MST doesn't exist for this graph since it is not connected",
+        ));
+    }
+
+    println!("\nMST generated using Boruvka's algorithm: \n");
+
+    for (_, edge) in &mst.edges {
+        println!(
+            "({}) -------[{}]------- ({})",
+            edge.endpoints.0.clone(),
+            edge.weight,
+            edge.endpoints.1.clone()
+        );
+    }
+
+    println!("");
 
     Ok(mst)
 }
@@ -349,12 +443,15 @@ mod algos_tests {
         //assert_eq!(reverse_delete(G).unwrap_err(), "Reverse delete only work on undirected graphs!");
     }
     
+    
     #[test]
     fn test_reverse_delete_on_empty() {
         let mut G: Graph<i32, i32> = Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 0);
     }
+    
+    
     
     #[test]
     fn test_reverse_delete_on_trivial() {

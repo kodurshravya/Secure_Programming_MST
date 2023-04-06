@@ -1,3 +1,5 @@
+use crate::algos::boruvka;
+
 mod algos;
 mod graphs;
 mod util;
@@ -266,7 +268,18 @@ fn main() {
         G.add_edge((String::from("G"), String::from('I')), 6);
         G
     }
-    
+
+
+    let mut G = get_graph();
+    println!("\n\n----boruvka START -----\n\n");
+    let mst_boruvka = algos::boruvka(G);
+    match mst_boruvka {
+        // Ok(g) => println!("MST generated successfully!"),
+        Ok(g) => g.print(),
+        Err(e) => println!("{}", e),
+    }
+    println!("\n\n----boruvka END -----\n\n");
+
     let mut G = get_graph();
     println!("\n\n----KRUSKALS START -----\n\n");
     let mst_kruskals = algos::kruskals(G);
