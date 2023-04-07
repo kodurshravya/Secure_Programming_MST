@@ -3,7 +3,11 @@ mod graphs;
 mod util;
 
 fn main() {
+    //let mut g = graphs::Graph::new(false);
     let mut g = graphs::Graph::new(false);
+    
+    
+
 
     g.add_vertex(String::from("A"), 0);
     g.add_vertex(String::from("B"), 1);
@@ -96,7 +100,8 @@ fn main() {
 
     // algos::Dijkstra(g, String::from("A"));
     println!("\n\n----KRUSKALS START -----\n\n");
-    let mst_kruskals = algos::Kruskals(g);
+    //let mst_kruskals = algos::Kruskals(g);
+    let mst_kruskals = algos::Kruskals(&mut g);
     match mst_kruskals {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -106,4 +111,13 @@ fn main() {
 
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));
+    println!("\n\n----PRIMS START -----\n\n");
+    let mst_prims = algos::Prims(g);
+    //let mst_prims = algos::Prims(&mut g);
+    match mst_prims {
+        Ok(g) => g.print(),
+        Err(e) => println!("{}", e),
+    }
+    println!("\n\n----PRIMS END -----\n\n");
+
 }
