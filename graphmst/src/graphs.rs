@@ -4,6 +4,7 @@ use std::fmt::Debug;
 use std::fs::File;
 use std::io::Write;
 use std::io::{BufRead, BufReader, Error};
+use std::cmp::Ordering;
 
 type VLT = String; //vertex_label_type
 
@@ -22,6 +23,7 @@ where
     pub vertices: HashMap<VLT, Vertex<V>>,
     pub edges: HashMap<(VLT, VLT), Edge<E>>,
     pub edge_type: EdgeType,
+
 }
 
 impl<V, E: Clone> Graph<V, E>
@@ -364,6 +366,29 @@ impl<V> PartialEq for Vertex<V> {
         self.label == other.label
     }
 }
+
+//impl<E: Eq> PartialEq for Edge<E> {
+    //fn eq(&self, other: &Self) -> bool {
+        //self.weight.eq(&other.weight)
+    //}
+//}
+
+impl<E: Eq> Eq for Edge<E> {}
+
+
+impl<E: Ord> Ord for Edge<E> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.weight.cmp(&other.weight)
+    }
+}
+
+impl<E: PartialOrd> PartialOrd for Edge<E> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.weight.partial_cmp(&other.weight)
+    }
+}
+
+
 
 #[derive(Debug, Clone)]
 pub struct Edge<T> {

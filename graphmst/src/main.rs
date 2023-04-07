@@ -1,4 +1,7 @@
+use ::graphs::Graph;
+
 use crate::algos::boruvka;
+
 
 mod algos;
 mod graphs;
@@ -300,6 +303,24 @@ fn main() {
     }
     println!("\n\n----REVERSE DELETE END -----\n\n");
 
+    let mut G = get_graph();
+    println!("\n\n----PRIMS START -----\n\n");
+    let mst_prims = algos::prims(G);
+    match mst_prims {
+        Ok(g) => g.print(),
+        Err(e) => println!("{}", e),
+    }
+    println!("\n\n----PRIMS END -----\n\n");
+
+
+
+
+
+
+    
+
+
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));
 }
+

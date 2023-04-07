@@ -5,13 +5,15 @@ use crate::graphs::EdgeType;
 use super::graphs::Graph;
 use super::graphs::Vertex;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::f32::INFINITY;
 use std::fmt::Debug;
 use std::fmt::Display;
+use std::cmp::Reverse;
 
 use super::util::DisjointSet;
-//use std::collections::BinaryHeap;
+use std::collections::BinaryHeap;
 
 type VLT = String; //vertex label type
 
@@ -351,6 +353,107 @@ where
     Ok(G)
 }
 
+pub fn prims<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
+where
+    E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    V: Clone + Debug,
+    
+{
+    // check if graph has directed edges - Prims works on undirected graph and not directed
+    let is_directed = match g.edge_type {
+        EdgeType::Directed => true,
+        EdgeType::Undirected => false,
+    };
+
+    // return error if the graph has directed edges
+    if is_directed {
+        return Err(String::from(
+            "Prims only works properly on undirected graphs!",
+        ));
+    }
+
+    // vector to collect all edge values
+    let mut edges: Vec<Edge<E>> = Vec::new();
+
+    // fill the vector with edges in graph
+    for (_, edge) in &g.edges {
+        edges.push(edge.clone());
+    }
+
+    // The graph that we are going to return
+    let mut mst = graphs::Graph::new(false);
+
+    // set to keep track of visited nodes
+    let mut visited = HashSet::new();
+
+    // Use a priority queue to keep track of the minimum edge at each step
+    let mut pq = BinaryHeap::new();
+
+    // Add the first vertex to the visited set
+    let first_vertex = g.vertices.keys().next().unwrap().clone();
+    visited.insert(first_vertex.clone());
+
+    // Add all edges from the first vertex to the priority queue
+    for (endpoint, edge) in &g.edges {
+        if endpoint.0 == first_vertex {
+            pq.push(Reverse(edge.clone()));
+        }
+    }
+
+    // Iterate until we have visited all vertices
+    while visited.len() != g.vertices.len() {
+        // Get the minimum edge from the priority queue
+        let Reverse(edge) = pq.pop().unwrap();
+
+        // Get the two endpoints of the edge
+        let u = edge.endpoints.0.clone();
+        let v = edge.endpoints.1.clone();
+
+        // Skip this edge if both endpoints are already visited
+        if visited.contains(&u) && visited.contains(&v) {
+            continue;
+        }
+
+        // Add the vertices and edge to the MST
+        mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone());
+        mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone());
+        mst.add_edge(
+            (u.clone(), v.clone()),
+            edge.weight.clone(),
+            //graphs::EdgeType::Undirected,
+        );
+
+        // Add the endpoint that is not visited to the visited set
+        if visited.contains(&u) {
+            visited.insert(v.clone());
+        } else {
+            visited.insert(u.clone());
+        }
+
+        // Add all edges from the new visited vertex to the priority queue
+        for (endpoint, edge) in &g.edges {
+            if visited.contains(&endpoint.0) && !visited.contains(&endpoint.1) {
+                pq.push(Reverse(edge.clone()));
+            }
+        }
+    }
+
+    println!("\nMST: \n");
+
+    for (_, edge) in &mst.edges {
+        println!(
+            "({}) -------{}------- ({})",
+            edge.endpoints.0.clone(),
+            edge.weight,
+            edge.endpoints.1.clone()
+        );
+    }
+
+    println!("");
+
+    Ok(mst)
+}
+
 #[cfg(test)]
 mod algos_tests {
     use super::*;
@@ -416,6 +519,7 @@ mod algos_tests {
         G.add_edge((String::from("C"), String::from('F')), 4);
         G
     }
+
     
     //Test depth-first search.
     #[test]
