@@ -2,7 +2,6 @@ use ::graphs::Graph;
 
 use crate::algos::boruvka;
 
-
 mod algos;
 mod graphs;
 mod util;
@@ -24,72 +23,72 @@ fn main() {
     //g.add_edge(
     //    (String::from("A"), String::from('B')),
     //    4,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("B"), String::from('C')),
     //    8,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("C"), String::from('D')),
     //    7,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("D"), String::from('E')),
     //    9,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("E"), String::from('F')),
     //    10,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("F"), String::from('G')),
     //    2,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("G"), String::from('H')),
     //    1,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("H"), String::from('I')),
     //    7,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("H"), String::from('A')),
     //    8,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("B"), String::from('H')),
     //    11,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("C"), String::from('I')),
     //    2,
-    //    
+    //
     //);
     //g.add_edge(
     //    (String::from("C"), String::from('F')),
     //    4,
-    //   
+    //
     //);
     //g.add_edge(
     //    (String::from("D"), String::from('F')),
     //    14,
-    //   
+    //
     //);
     //g.add_edge(
     //    (String::from("G"), String::from('I')),
     //    6,
-    //    
+    //
     //);
 
     // Float values - f64
@@ -238,12 +237,12 @@ fn main() {
     // );
 
     // algos::Dijkstra(g, String::from("A"));
-    
+
     //    }
-    
-    fn get_graph() -> graphs::Graph<i32, i32>  {
+
+    fn get_graph() -> graphs::Graph<i32> {
         //Generates a graph with 2 connected components.
-        let mut G: graphs::Graph<i32, i32> = graphs::Graph::new(false);
+        let mut G: graphs::Graph<i32> = graphs::Graph::new(false);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
         G.add_vertex(String::from("C"), 2);
@@ -255,23 +254,64 @@ fn main() {
         G.add_vertex(String::from("I"), 8);
 
         // Integers - i32
-        G.add_edge((String::from("A"), String::from('B')), 4);
-        G.add_edge((String::from("B"), String::from('C')), 8);
-        G.add_edge((String::from("C"), String::from('D')), 7);
-        G.add_edge((String::from("D"), String::from('E')), 9);
-        G.add_edge((String::from("E"), String::from('F')), 10);
-        G.add_edge((String::from("F"), String::from('G')), 2);
-        G.add_edge((String::from("G"), String::from('H')), 1);
-        G.add_edge((String::from("H"), String::from('I')), 7);
-        G.add_edge((String::from("H"), String::from('A')), 8);
-        G.add_edge((String::from("B"), String::from('H')), 11);
-        G.add_edge((String::from("C"), String::from('I')), 2 );
-        G.add_edge((String::from("C"), String::from('F')), 4);
-        G.add_edge((String::from("D"), String::from('F')), 14);
-        G.add_edge((String::from("G"), String::from('I')), 6);
+        G.add_edge(
+            (String::from("A"), String::from('B')),
+            graphs::Number::I32(4),
+        );
+        G.add_edge(
+            (String::from("B"), String::from('C')),
+            graphs::Number::I32(8),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('D')),
+            graphs::Number::I32(7),
+        );
+        G.add_edge(
+            (String::from("D"), String::from('E')),
+            graphs::Number::I32(9),
+        );
+        G.add_edge(
+            (String::from("E"), String::from('F')),
+            graphs::Number::I32(10),
+        );
+        G.add_edge(
+            (String::from("F"), String::from('G')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("G"), String::from('H')),
+            graphs::Number::I32(1),
+        );
+        G.add_edge(
+            (String::from("H"), String::from('I')),
+            graphs::Number::I32(7),
+        );
+        G.add_edge(
+            (String::from("H"), String::from('A')),
+            graphs::Number::I32(8),
+        );
+        G.add_edge(
+            (String::from("B"), String::from('H')),
+            graphs::Number::I32(11),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('I')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('F')),
+            graphs::Number::I32(4),
+        );
+        G.add_edge(
+            (String::from("D"), String::from('F')),
+            graphs::Number::I32(14),
+        );
+        G.add_edge(
+            (String::from("G"), String::from('I')),
+            graphs::Number::I32(6),
+        );
         G
     }
-
 
     let mut G = get_graph();
     println!("\n\n----boruvka START -----\n\n");
@@ -292,7 +332,7 @@ fn main() {
         Err(e) => println!("{}", e),
     }
     println!("\n\n----KRUSKALS END -----\n\n");
-    
+
     let mut G = get_graph();
     println!("\n\n----REVERSE DELETE START -----\n\n");
     let mst_rd = algos::kruskals(G);
@@ -312,15 +352,6 @@ fn main() {
     }
     println!("\n\n----PRIMS END -----\n\n");
 
-
-
-
-
-
-    
-
-
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));
 }
-
