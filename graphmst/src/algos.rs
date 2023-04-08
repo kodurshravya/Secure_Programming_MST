@@ -4,13 +4,13 @@ use crate::graphs::EdgeType;
 
 use super::graphs::Graph;
 use super::graphs::Vertex;
+use std::cmp::Reverse;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::f32::INFINITY;
 use std::fmt::Debug;
 use std::fmt::Display;
-use std::cmp::Reverse;
 
 use super::util::DisjointSet;
 use std::collections::BinaryHeap;
@@ -20,7 +20,7 @@ type VLT = String; //vertex label type
 const INF: f64 = f64::INFINITY;
 
 type TMPV = f64; //Should be V, but I'm being specific so I can debug.
-pub fn dijkstra<E>(mut g: Graph<TMPV, E>, start_vertex: VLT)
+pub fn dijkstra<E>(mut g: Graph<TMPV>, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
@@ -53,10 +53,8 @@ where
 }
 
 //TODO: Test this function
-pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
-    G: &mut Graph<V, E>,
-    start_vertex: VLT,
-) -> HashMap<VLT, bool> {
+// pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
+pub fn dfs<V: Clone + Debug>(G: &mut Graph<V>, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
@@ -75,7 +73,7 @@ pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
     visited
 }
 
-pub fn bellman_ford<V, E>(mut g: Graph<V, E>, start_vertex: VLT)
+pub fn bellman_ford<V, E>(mut g: Graph<V>, start_vertex: VLT)
 where
     E: Clone,
     V: Clone,
@@ -83,9 +81,9 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
-pub fn kruskals<V, E>(g: Graph<V, E>) -> Result<Graph<V, E>, String>
+pub fn kruskals<V>(g: Graph<V>) -> Result<Graph<V>, String>
 where
-    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
@@ -105,7 +103,7 @@ where
     println!("{}", g.edges.len());
 
     // vector to collect all edge values
-    let mut edges: Vec<Edge<E>> = Vec::new();
+    let mut edges: Vec<Edge> = Vec::new();
 
     // fill the vector with edges in graph
     for (_, edge) in &g.edges {
@@ -171,9 +169,9 @@ where
     Ok(mst)
 }
 
-pub fn boruvka<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
+pub fn boruvka<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
-    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
@@ -193,16 +191,15 @@ where
     println!("{}", g.edges.len());
 
     // vector to collect all edge values
-    let mut edges: Vec<Edge<E>> = Vec::new();
+    let mut edges: Vec<Edge> = Vec::new();
 
     //
-    let mut added_edges: Vec<Edge<E>> = Vec::new();
+    let mut added_edges: Vec<Edge> = Vec::new();
 
     // fill the vector with edges in graph
     for (_, edge) in &g.edges {
         edges.push(edge.clone());
     }
-
 
     edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
@@ -223,51 +220,51 @@ where
 
     let mut mst = graphs::Graph::new(true);
 
+    let edges1 = edges.clone();
+    for (vertex, _) in &g.vertices {
+        // iterate over edges - smallest weight to largest weight
+        for edge in &edges1 {
+            let u = edge.endpoints.0.clone(); // get the first vertex of the edge
+            let v = edge.endpoints.1.clone();
 
-   let edges1 = edges.clone();
-   for (vertex, _) in &g.vertices{
-    // iterate over edges - smallest weight to largest weight
-    for edge in &edges1 {
-        let u = edge.endpoints.0.clone(); // get the first vertex of the edge
-        let v = edge.endpoints.1.clone();
-        
-      if(u.eq(vertex) || v.eq(vertex)){ // get the second vertex of the edge
-        // set.find(&u); // Find parent of u
-        // check if they are in different sets
+            if (u.eq(vertex) || v.eq(vertex)) {
+                // get the second vertex of the edge
+                // set.find(&u); // Find parent of u
+                // check if they are in different sets
+                if set.find(&u) != set.find(&v) {
+                    // If they are in different sets then we join them using union and also use the edge in MST
+                    mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+                    mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+                    mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
+                    added_edges.push(edge.clone());
+                    set.union(&u, &v);
+                }
+            }
+        }
+    }
+
+    let mut remaining_edges: Vec<Edge> = Vec::new();
+    for iter in added_edges {
+        if edges.contains(&iter) {
+            continue;
+        } else {
+            remaining_edges.push(iter);
+        }
+    }
+
+    remaining_edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
+
+    for in_between in remaining_edges {
+        let u = in_between.endpoints.0.clone(); // get the first vertex of the edge
+        let v = in_between.endpoints.1.clone();
         if set.find(&u) != set.find(&v) {
             // If they are in different sets then we join them using union and also use the edge in MST
             mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
             mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-            mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
-            added_edges.push(edge.clone());
+            mst.add_edge((u.clone(), v.clone()), in_between.weight.clone());
             set.union(&u, &v);
         }
-      }
     }
-   } 
- 
-   let mut remaining_edges: Vec<Edge<E>> = Vec::new();
-   for iter in added_edges{
-       if edges.contains(&iter){
-        continue;
-       } else{
-        remaining_edges.push(iter);
-       }
-   }
-
-   remaining_edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
-
-   for in_between in remaining_edges{
-       let u = in_between.endpoints.0.clone(); // get the first vertex of the edge
-       let v = in_between.endpoints.1.clone();
-       if set.find(&u) != set.find(&v) {
-        // If they are in different sets then we join them using union and also use the edge in MST
-        mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-        mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-        mst.add_edge((u.clone(), v.clone()), in_between.weight.clone());
-        set.union(&u, &v);
-    }
-   }
 
     // check if MST is successfull
     if mst.edges.len() != mst.vertices.len() - 1 {
@@ -292,9 +289,9 @@ where
     Ok(mst)
 }
 
-pub fn reverse_delete<V, E>(mut G: Graph<V, E>) -> Result<Graph<V, E>, String>
+pub fn reverse_delete<V>(mut G: Graph<V>) -> Result<Graph<V>, String>
 where
-    E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
 {
     // Reverse delete only works for undirected graphs.
@@ -320,7 +317,7 @@ where
     }
 
     // vector to collect all edge values
-    let mut edges: Vec<Edge<E>> = Vec::new();
+    let mut edges: Vec<Edge> = Vec::new();
 
     // fill the vector with edges in graph
     for (_, edge) in G.get_edges().iter() {
@@ -353,11 +350,12 @@ where
     Ok(G)
 }
 
-pub fn prims<V, E>(mut g: Graph<V, E>) -> Result<Graph<V, E>, String>
+// -- Uncomment later --
+
+pub fn prims<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
-    E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+    // E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
-    
 {
     // check if graph has directed edges - Prims works on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -373,7 +371,7 @@ where
     }
 
     // vector to collect all edge values
-    let mut edges: Vec<Edge<E>> = Vec::new();
+    let mut edges: Vec<Edge> = Vec::new();
 
     // fill the vector with edges in graph
     for (_, edge) in &g.edges {
@@ -454,12 +452,14 @@ where
     Ok(mst)
 }
 
+// -- Uncomment later --
+
 #[cfg(test)]
 mod algos_tests {
     use super::*;
-    fn get_test_graph_1(directed: bool) -> Graph<i32, i32>  {
+    fn get_test_graph_1(directed: bool) -> Graph<i32> {
         // Generate a connected undirected graph.
-        let mut G: Graph<i32, i32> = Graph::new(directed);
+        let mut G: Graph<i32> = Graph::new(directed);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
         G.add_vertex(String::from("C"), 2);
@@ -471,24 +471,66 @@ mod algos_tests {
         G.add_vertex(String::from("I"), 8);
 
         // Integers - i32
-        G.add_edge((String::from("A"), String::from('B')), 4);
-        G.add_edge((String::from("B"), String::from('C')), 8);
-        G.add_edge((String::from("C"), String::from('D')), 7);
-        G.add_edge((String::from("D"), String::from('E')), 10);
-        G.add_edge((String::from("E"), String::from('F')), 11);
-        G.add_edge((String::from("F"), String::from('G')), 2);
-        G.add_edge((String::from("G"), String::from('H')), 1);
-        G.add_edge((String::from("H"), String::from('I')), 7);
-        G.add_edge((String::from("H"), String::from('A')), 9);
-        G.add_edge((String::from("B"), String::from('H')), 12);
-        G.add_edge((String::from("C"), String::from('I')), 2);
-        G.add_edge((String::from("C"), String::from('F')), 4);
-        G.add_edge((String::from("D"), String::from('F')), 14);
-        G.add_edge((String::from("G"), String::from('I')), 6);
+        G.add_edge(
+            (String::from("A"), String::from('B')),
+            graphs::Number::I32(4),
+        );
+        G.add_edge(
+            (String::from("B"), String::from('C')),
+            graphs::Number::I32(8),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('D')),
+            graphs::Number::I32(7),
+        );
+        G.add_edge(
+            (String::from("D"), String::from('E')),
+            graphs::Number::I32(10),
+        );
+        G.add_edge(
+            (String::from("E"), String::from('F')),
+            graphs::Number::I32(11),
+        );
+        G.add_edge(
+            (String::from("F"), String::from('G')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("G"), String::from('H')),
+            graphs::Number::I32(1),
+        );
+        G.add_edge(
+            (String::from("H"), String::from('I')),
+            graphs::Number::I32(7),
+        );
+        G.add_edge(
+            (String::from("H"), String::from('A')),
+            graphs::Number::I32(9),
+        );
+        G.add_edge(
+            (String::from("B"), String::from('H')),
+            graphs::Number::I32(12),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('I')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('F')),
+            graphs::Number::I32(4),
+        );
+        G.add_edge(
+            (String::from("D"), String::from('F')),
+            graphs::Number::I32(14),
+        );
+        G.add_edge(
+            (String::from("G"), String::from('I')),
+            graphs::Number::I32(6),
+        );
         G
     }
-    
-    fn get_test_graph_2(directed: bool) -> Graph<i32, i32>  {
+
+    fn get_test_graph_2(directed: bool) -> Graph<i32> {
         //Generates a graph with 2 connected components.
         let mut G = get_test_graph_1(directed);
         G.remove_vertex(String::from("I"));
@@ -496,10 +538,10 @@ mod algos_tests {
         G.remove_edge((String::from("F"), String::from('G')));
         G
     }
-    
-    fn get_mst_of_graph_1() -> Graph<i32, i32>  {
+
+    fn get_mst_of_graph_1() -> Graph<i32> {
         //Generate solution to test graph 1.
-        let mut G: Graph<i32, i32> = Graph::new(false);
+        let mut G: Graph<i32> = Graph::new(false);
         G.add_vertex(String::from("A"), 0);
         G.add_vertex(String::from("B"), 1);
         G.add_vertex(String::from("C"), 2);
@@ -509,18 +551,41 @@ mod algos_tests {
         G.add_vertex(String::from("G"), 6);
         G.add_vertex(String::from("H"), 7);
         G.add_vertex(String::from("I"), 8);
-        G.add_edge((String::from("A"), String::from('B')), 4);
-        G.add_edge((String::from("B"), String::from('C')), 8);
-        G.add_edge((String::from("C"), String::from('D')), 7);
-        G.add_edge((String::from("D"), String::from('E')), 10);
-        G.add_edge((String::from("F"), String::from('G')), 2);
-        G.add_edge((String::from("G"), String::from('H')), 1);
-        G.add_edge((String::from("C"), String::from('I')), 2);
-        G.add_edge((String::from("C"), String::from('F')), 4);
+        G.add_edge(
+            (String::from("A"), String::from('B')),
+            graphs::Number::I32(4),
+        );
+        G.add_edge(
+            (String::from("B"), String::from('C')),
+            graphs::Number::I32(8),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('D')),
+            graphs::Number::I32(7),
+        );
+        G.add_edge(
+            (String::from("D"), String::from('E')),
+            graphs::Number::I32(10),
+        );
+        G.add_edge(
+            (String::from("F"), String::from('G')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("G"), String::from('H')),
+            graphs::Number::I32(1),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('I')),
+            graphs::Number::I32(2),
+        );
+        G.add_edge(
+            (String::from("C"), String::from('F')),
+            graphs::Number::I32(4),
+        );
         G
     }
 
-    
     //Test depth-first search.
     #[test]
     fn test_dfs_on_connected() {
@@ -546,31 +611,28 @@ mod algos_tests {
         assert!(reverse_delete(G).is_err());
         //assert_eq!(reverse_delete(G).unwrap_err(), "Reverse delete only work on undirected graphs!");
     }
-    
-    
+
     #[test]
     fn test_reverse_delete_on_empty() {
-        let mut G: Graph<i32, i32> = Graph::new(false);
+        let mut G: Graph<i32> = Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 0);
     }
-    
-    
-    
+
     #[test]
     fn test_reverse_delete_on_trivial() {
-        let mut G: Graph<i32, i32> = Graph::new(false);
+        let mut G: Graph<i32> = Graph::new(false);
         G.add_vertex(String::from("Banana"), 0);
         //TODO: Come up with a better check.
         assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 1);
     }
-    
+
     #[test]
     fn test_reverse_delete_disconnected() {
         let mut G = get_test_graph_2(false);
         assert!(reverse_delete(G).is_err());
     }
-    
+
     #[test]
     fn test_reverse_delete_on_non_trivial() {
         let mut G = get_test_graph_1(false);
@@ -578,6 +640,9 @@ mod algos_tests {
         let mut solution = get_mst_of_graph_1();
         println!("{:?}", mst.get_edges().keys());
         println!("{:?}", solution.get_edges().keys());
-        assert!(mst.get_edges().keys().all(|x| solution.get_edges().contains_key(x)));
+        assert!(mst
+            .get_edges()
+            .keys()
+            .all(|x| solution.get_edges().contains_key(x)));
     }
 }
