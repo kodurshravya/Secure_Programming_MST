@@ -174,7 +174,7 @@ where
         self.vertices.remove(&label);
     }
 
-    //FICME: VLT ~is~ a String. This function isn't needed.
+    //FIXME: VLT ~is~ a String. This function isn't needed.
     pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
         (e.0, e.1)
     }

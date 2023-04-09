@@ -596,7 +596,7 @@ mod algos_tests {
     }
 
     #[test]
-    fn test_dfs() {
+    fn test_dfs_on_disconnected() {
         let mut G = get_test_graph_2(false);
         let res = dfs(&mut G, String::from("A"));
         assert!(res.get(&String::from("G")).unwrap());
