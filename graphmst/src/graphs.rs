@@ -1,5 +1,7 @@
 //Contains definition of graph structures.
+use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::fmt;
 use std::fmt::Debug;
 use std::fs::File;
 use std::io::Write;
@@ -13,20 +15,49 @@ pub enum EdgeType {
     Undirected,
 }
 
+// Edge Weight Type constraint enum
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub enum Number {
+    U16(u16),
+    U32(u32),
+    U64(u64),
+    I16(i16),
+    I32(i32),
+    I64(i64),
+    F32(f32),
+    F64(f64),
+}
+
+impl fmt::Display for Number {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Number::U16(x) => write!(f, "{}", x),
+            Number::U32(x) => write!(f, "{}", x),
+            Number::U64(x) => write!(f, "{}", x),
+            Number::I16(x) => write!(f, "{}", x),
+            Number::I32(x) => write!(f, "{}", x),
+            Number::I64(x) => write!(f, "{}", x),
+            Number::F32(x) => write!(f, "{}", x),
+            Number::F64(x) => write!(f, "{}", x),
+        }
+    }
+}
+
 //Basic undirected graph.
-pub struct Graph<V, E>
+pub struct Graph<V>
 where
     V: Clone,
-    E: Clone,
+    // E: Clone,
 {
     pub vertices: HashMap<VLT, Vertex<V>>,
-    pub edges: HashMap<(VLT, VLT), Edge<E>>,
+    pub edges: HashMap<(VLT, VLT), Edge>,
     pub edge_type: EdgeType,
 }
 
-impl<V, E: Clone> Graph<V, E>
+impl<V> Graph<V>
+// impl<V, E: Clone> Graph<V>
 where
-    E: Clone + Debug,
+    // E: Clone + Debug,
     V: Clone + Debug,
 {
     pub fn print(&self) {
@@ -41,28 +72,30 @@ where
         }
     }
 
-    pub fn new(directed: bool) -> Graph<V, E> {
+    pub fn new(directed: bool) -> Graph<V> {
         //Create an empty graph.
         let v: HashMap<VLT, Vertex<V>> = HashMap::new();
-        let e: HashMap<(VLT, VLT), Edge<E>> = HashMap::new();
+        let e: HashMap<(VLT, VLT), Edge> = HashMap::new();
         let edge_type = if directed {
             EdgeType::Directed
         } else {
             EdgeType::Undirected
         };
-        Graph::<V, E> {
+        Graph::<V> {
             vertices: v,
             edges: e,
             edge_type: edge_type,
         }
     }
 
-    pub fn get_topological_order(&mut self) -> Vec<String> {
-        let mut g: Graph<f64, f64> = Graph::new(true);
+    pub fn get_topological_order(&mut self) -> Vec<VLT> {
+        //FIXME: Function not finished.
+        //TODO: Consider moving to utils.
+        let mut g: Graph<f64> = Graph::new(true);
         let nodes = g.get_vertices().keys();
         // let nodes =  g.edges;
-        let mut order: Vec<String> = vec![];
-        let mut visited_vertex: HashMap<String, bool> = HashMap::new();
+        let mut order: Vec<VLT> = vec![];
+        let mut visited_vertex: HashMap<VLT, bool> = HashMap::new();
 
         for node in nodes {
             if visited_vertex.get(node) == None {
@@ -74,8 +107,9 @@ where
         return order;
     }
 
-    pub fn get_order(&mut self, node: &String, order: &mut Vec<String>) {
-        let mut g: Graph<f64, f64> = Graph::new(true);
+    pub fn get_order(&mut self, node: &VLT, order: &mut Vec<VLT>) {
+        //TODO: Consider moving to utils.
+        let mut g: Graph<f64> = Graph::new(true);
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
 
@@ -89,13 +123,21 @@ where
         //     }
         // }
         if !order.contains(node) {
-            order.push(node.to_string());
+            order.push(node.to_string()); //FIXME: Is .to_string needed here?
         }
     }
 
     pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
         &mut self.vertices
     }
+
+    pub fn get_edges(&mut self) -> &mut HashMap<(VLT, VLT), Edge> {
+        &mut self.edges
+    }
+
+    //pub fn get_edge(&mut self, e: (VLT, VLT)) -> &mut Edge<E> {
+    //    &mut self.edges.get(&e).unwrap()
+    //}
 
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
@@ -123,6 +165,7 @@ where
         // Remove all edges, regardless of direction.
         // TODO: Decide on handling of directed vs undirected graphs.
         for vert_label in neighbors.into_iter() {
+            //FIXME: Keep an eye on these '.to_string' uses.
             self.remove_edge((label.clone(), vert_label.to_string()));
             self.remove_edge((vert_label.to_string(), label.clone()));
         }
@@ -131,15 +174,18 @@ where
         self.vertices.remove(&label);
     }
 
+    //FIXME: VLT ~is~ a String. This function isn't needed.
     pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
         (e.0, e.1)
     }
 
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: E, edge_type: EdgeType) {
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: Number) {
         // Adds an edge to the graph.
         // Endpoint vertices must be present in graph.
 
-        let isUnDirected = match edge_type {
+        let edge_type = self.edge_type;
+
+        let is_undirected = match edge_type {
             EdgeType::Directed => false,
             EdgeType::Undirected => true,
         };
@@ -149,7 +195,7 @@ where
             return;
         }
 
-        if isUnDirected {
+        if is_undirected {
             let rev = (e.1.clone(), e.0.clone());
             if self.contains_edge(&rev) {
                 println!("Edge '{}'-'{}' already in graph", e.1, e.0);
@@ -166,7 +212,7 @@ where
         }
     }
 
-    pub fn update_edge(&mut self, e: (VLT, VLT), weight: E) {
+    pub fn update_edge(&mut self, e: (VLT, VLT), weight: Number) {
         // Update the weight of an edge to the graph.
         // Edge must be present in graph.
         if self.contains_edge(&e) {
@@ -351,15 +397,58 @@ impl<V> PartialEq for Vertex<V> {
     }
 }
 
+//  -------- OLD CODE START--------
+
+//impl<E: Eq> PartialEq for Edge<E> {
+//fn eq(&self, other: &Self) -> bool {
+//self.weight.eq(&other.weight)
+//}
+//}
+
+// impl<E: Eq> Eq for Edge<E> {}
+
+// impl<E: Ord> Ord for Edge<E> {
+//     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+//         self.weight.cmp(&other.weight)
+//     }
+// }
+
+// impl<E: PartialOrd> PartialOrd for Edge<E> {
+//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+//         self.weight.partial_cmp(&other.weight)
+//     }
+// }
+
+//  -------- OLD CODE END--------
+
+//  -------- NEW CODE START--------
+
+impl Eq for Edge {}
+
+impl Ord for Edge {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.weight.partial_cmp(&other.weight).unwrap()
+    }
+}
+
+impl PartialOrd for Edge {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.weight.partial_cmp(&other.weight)
+    }
+}
+
+//  -------- NEW CODE END--------
+
 #[derive(Debug, Clone)]
-pub struct Edge<T> {
+pub struct Edge {
     pub endpoints: (VLT, VLT),
-    pub weight: T,
+    // pub weight: T,
+    pub weight: Number,
     pub edge_type: EdgeType,
 }
 
-impl<T> PartialEq for Edge<T> {
-    fn eq(&self, e: &Edge<T>) -> bool {
+impl PartialEq for Edge {
+    fn eq(&self, e: &Edge) -> bool {
         let ends1 = &self.endpoints;
         let ends2 = &e.endpoints;
         match self.edge_type {
@@ -369,5 +458,86 @@ impl<T> PartialEq for Edge<T> {
                     || (ends1.1).eq(&ends2.1) && (ends1.0).eq(&ends2.0)
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod graph_tests {
+    //extern crate graphs;
+    //use graphs::Graph;
+    use super::*;
+
+    fn get_test_graph_1() -> Graph<f64> {
+        let mut g: Graph<f64> = Graph::new(false);
+        g.add_vertex(String::from("A"), 0.);
+        g.add_vertex(String::from("B"), 1.);
+        g.add_vertex(String::from("C"), 2.);
+        g.add_vertex(String::from("D"), 3.);
+        g.add_vertex(String::from("E"), 4.);
+        g.add_vertex(String::from("F"), 5.);
+        g.add_vertex(String::from("G"), 6.);
+        g.add_vertex(String::from("H"), 7.);
+        g.add_vertex(String::from("I"), 8.);
+        g
+    }
+
+    #[test]
+    fn add_one_vertex() {
+        let mut g: Graph<f64> = Graph::new(false);
+        g.add_vertex(String::from("A"), 0f64);
+        assert_eq!(g.get_vertices().len(), 1);
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0f64);
+    }
+
+    #[test]
+    fn add_multiple_vertices() {
+        let mut g = get_test_graph_1();
+        assert_eq!(g.get_vertices().len(), 9);
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
+        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0.);
+        assert_eq!(g.get_vertex(&String::from("C")).unwrap().label, "C");
+        assert_eq!(g.get_vertex(&String::from("C")).unwrap().get_value(), 2.);
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
+        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
+        assert_eq!(g.get_vertex(&String::from("I")).unwrap().label, "I");
+        assert_eq!(g.get_vertex(&String::from("I")).unwrap().get_value(), 8.);
+    }
+
+    #[test]
+    fn remove_one_vertex() {
+        let mut g = get_test_graph_1();
+        g.remove_vertex(String::from("F"));
+        assert_eq!(g.get_vertices().len(), 8);
+        assert_eq!(g.get_vertices().get("F").is_none(), true);
+    }
+
+    #[test]
+    fn remove_multiple_vertices() {
+        let mut G = get_test_graph_1();
+        G.remove_vertex(String::from("I"));
+        G.remove_vertex(String::from("H"));
+        assert_eq!(G.get_vertices().len(), 7);
+        G.remove_vertex(String::from("E"));
+        assert_eq!(G.get_vertices().len(), 6);
+        G.remove_vertex(String::from("A"));
+        G.remove_vertex(String::from("B"));
+        assert_eq!(G.get_vertices().len(), 4);
+        G.remove_vertex(String::from("I"));
+        assert_eq!(G.get_vertices().len(), 4);
+        G.remove_vertex(String::from("G"));
+        G.remove_vertex(String::from("F"));
+        G.remove_vertex(String::from("D"));
+        G.remove_vertex(String::from("C"));
+        assert_eq!(G.get_vertices().len(), 0);
+    }
+
+    #[test]
+    fn add_one_undirected_edge() {
+        let mut G = get_test_graph_1();
+        G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
+        assert_eq!(G.get_edges().len(), 1);
     }
 }
