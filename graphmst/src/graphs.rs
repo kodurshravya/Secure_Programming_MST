@@ -229,6 +229,12 @@ where
     //}
 
     /// Add vertex to the graph
+    ///
+    /// Parameters:
+    ///
+    /// 1. label - the label of the vertex which should be of type String
+    ///
+    /// 2. value - value of the vertex, any generic
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
