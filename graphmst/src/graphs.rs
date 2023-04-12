@@ -77,7 +77,11 @@ impl fmt::Display for Number {
 ///
 /// # Edges:
 ///
-/// Edges - Hashmap of type (VLT, VLT), Edge. (VLT, VLT) are two end points of the edge. Edge has weight and edge type
+/// Edges - Hashmap of type (VLT, VLT), Edge.
+///
+/// (VLT, VLT) are two end points of the edge.
+///
+/// Edge has weight and edge type
 ///
 /// Example:
 ///
@@ -126,7 +130,7 @@ where
     ///
     /// # Return value
     ///
-    /// This function returns Graph - directed or undirected based on the parameter passed.
+    /// This function returns Graph - directed or undirected based on the parameter passed (Graph<V> )
     ///
     /// # Example
     ///
@@ -230,11 +234,18 @@ where
 
     /// Add vertex to the graph
     ///
-    /// Parameters:
+    /// # Parameters:
     ///
     /// 1. label - the label of the vertex which should be of type String
     ///
     /// 2. value - value of the vertex, any generic
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // create undirected graph
+    /// G.add_vertex(String::from("A"), 0); // add vertex to the graph with label A and value 0
+    /// ```
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
@@ -253,6 +264,17 @@ where
     }
 
     /// Remove vertex and all of its adjacent edges.
+    ///
+    /// # Parameters
+    ///
+    /// 1. label: The label of the vertex
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// G.remove_vertex(String::from("A")); // Remove vertex A from the graph G
+    /// ```
+    ///  
     pub fn remove_vertex(&mut self, label: VLT) {
         // Find all neighbors.
         let neighbors = self.get_neighbors(&label);
@@ -269,12 +291,40 @@ where
         self.vertices.remove(&label);
     }
 
-    //FIXME: VLT ~is~ a String. This function isn't needed.
-    pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
-        (e.0, e.1)
-    }
+    // //FIXME: VLT ~is~ a String. This function isn't needed.
+    // pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
+    //     (e.0, e.1)
+    // }
 
     /// Adds an edge to the graph (Endpoint vertices must be present in graph)
+    ///
+    /// # Parameters
+    ///
+    /// 1. (endpoint1, endpoint2) - the two endpoints of the edge each will be of type String
+    ///
+    /// 2. weight - The weight of the edge
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// // Edge with I32 weights having endpoints "A" and "B"
+    ///  g.add_edge(
+    ///     (String::from("A"), String::from('B')),
+    ///     graphs::Number::I32(4),
+    /// );
+    ///
+    /// // Edge with F32 weights having endpoints "A" and "B"
+    /// g2.add_edge(
+    ///     (String::from("A"), String::from('B')),
+    ///     graphs::Number::F32(4.),
+    /// );
+    ///
+    /// // Edge with U32 weights having endpoints "A" and "B"
+    /// g3.add_edge(
+    ///     (String::from("A"), String::from('B')),
+    ///     graphs::Number::U32(2),
+    /// );
+    /// ```
     pub fn add_edge(&mut self, e: (VLT, VLT), weight: Number) {
         let edge_type = self.edge_type;
 
@@ -306,6 +356,22 @@ where
     }
 
     /// Update the weight of an edge to the graph (Edge must be present in graph)
+    ///
+    /// # Parameters
+    ///
+    /// 1. (endpoint1, endpoint2) - the two endpoints of the edge each will be of type String
+    ///
+    /// 2. weight - The weight of the edge
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// // This will update the value of the edge with endpoint (A, B) to 10 (I32 value)
+    ///  g.update_edge(
+    ///     (String::from("A"), String::from('B')),
+    ///     graphs::Number::I32(10),
+    /// );
+    /// ```
     pub fn update_edge(&mut self, e: (VLT, VLT), weight: Number) {
         if self.contains_edge(&e) {
             self.edges.insert(
@@ -320,6 +386,19 @@ where
     }
 
     /// Removes an edge from a graph (Endpoint vertices are not affected)
+    ///
+    /// # Parameters
+    ///
+    /// 1. (endpoint1, endpoint2) - the two endpoints of the edge (type String)
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// // This will remove edge with endpoints A and B
+    ///  g.remove_edge(
+    ///     (String::from("A"), String::from('B')),
+    /// );
+    /// ```
     pub fn remove_edge(&mut self, e: (VLT, VLT)) {
         let target_edge = self.edges.get(&e);
         match target_edge {
@@ -342,6 +421,22 @@ where
     }
 
     /// Input a vertex label (Returns a vector of vertex labels which correspond to the neighbors of the input vertex)
+    ///
+    /// # Parameter:
+    ///
+    /// 1. label - Label of type String
+    ///
+    /// # Return Value:
+    ///
+    /// Returns a vector of labels of all the vertices that are neighbors of this vertex
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// G.get_neighbors(String::from("A")) // returns all the neighbors of A
+    ///
+    /// // example return: ["B", "C", "D"]. If B, C and D are neighbors of A
+    /// ```
     pub fn get_neighbors(&self, label: &VLT) -> Vec<VLT> {
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
@@ -355,6 +450,23 @@ where
     }
 
     /// Input a vertex label. Returns a vector of vertex labels which correspond to the outgoing neighbors of the input vertex.
+    ///
+    /// # Parameter:
+    ///
+    /// 1. label - Label of type String
+    ///
+    /// # Return Value:
+    ///
+    /// Returns a vector of labels of all the vertices that are outgoing neighbors of this vertex.
+    /// This is for a directed graph
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// G.get_out_neighbors(String::from("A")) // returns all the  outgoing neighbors of A
+    ///
+    /// // example return: ["B", "C", "D"].
+    /// // A -> B, A -> C, A -> D
     pub fn get_out_neighbors(&self, label: &VLT) -> Vec<VLT> {
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
@@ -366,6 +478,23 @@ where
     }
 
     /// Input a vertex label. Returns a vector of vertex labels which correspond to the incoming neighbors of the input vertex.
+    ///
+    /// # Parameter:
+    ///
+    /// 1. label - Label of type String
+    ///
+    /// # Return Value:
+    ///
+    /// Returns a vector of labels of all the vertices that are incoming neighbors of this vertex.
+    /// This is for a directed graph
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// G.get_in_neighbors(String::from("A")) // returns all the incoming neighbors of A
+    ///
+    /// // example return: ["B", "C", "D"].
+    /// // B -> A, C -> A, D -> A
     pub fn get_in_neighbors(&self, label: &VLT) -> Vec<VLT> {
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
@@ -376,7 +505,8 @@ where
         neighbors
     }
 
-    /// Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>.
+    // TODO: Documentation
+    /// Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>
     pub fn read_adjacency_matrix(filename: &str) -> Result<Vec<Vec<u32>>, Error> {
         // Open the file for reading.
         let file = File::open(filename)?;
@@ -399,6 +529,7 @@ where
         Ok(matrix)
     }
 
+    // TODO: Documentation
     /// Writes an adjacency matrix to a file.
     pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
         // Open the file for writing.
@@ -421,6 +552,21 @@ where
         Ok(())
     }
 
+    /// Function to get the vertex given the label
+    ///
+    /// # Parameters:
+    ///
+    /// 1. label - Label of the vertex - type String
+    ///
+    /// # Return Type:
+    ///
+    /// Returns an Option of type mutable Vertex<V>. If there are no vertex with the provided label - None will be returned
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let vertex_A = g.get_vertex(String::from("A")); // this wil return the vertex A which is mutable (We can change the value of the vertex)
+    /// ```
     pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex<V>> {
         self.vertices.get_mut(label)
     }
@@ -444,11 +590,55 @@ where
     }
     */
 
+    /// Function to check if the given vertex is present in the graph
+    ///
+    /// # Parameters
+    ///
+    /// 1. label - Label of the vertex - type String
+    ///
+    /// # Return Type
+    ///
+    /// Returns a boolean value.
+    ///
+    /// true - if the vertex is present in the graph
+    ///
+    /// false - if the vertex is not present in the graph
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// if g.contains_vertex(String::from("A")){
+    ///     // Do something
+    /// }
+    /// ```
     fn contains_vertex(&self, label: &VLT) -> bool {
         //Check if graph contain vertex with label.
         self.vertices.contains_key(label)
     }
 
+    /// Function to check if the given edge is present in the graph
+    ///
+    /// # Parameters
+    ///
+    /// 1. (endpoint1, endpoint2) - endpoints of the edge (String, String)
+    ///
+    /// # Return Type
+    ///
+    /// Returns a boolean value.
+    ///
+    /// true - if the edge is present in the graph
+    ///
+    /// false - if the edge is not present in the graph
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// // Check if the edge A-B is present in the graph
+    /// // Note if the graph is directed, it will return true only if the edge A -> B is present. B -> A will not be counted
+    /// if g.contains_edge((String::from("A"), String::from("B"))){
+    ///     // Do something
+    /// }
+    /// ```
     fn contains_edge(&self, e: &(VLT, VLT)) -> bool {
         //Check if graph contain an edge.
         self.edges.contains_key(e)
@@ -458,6 +648,12 @@ where
 }
 
 /// Vertex Structure
+///
+/// The structure of the vertex
+///
+/// A vertex has a label and a value
+///
+/// Label is a string and value is a generic
 #[derive(Debug, Clone)]
 pub struct Vertex<T> {
     pub label: VLT,
@@ -527,10 +723,15 @@ impl PartialOrd for Edge {
 //  -------- NEW CODE END--------
 
 /// Edge Structure
+///
+/// Edges have three fields
+///
+/// 1. endpoints (a,b) - this contains the info of the two vertices of the edge (A -- B)
+/// 2. weight - the weight of the edge. It's of type number
+/// 3. edge_type - the type of the edge (Directed / Undirected)
 #[derive(Debug, Clone)]
 pub struct Edge {
     pub endpoints: (VLT, VLT),
-    // pub weight: T,
     pub weight: Number,
     pub edge_type: EdgeType,
 }
