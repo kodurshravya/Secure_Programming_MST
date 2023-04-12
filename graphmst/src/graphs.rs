@@ -1,4 +1,4 @@
-//Contains definition of graph structures.
+// Contains definition of graph structures.
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt;
@@ -7,15 +7,21 @@ use std::fs::File;
 use std::io::Write;
 use std::io::{BufRead, BufReader, Error};
 
-type VLT = String; //vertex_label_type
+/// vertex_label_type
+type VLT = String;
 
+/// Edge Type - Directed and Undirected Edge
 #[derive(Debug, Copy, Clone)]
 pub enum EdgeType {
     Directed,
     Undirected,
 }
 
-// Edge Weight Type constraint enum
+/// Edge Weight Type constraint enum
+///
+/// Weight can only be a numeric type
+///
+/// eg: Number::I32(10)
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub enum Number {
     U16(u16),
@@ -43,7 +49,55 @@ impl fmt::Display for Number {
     }
 }
 
-//Basic undirected graph.
+/// This is the basic graph structure. Graph consists of vertices, edges and edge_type
+///
+/// # Vertices:
+///
+/// Vertices - Hashmap of type String, Vertex. Vertex has a label and a value
+///
+/// Example: A vertex with label A and value 10 will look like this
+/// ```
+///  self.vertices.insert(
+///     String::from("A");
+///     Vertex {
+///         label: String::from("A"),
+///         value: 10,
+///     },
+/// );
+/// ```
+///
+/// The structure of the vertex
+///
+/// ```
+/// pub struct Vertex<T> {
+///     pub label: VLT,
+///     pub value: T,
+/// }
+/// ```
+///
+/// # Edges:
+///
+/// Edges - Hashmap of type (VLT, VLT), Edge. (VLT, VLT) are two end points of the edge. Edge has weight and edge type
+///
+/// Example:
+///
+/// ```
+/// HashMap - Key: (String::from("A"), String::from("B")) | Value: Edge
+/// ```
+///
+/// Edge Looks like this:
+///
+/// ```
+/// pub struct Edge {
+///     pub endpoints: (VLT, VLT),
+///     pub weight: Number,
+///     pub edge_type: EdgeType,
+///}
+/// ```
+///
+/// # Edge Type
+///
+/// edge_type: EdgeType - Directed or Undirected
 pub struct Graph<V>
 where
     V: Clone,
@@ -60,18 +114,32 @@ where
     // E: Clone + Debug,
     V: Clone + Debug,
 {
-    pub fn print(&self) {
-        println!("Vertices:");
-        for (id, vertex) in &self.vertices {
-            println!("{:?}: {:?}", id, vertex);
-        }
-
-        println!("Edges:");
-        for ((src, dst), edge) in &self.edges {
-            println!("({:?}, {:?}) -> {:?}", src, dst, edge);
-        }
-    }
-
+    /// Creates a new Graph
+    ///
+    /// # Parameters:
+    ///
+    /// directed - type boolean
+    ///
+    /// directed = true if we want a directed graph
+    ///
+    /// directed = false if we want an undirected graph
+    ///
+    /// # Return value
+    ///
+    /// This function returns Graph - directed or undirected based on the parameter passed.
+    ///
+    /// # Example
+    ///
+    /// Basic Usage:
+    ///
+    /// 1. Undirected graph:
+    /// ```
+    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(false);
+    /// ```
+    /// 2. Directed graph:
+    /// ```
+    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(true);
+    /// ```
     pub fn new(directed: bool) -> Graph<V> {
         //Create an empty graph.
         let v: HashMap<VLT, Vertex<V>> = HashMap::new();
@@ -88,6 +156,27 @@ where
         }
     }
 
+    /// Prints the graph
+    ///
+    /// # usage:
+    /// ```
+    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(false); // creates undirected graph
+    /// g.print() // prints the graph
+    /// ```
+    pub fn print(&self) {
+        println!("Vertices:");
+        for (id, vertex) in &self.vertices {
+            println!("{:?}: {:?}", id, vertex);
+        }
+
+        println!("Edges:");
+        for ((src, dst), edge) in &self.edges {
+            println!("({:?}, {:?}) -> {:?}", src, dst, edge);
+        }
+    }
+
+    /// Returns topological sorted order of the vertice of the graph
+    ///
     pub fn get_topological_order(&mut self) -> Vec<VLT> {
         //FIXME: Function not finished.
         //TODO: Consider moving to utils.
@@ -139,6 +228,7 @@ where
     //    &mut self.edges.get(&e).unwrap()
     //}
 
+    /// Add vertex to the graph
     pub fn add_vertex(&mut self, label: VLT, value: V) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
@@ -156,9 +246,8 @@ where
         }
     }
 
+    /// Remove vertex and all of its adjacent edges.
     pub fn remove_vertex(&mut self, label: VLT) {
-        // Remove vertex and all of its adjacent edges.
-
         // Find all neighbors.
         let neighbors = self.get_neighbors(&label);
 
@@ -179,10 +268,8 @@ where
         (e.0, e.1)
     }
 
+    /// Adds an edge to the graph (Endpoint vertices must be present in graph)
     pub fn add_edge(&mut self, e: (VLT, VLT), weight: Number) {
-        // Adds an edge to the graph.
-        // Endpoint vertices must be present in graph.
-
         let edge_type = self.edge_type;
 
         let is_undirected = match edge_type {
@@ -212,9 +299,8 @@ where
         }
     }
 
+    /// Update the weight of an edge to the graph (Edge must be present in graph)
     pub fn update_edge(&mut self, e: (VLT, VLT), weight: Number) {
-        // Update the weight of an edge to the graph.
-        // Edge must be present in graph.
         if self.contains_edge(&e) {
             self.edges.insert(
                 e.clone(),
@@ -227,9 +313,8 @@ where
         }
     }
 
+    /// Removes an edge from a graph (Endpoint vertices are not affected)
     pub fn remove_edge(&mut self, e: (VLT, VLT)) {
-        // Removes an edge from a graph.
-        // Endpoint vertices are not affected.
         let target_edge = self.edges.get(&e);
         match target_edge {
             Some(te) => match te.edge_type {
@@ -250,9 +335,8 @@ where
         }
     }
 
+    /// Input a vertex label (Returns a vector of vertex labels which correspond to the neighbors of the input vertex)
     pub fn get_neighbors(&self, label: &VLT) -> Vec<VLT> {
-        //Input a vertex label.
-        //Returns a vector of vertex labels which correspond to the neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
             if (label).eq(&edge_labels.0) {
@@ -264,10 +348,8 @@ where
         neighbors
     }
 
+    /// Input a vertex label. Returns a vector of vertex labels which correspond to the outgoing neighbors of the input vertex.
     pub fn get_out_neighbors(&self, label: &VLT) -> Vec<VLT> {
-        //Input a vertex label.
-        //Returns a vector of vertex labels which correspond
-        //to the outgoing neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
             if (label).eq(&edge_labels.0) {
@@ -277,10 +359,8 @@ where
         neighbors
     }
 
+    /// Input a vertex label. Returns a vector of vertex labels which correspond to the incoming neighbors of the input vertex.
     pub fn get_in_neighbors(&self, label: &VLT) -> Vec<VLT> {
-        //Input a vertex label.
-        //Returns a vector of vertex labels which correspond
-        //to the incoming neighbors of the input vertex.
         let mut neighbors: Vec<VLT> = Vec::<VLT>::new();
         for (edge_labels, _edge) in self.edges.iter() {
             if (label).eq(&edge_labels.1) {
@@ -290,7 +370,7 @@ where
         neighbors
     }
 
-    // Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>.
+    /// Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>.
     pub fn read_adjacency_matrix(filename: &str) -> Result<Vec<Vec<u32>>, Error> {
         // Open the file for reading.
         let file = File::open(filename)?;
@@ -313,7 +393,7 @@ where
         Ok(matrix)
     }
 
-    // Writes an adjacency matrix to a file.
+    /// Writes an adjacency matrix to a file.
     pub fn write_adjacency_matrix(matrix: &[Vec<u32>], filename: &str) -> Result<(), Error> {
         // Open the file for writing.
         let mut file = File::create(filename)?;
@@ -371,6 +451,7 @@ where
     //TODO: Add function to print graph.
 }
 
+/// Vertex Structure
 #[derive(Debug, Clone)]
 pub struct Vertex<T> {
     pub label: VLT,
@@ -439,6 +520,7 @@ impl PartialOrd for Edge {
 
 //  -------- NEW CODE END--------
 
+/// Edge Structure
 #[derive(Debug, Clone)]
 pub struct Edge {
     pub endpoints: (VLT, VLT),
@@ -461,6 +543,7 @@ impl PartialEq for Edge {
     }
 }
 
+/// Test cases
 #[cfg(test)]
 mod graph_tests {
     //extern crate graphs;

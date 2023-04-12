@@ -81,6 +81,7 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
+/// Kruskals Algorithm
 pub fn kruskals<V>(g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -169,6 +170,7 @@ where
     Ok(mst)
 }
 
+/// Boruvka' Algorithm
 pub fn boruvka<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -289,6 +291,7 @@ where
     Ok(mst)
 }
 
+/// Reverse Delete Algorithm
 pub fn reverse_delete<V>(mut G: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -350,8 +353,7 @@ where
     Ok(G)
 }
 
-// -- Uncomment later --
-
+/// Prim's Algorithm
 pub fn prims<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -452,8 +454,7 @@ where
     Ok(mst)
 }
 
-// -- Uncomment later --
-
+/// Tests
 #[cfg(test)]
 mod algos_tests {
     use super::*;
