@@ -15,18 +15,18 @@ use std::fmt::Display;
 use super::util::DisjointSet;
 use std::collections::BinaryHeap;
 
-type VLT = String; //vertex label type
+type VLT = String; // vertex label type
 
 const INF: f64 = f64::INFINITY;
 
-type TMPV = f64; //Should be V, but I'm being specific so I can debug.
+type TMPV = f64; // Should be V, but I'm being specific so I can debug.
 pub fn dijkstra<E>(mut g: Graph<TMPV>, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
     println!("Beginning Dikstra's algorithm.");
 
-    //let prev: HashMap<Vertex<TMPV>, Option<Vertex<TMPV>>> = HashMap::new();
+    // let prev: HashMap<Vertex<TMPV>, Option<Vertex<TMPV>>> = HashMap::new();
     let mut prev: HashMap<VLT, Option<VLT>> = HashMap::new();
 
     for (lbl, vertex) in g.get_vertices().iter_mut() {
@@ -81,7 +81,51 @@ where
     println!("Beginning the Bellman-Ford algorithm.");
 }
 
-/// Kruskals Algorithm
+/// Kruskals Algorithm - Generate MST for any graph using the Kruskal's Algorithm
+///
+/// # Parameters:
+///
+/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+///
+/// # Return Value:
+///
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+///
+/// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
+///
+///
+/// # Example Usage:
+///
+/// ```
+/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+///
+/// // Add vertices
+///
+/// G.add_vertex(String::from("A"), 0); // add vertex A
+/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// ...
+/// ...
+/// G.add_vertex(String::from("I"), 8); // add vertex I
+///
+/// // Add edges
+///
+/// // Add multiple edges
+/// G.add_edge(
+///     (String::from("A"), String::from('B')),
+///     graphs::Number::I32(4),
+/// );
+/// ...
+/// ...
+/// let mst = algos::kruskals(G); // get the mst using kruskals algorithm
+///
+/// // kruskals returns results, so use match statement to process it
+/// match mst_kruskals {
+///     Ok(g) => g.print(), // print the MST if generated successfully
+///     Err(e) => println!("{}", e), // print the error if any
+/// }
+///
+/// ```
+///
 pub fn kruskals<V>(g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -94,7 +138,6 @@ where
     };
 
     // return error if the graph has directed edges
-
     if is_directed {
         return Err(String::from(
             "Kruskals only work properly on undirected graphs!",
@@ -112,13 +155,6 @@ where
     }
 
     edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
-
-    // println!("Edges in Sorted Order: \n");
-    // let mut count = 0;
-    // for i in &edges {
-    //     println!("{count}.: {}", i.weight);
-    //     count += 1;
-    // }
 
     // The graph that we are going to return
     let mut mst = graphs::Graph::new(false);
@@ -170,7 +206,51 @@ where
     Ok(mst)
 }
 
-/// Boruvka' Algorithm
+/// Boruvka's Algorithm - Generate MST for any graph using the Boruvka's Algorithm
+///
+/// # Parameters:
+///
+/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+///
+/// # Return Value:
+///
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+///
+/// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
+///
+///
+/// # Example Usage:
+///
+/// ```
+/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+///
+/// // Add vertices
+///
+/// G.add_vertex(String::from("A"), 0); // add vertex A
+/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// ...
+/// ...
+/// G.add_vertex(String::from("I"), 8); // add vertex I
+///
+/// // Add edges
+///
+/// // Add multiple edges
+/// G.add_edge(
+///     (String::from("A"), String::from('B')),
+///     graphs::Number::I32(4),
+/// );
+/// ...
+/// ...
+/// let mst = algos::boruvka(G); // get the mst using kruskals algorithm
+///
+/// // boruvka returns results, so use match statement to process it
+/// match mst_kruskals {
+///     Ok(g) => g.print(), // print the MST if generated successfully
+///     Err(e) => println!("{}", e), // print the error if any
+/// }
+///
+/// ```
+///
 pub fn boruvka<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -291,7 +371,50 @@ where
     Ok(mst)
 }
 
-/// Reverse Delete Algorithm
+/// Reverse Delete Algorithm - Generate MST for any graph using the Reverse Delete Algorithm
+///
+/// # Parameters:
+///
+/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+///
+/// # Return Value:
+///
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+///
+/// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
+///
+/// # Example Usage:
+///
+/// ```
+/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+///
+/// // Add vertices
+///
+/// G.add_vertex(String::from("A"), 0); // add vertex A
+/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// ...
+/// ...
+/// G.add_vertex(String::from("I"), 8); // add vertex I
+///
+/// // Add edges
+///
+/// // Add multiple edges
+/// G.add_edge(
+///     (String::from("A"), String::from('B')),
+///     graphs::Number::I32(4),
+/// );
+/// ...
+/// ...
+/// let mst = algos::reverse_delete(G); // get the mst using reverse_delete algorithm
+///
+/// // reverse_delete returns results, so use match statement to process it
+/// match mst_kruskals {
+///     Ok(g) => g.print(), // print the MST if generated successfully
+///     Err(e) => println!("{}", e), // print the error if any
+/// }
+///
+/// ```
+///
 pub fn reverse_delete<V>(mut G: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
@@ -353,7 +476,50 @@ where
     Ok(G)
 }
 
-/// Prim's Algorithm
+/// Prim's Algorithm - Generate MST for any graph using the Prim's Algorithm
+///
+/// # Parameters:
+///
+/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+///
+/// # Return Value:
+///
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+///
+/// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
+///
+/// # Example Usage:
+///
+/// ```
+/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+///
+/// // Add vertices
+///
+/// G.add_vertex(String::from("A"), 0); // add vertex A
+/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// ...
+/// ...
+/// G.add_vertex(String::from("I"), 8); // add vertex I
+///
+/// // Add edges
+///
+/// // Add multiple edges
+/// G.add_edge(
+///     (String::from("A"), String::from('B')),
+///     graphs::Number::I32(4),
+/// );
+/// ...
+/// ...
+/// let mst = algos::prims(G); // get the mst using prims algorithm
+///
+/// // prims returns results, so use match statement to process it
+/// match mst_kruskals {
+///     Ok(g) => g.print(), // print the MST if generated successfully
+///     Err(e) => println!("{}", e), // print the error if any
+/// }
+///
+/// ```
+///
 pub fn prims<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
