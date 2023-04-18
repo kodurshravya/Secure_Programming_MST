@@ -647,6 +647,19 @@ where
     //TODO: Add function to print graph.
 }
 
+#[macro_export]
+macro_rules! gph {
+    ( $($x:expr ),* ) => {
+        {
+            let mut G: Graph<i32> = Graph::new(false);
+            $(
+                G.add_vertex(String::from($x), 0);
+            )*
+            G
+        }
+    };
+}
+
 /// Vertex Structure
 ///
 /// The structure of the vertex
@@ -829,5 +842,11 @@ mod graph_tests {
         let mut G = get_test_graph_1();
         G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
         assert_eq!(G.get_edges().len(), 1);
+    }
+    
+    #[test]
+    fn make_from_macro() {
+        let mut G = gph!("A", "B");
+        assert_eq!(G.get_vertices().len(), 2);
     }
 }

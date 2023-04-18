@@ -351,6 +351,8 @@ fn main() {
         Err(e) => println!("{}", e),
     }
     println!("\n\n----PRIMS END -----\n\n");
+    
+    //gph!("A", "B");
 
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));
