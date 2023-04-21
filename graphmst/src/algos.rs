@@ -184,8 +184,13 @@ where
 
     if is_directed {
         return Err(String::from(
-            "Kruskals only work properly on undirected graphs!",
+            "Boruvka's only work properly on undirected graphs!",
         ));
+    }
+
+    // Check for empty or trivial graph
+    if g.get_vertices().len() <= 1 {
+        return Ok(g);
     }
 
     println!("{}", g.edges.len());
@@ -203,12 +208,8 @@ where
 
     edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
-    // println!("Edges in Sorted Order: \n");
-    // let mut count = 0;
-    // for i in &edges {
-    //     println!("{count}.: {}", i.weight);
-    //     count += 1;
-    // }
+    // set to keep track of visited nodes
+    let mut visited = HashSet::new();
 
     // Use Disjoint set for union find algorithm
     let mut set = DisjointSet::new();
@@ -218,30 +219,35 @@ where
         set.set_insert(node.clone());
     }
 
+   //Minimum spanning graph initialization
     let mut mst = graphs::Graph::new(true);
 
+    // Add the first vertex to the visited set
+    let first_vertex = g.vertices.keys().next().unwrap().clone();
+    visited.insert(first_vertex.clone());
+
     let edges1 = edges.clone();
-    for (vertex, _) in &g.vertices {
-        // iterate over edges - smallest weight to largest weight
         for edge in &edges1 {
             let u = edge.endpoints.0.clone(); // get the first vertex of the edge
             let v = edge.endpoints.1.clone();
 
-            if (u.eq(vertex) || v.eq(vertex)) {
-                // get the second vertex of the edge
-                // set.find(&u); // Find parent of u
-                // check if they are in different sets
-                if set.find(&u) != set.find(&v) {
-                    // If they are in different sets then we join them using union and also use the edge in MST
-                    mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-                    mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-                    mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
-                    added_edges.push(edge.clone());
-                    set.union(&u, &v);
-                }
+            // Skip this edge if both endpoints are already visited
+            if visited.contains(&u) && visited.contains(&v) {
+                continue;
+            }
+    
+            // get the second vertex of the edge
+            set.find(&u); // Find parent of u
+            // check if they are in different sets
+            if set.find(&u) != set.find(&v) {
+               // If they are in different sets then we join them using union and also use the edge in MST
+               mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+               mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+               mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
+               added_edges.push(edge.clone());
+               set.union(&u, &v);
             }
         }
-    }
 
     let mut remaining_edges: Vec<Edge> = Vec::new();
     for iter in added_edges {
@@ -644,5 +650,47 @@ mod algos_tests {
             .get_edges()
             .keys()
             .all(|x| solution.get_edges().contains_key(x)));
+    }
+
+    #[test]
+    fn test_boruvka_on_directed() {
+        let mut G = get_test_graph_1(true);
+        //TODO: Figure out how to check assertion error.
+        assert!(boruvka(G).is_err());
+        //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
+    }
+
+    #[test]
+    fn test_boruvka_on_empty() {
+        let mut G: Graph<i32> = Graph::new(false);
+        //TODO: Come up with a better check.
+        assert_eq!(boruvka(G).unwrap().get_vertices().len(), 0);
+    }
+
+    #[test]
+    fn test_boruvka_on_trivial() {
+        let mut G: Graph<i32> = Graph::new(false);
+        G.add_vertex(String::from("Banana"), 0);
+        //TODO: Come up with a better check.
+        assert_eq!(boruvka(G).unwrap().get_vertices().len(), 1);
+    }
+
+    #[test]
+    fn test_boruvka_disconnected() {
+        let mut G = get_test_graph_2(false);
+        assert!(boruvka(G).is_err());
+    }
+
+    #[test]
+    fn test_boruvka_on_non_trivial() {
+        let mut G = get_test_graph_1(false);
+        let mut mst = boruvka(G).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        println!("{:?}", mst.get_edges().keys());
+        println!("{:?}", solution.get_edges().keys());
+        assert!(mst
+            .get_edges()
+            .keys()
+            .all(|y| solution.get_edges().contains_key(y)));
     }
 }
