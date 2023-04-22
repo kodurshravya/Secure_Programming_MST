@@ -647,18 +647,8 @@ where
     //TODO: Add function to print graph.
 }
 
-#[macro_export]
-macro_rules! gph {
-    ( $($x:expr ),* ) => {
-        {
-            let mut G: Graph<i32> = Graph::new(false);
-            $(
-                G.add_vertex(String::from($x), 0);
-            )*
-            G
-        }
-    };
-}
+//GPH MARKER
+
 
 /// Vertex Structure
 ///
@@ -763,6 +753,95 @@ impl PartialEq for Edge {
     }
 }
 
+macro_rules! ev {
+    ( $G:expr, [$a:literal, $b:literal, $c:literal] ) => {
+        {
+            $G.add_vertex(String::from($a), 0);
+            $G.add_vertex(String::from($c), 0);
+            $G.add_edge((String::from($a), String::from($c)), Number::I32($b));
+            println!( "{}, {}, {}", $a, $b, $c );
+        }
+    };
+    
+    ( $G:expr, $($x:expr ),* ) => {
+        {
+            {   
+                $(
+                    $G.add_vertex(String::from($x), 0);
+                    println!("{}", String::from($x));
+                )*
+            }
+        }
+    };
+    
+}
+
+
+#[macro_export]
+macro_rules! gph {
+    ( {$($sub:tt),*} ) => { //iterate over every token. Could be a single string or an edge tuple.
+        {
+            let mut G: Graph<i32> = Graph::new(false);
+            $(
+                ev!(&mut G, $sub);
+            )*
+            G
+        }
+    };
+    ( $($x:expr ),* ) => {
+        {
+            let mut G: Graph<i32> = Graph::new(false);
+            {   
+                $(
+                    println!("{}", String::from($x));
+                    G.add_vertex(String::from($x), 0);
+                )*
+                G
+            }
+        }
+    };
+}
+/*
+fn main() {
+    gph!("A");
+    gph!("A", "B", "C");
+    gph!({"D"});
+    
+    gph!({["H", "5", "G"]});
+    gph!({"E", ["F", "5", "G"]});
+}
+*/
+
+
+
+
+
+/*
+#[macro_export]
+macro_rules! gph {
+    ( {$($edg:tt),*} ) => {
+        {
+            let mut G: Graph<i32> = Graph::new(false);
+            $(
+                G.add_edge((String::from(edg(0)), String::from(edg(1))), edg(2));
+            )*
+            G
+        }
+    };
+    ( $($x:expr ),* ) => {
+        {
+            let mut G: Graph<i32> = Graph::new(false);
+            {   
+                $(
+                    G.add_vertex(String::from($x), 0);
+                )*
+                G
+            }
+        }
+    };
+}
+*/
+
 /// Test cases
 #[cfg(test)]
 mod graph_tests {
@@ -848,5 +927,8 @@ mod graph_tests {
     fn make_from_macro() {
         let mut G = gph!("A", "B");
         assert_eq!(G.get_vertices().len(), 2);
+        
+        let mut G = gph!({"C", ["A", 3, "B"]});
+        assert_eq!(G.get_vertices().len(), 3);
     }
 }
