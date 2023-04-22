@@ -78,10 +78,10 @@ mod graph_tests {
     #[test]
     fn add_one_undirected_edge() {
         let mut G = get_test_graph_1();
-        G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
+        G.add_edge((String::from("A"), String::from('B')), GNumber::F64((4.)));
         assert_eq!(G.get_edges().len(), 1);
     }
-    
+
     #[test]
     fn make_from_macro() {
         let mut G = gph!("A", "B");

@@ -8,7 +8,12 @@ edition = "2021"
 [dependencies]
 
 
+# [lib]
+# name = "graphs"
+# path = "src/graphs.rs"
+# doctest = true
+
 [lib]
-name = "graphs"
-path = "src/graphs.rs"
-doctest = true
+name = "graphalgos"
+path = "src/lib.rs"
+doctest = false
