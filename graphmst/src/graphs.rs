@@ -638,6 +638,90 @@ impl Graph {
     //TODO: Add function to print graph.
 }
 
+//Internal macro that matches the pattern of a single expession (indicating the user would like to add a vertex,
+//or a tuple-like pattern (str, i32, str), indicating the user would like an edge.
+macro_rules! edg_or_vert {
+    ( $G:expr, ($a:literal, $b:literal, $c:literal) ) => {
+        {
+            $G.add_vertex(String::from($a));
+            $G.add_vertex(String::from($c));
+            $G.add_edge((String::from($a), String::from($c)), Number::I32($b));
+            println!( "{}, {}, {}", $a, $b, $c );
+        }
+    };
+    
+    ( $G:expr, $($x:expr ),* ) => {
+        {
+            {   
+                $(
+                    $G.add_vertex(String::from($x));
+                    println!("{}", String::from($x));
+                )*
+            }
+        }
+    };
+    
+}
+
+    /// Function to check if the given vertex is present in the graph
+    ///
+    /// # Parameters
+    ///
+    /// 1. label - Label of the vertex - type String
+    ///
+    /// # Return Type
+    ///
+    /// Returns a boolean value.
+    ///
+    /// true - if the vertex is present in the graph
+    ///
+    /// false - if the vertex is not present in the graph
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// if g.contains_vertex(String::from("A")){
+    ///     // Do something
+    /// }
+    /// ```
+
+///Build an undirected graph
+///
+///This macro can make both vertices and edges.
+///For a vertex, simple pass a string literal to be that vertex's label.
+///For an edge, write a pattern of the form (str, i32, str) where the first and last element represent the label of a vertex, and the middle value is the edges weight.
+///
+///# Example
+/// ```
+/// let G = gph!("A", "B", "C", ("A", 3, "C"), ("B", 7, "D"))
+/// ```
+///Notice that we do not need to list all vertices before adding edges for them, as shown in the last edge pattern.
+#[macro_export]
+macro_rules! gph {
+    ( $($sub:tt),* ) => { //iterate over every token. Could be a single string or an edge tuple.
+        {
+            let mut G: Graph = Graph::new(false);
+            $(
+                edg_or_vert!(&mut G, $sub);
+            )*
+            G
+        }
+    };
+    /*
+    ( $($x:expr ),* ) => {
+        {
+            let mut G: Graph = Graph::new(false);
+            {   
+                $(
+                    G.add_vertex(String::from($x));
+                )*
+                G
+            }
+        }
+    };
+    */
+}
+
 
 /// Vertex Structure
 ///
@@ -645,7 +729,7 @@ impl Graph {
 ///
 /// A vertex has a label and a value
 ///
-/// Label is a string and value is a generic
+/// Label is a string and value is f64
 #[derive(Debug, Clone)]
 pub struct Vertex {
     pub label: VLT,
@@ -743,64 +827,6 @@ impl PartialEq for Edge {
     }
 }
 
-macro_rules! ev {
-    ( $G:expr, [$a:literal, $b:literal, $c:literal] ) => {
-        {
-            $G.add_vertex(String::from($a));
-            $G.add_vertex(String::from($c));
-            $G.add_edge((String::from($a), String::from($c)), Number::I32($b));
-            println!( "{}, {}, {}", $a, $b, $c );
-        }
-    };
-    
-    ( $G:expr, $($x:expr ),* ) => {
-        {
-            {   
-                $(
-                    $G.add_vertex(String::from($x));
-                    println!("{}", String::from($x));
-                )*
-            }
-        }
-    };
-    
-}
-
-
-#[macro_export]
-macro_rules! gph {
-    ( {$($sub:tt),*} ) => { //iterate over every token. Could be a single string or an edge tuple.
-        {
-            let mut G: Graph = Graph::new(false);
-            $(
-                ev!(&mut G, $sub);
-            )*
-            G
-        }
-    };
-    ( $($x:expr ),* ) => {
-        {
-            let mut G: Graph = Graph::new(false);
-            {   
-                $(
-                    G.add_vertex(String::from($x));
-                )*
-                G
-            }
-        }
-    };
-}
-/*
-fn main() {
-    gph!("A");
-    gph!("A", "B", "C");
-    gph!({"D"});
-    
-    gph!({["H", "5", "G"]});
-    gph!({"E", ["F", "5", "G"]});
-}
-*/
-
 
 /// Test cases
 #[cfg(test)]
@@ -882,7 +908,8 @@ mod graph_tests {
         let mut G = gph!("A", "B");
         assert_eq!(G.get_vertices().len(), 2);
         
-        let mut G = gph!({"C", ["A", 3, "B"]});
+        let mut G = gph!("C", ("A", 5, "B"));
         assert_eq!(G.get_vertices().len(), 3);
+        assert_eq!(G.get_edges().len(), 1);
     }
 }
