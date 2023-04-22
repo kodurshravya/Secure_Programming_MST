@@ -78,7 +78,7 @@ mod graph_tests {
         G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
         assert_eq!(G.get_edges().len(), 1);
     }
-    
+
     #[test]
     fn make_from_macro() {
         let mut G = gph!("A", "B");
@@ -96,5 +96,48 @@ mod graph_tests {
             .get_edges()
             .keys()
             .all(|x| solution.get_edges().contains_key(x)));
+    }
+
+    //Test Kruskal's algorithm.
+    #[test]
+    fn test_kruskals_on_directed() {
+        let mut G = get_test_graph_1(true);
+        //TODO: Figure out how to check assertion error.
+        assert!(kruskals(G).is_err());
+        //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
+    }
+
+    #[test]
+    fn test_kruskals_on_empty() {
+        let mut G: Graph<i32> = Graph::new(false);
+        //TODO: Come up with a better check.
+        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 0);
+    }
+
+    #[test]
+    fn test_kruskals_on_trivial() {
+        let mut G: Graph<i32> = Graph::new(false);
+        G.add_vertex(String::from("Banana"), 0);
+        //TODO: Come up with a better check.
+        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 1);
+    }
+
+    #[test]
+    fn test_kruskals_disconnected() {
+        let mut G = get_test_graph_2(false);
+        assert!(kruskals(G).is_err());
+    }
+
+    #[test]
+    fn test_kruskals_on_non_trivial() {
+        let mut G = get_test_graph_1(false);
+        let mut mst = kruskals(G).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        println!("{:?}", mst.get_edges().keys());
+        println!("{:?}", solution.get_edges().keys());
+        assert!(mst
+            .get_edges()
+            .keys()
+            .all(|y| solution.get_edges().contains_key(y)));
     }
 }

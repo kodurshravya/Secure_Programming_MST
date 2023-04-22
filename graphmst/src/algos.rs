@@ -126,7 +126,7 @@ where
 ///
 /// ```
 ///
-pub fn kruskals<V>(g: Graph<V>) -> Result<Graph<V>, String>
+pub fn kruskals<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
 where
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
     V: Clone + Debug,
@@ -144,7 +144,12 @@ where
         ));
     }
 
-    println!("{}", g.edges.len());
+    // Check for empty or trivial graph
+    if g.get_vertices().len() <= 1 {
+        return Ok(g);
+    }
+
+    // println!("{}", g.edges.len());
 
     // vector to collect all edge values
     let mut edges: Vec<Edge> = Vec::new();
@@ -301,7 +306,7 @@ where
         set.set_insert(node.clone());
     }
 
-   //Minimum spanning graph initialization
+    //Minimum spanning graph initialization
     let mut mst = graphs::Graph::new(true);
 
     // Add the first vertex to the visited set
@@ -310,12 +315,12 @@ where
 
     let edges1 = edges.clone();
     for (vertex, _) in &g.vertices {
-        // 
-    for (endpoint, edge) in &g.edges {
-        if endpoint.0 == vertex.clone() {
-           added_edges.push(edge.clone());
+        //
+        for (endpoint, edge) in &g.edges {
+            if endpoint.0 == vertex.clone() {
+                added_edges.push(edge.clone());
+            }
         }
-     }
         for edge in &edges1 {
             let u = edge.endpoints.0.clone(); // get the first vertex of the edge
             let v = edge.endpoints.1.clone();
@@ -324,19 +329,19 @@ where
             if visited.contains(&u) && visited.contains(&v) {
                 continue;
             }
-    
+
             // get the second vertex of the edge
             set.find(&u); // Find parent of u
-            // check if they are in different sets
+                          // check if they are in different sets
             if set.find(&u) != set.find(&v) {
-               // If they are in different sets then we join them using union and also use the edge in MST
-               mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-               mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
-               mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
-               added_edges.push(edge.clone());
-               set.union(&u, &v);
+                // If they are in different sets then we join them using union and also use the edge in MST
+                mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
+                mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+                mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
+                added_edges.push(edge.clone());
+                set.union(&u, &v);
             }
-        }            
+        }
     }
 
     let mut remaining_edges: Vec<Edge> = Vec::new();
@@ -827,7 +832,7 @@ mod algos_tests {
             .all(|x| solution.get_edges().contains_key(x)));
     }
 
-    //Test reverse delete algorithm.
+    //Test boruvka's algorithm.
     #[test]
     fn test_boruvka_on_directed() {
         let mut G = get_test_graph_1(true);
@@ -861,6 +866,49 @@ mod algos_tests {
     fn test_boruvka_on_non_trivial() {
         let mut G = get_test_graph_1(false);
         let mut mst = boruvka(G).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        println!("{:?}", mst.get_edges().keys());
+        println!("{:?}", solution.get_edges().keys());
+        assert!(mst
+            .get_edges()
+            .keys()
+            .all(|y| solution.get_edges().contains_key(y)));
+    }
+
+    //Test Kruskal's algorithm.
+    #[test]
+    fn test_kruskals_on_directed() {
+        let mut G = get_test_graph_1(true);
+        //TODO: Figure out how to check assertion error.
+        assert!(kruskals(G).is_err());
+        //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
+    }
+
+    #[test]
+    fn test_kruskals_on_empty() {
+        let mut G: Graph<i32> = Graph::new(false);
+        //TODO: Come up with a better check.
+        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 0);
+    }
+
+    #[test]
+    fn test_kruskals_on_trivial() {
+        let mut G: Graph<i32> = Graph::new(false);
+        G.add_vertex(String::from("Banana"), 0);
+        //TODO: Come up with a better check.
+        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 1);
+    }
+
+    #[test]
+    fn test_kruskals_disconnected() {
+        let mut G = get_test_graph_2(false);
+        assert!(kruskals(G).is_err());
+    }
+
+    #[test]
+    fn test_kruskals_on_non_trivial() {
+        let mut G = get_test_graph_1(false);
+        let mut mst = kruskals(G).unwrap();
         let mut solution = get_mst_of_graph_1();
         println!("{:?}", mst.get_edges().keys());
         println!("{:?}", solution.get_edges().keys());
