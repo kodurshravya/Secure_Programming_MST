@@ -11,4 +11,4 @@ edition = "2021"
 [lib]
 name = "graphs"
 path = "src/graphs.rs"
-doctest = false
+doctest = true
