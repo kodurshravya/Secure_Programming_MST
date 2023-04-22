@@ -1,9 +1,10 @@
 //Contains definition of graph structures.
 use std::cmp::Ordering;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::fmt::Debug;
 use std::fs::File;
+use std::hash::Hash;
 use std::io::Write;
 use std::io::{BufRead, BufReader, Error};
 
@@ -88,43 +89,39 @@ where
         }
     }
 
-    pub fn get_topological_order(&mut self) -> Vec<VLT> {
-        //FIXME: Function not finished.
-        //TODO: Consider moving to utils.
-        let mut g: Graph<f64> = Graph::new(true);
-        let nodes = g.get_vertices().keys();
-        // let nodes =  g.edges;
-        let mut order: Vec<VLT> = vec![];
-        let mut visited_vertex: HashMap<VLT, bool> = HashMap::new();
+    pub fn get_topological_orders(g: Graph<V>)  -> Vec<VLT> 
+    where 
+    V: Eq + Hash,
+    {
+    let mut visited = HashSet::new();
+    let mut order = Vec::new();
 
-        for node in nodes {
-            if visited_vertex.get(node) == None {
-                self.get_order(node, &mut order);
-            }
+    let mut g: Graph<V> = Graph::new(true);
+
+    for (node, _) in &g.vertices {
+        if !visited.contains(node) {
+            Self::get_order(node, &g, &mut visited, &mut order);
         }
-        order.reverse();
-        println!("{:?}", order);
-        return order;
     }
+    order
+}
 
-    pub fn get_order(&mut self, node: &VLT, order: &mut Vec<VLT>) {
-        //TODO: Consider moving to utils.
-        let mut g: Graph<f64> = Graph::new(true);
-        //let coming_nodes = self.get_vertices().get(node);
-        let coming_nodes = g.get_vertices().keys();
+    pub fn get_order(node : & String, 
+                 g: &Graph<V>, 
+                 visited: &mut HashSet<&String>, 
+                 order: &mut Vec<VLT>)
+       where
+        V: Eq + Hash,
+    {
+      // Find all neighbors.
+      let neighbors = g.get_neighbors(&node);
 
-        for value in coming_nodes {
-            self.get_order(node, order)
-        }
-        // if new_graph.get(node) == None {
-        // if coming_nodes != None {
-        //     for value in coming_nodes. {
-        //         self.get_order(value, order);
-        //     }
-        // }
-        if !order.contains(node) {
-            order.push(node.to_string()); //FIXME: Is .to_string needed here?
-        }
+      for vert_label in neighbors.into_iter() {
+         if !visited.contains(&vert_label) {
+             Self::get_order(&vert_label, &g, visited, order);
+        } 
+      }
+        order.insert(0, node.clone());
     }
 
     pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
@@ -540,4 +537,5 @@ mod graph_tests {
         G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
         assert_eq!(G.get_edges().len(), 1);
     }
+
 }
