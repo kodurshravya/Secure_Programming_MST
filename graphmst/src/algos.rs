@@ -96,15 +96,15 @@ where
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A"), 0); // add vertex A
-/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// G.add_vertex(String::from("A")); // add vertex A
+/// G.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I"), 8); // add vertex I
+/// G.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
@@ -225,15 +225,15 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A"), 0); // add vertex A
-/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// G.add_vertex(String::from("A")); // add vertex A
+/// G.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I"), 8); // add vertex I
+/// G.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
@@ -401,15 +401,15 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A"), 0); // add vertex A
-/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// G.add_vertex(String::from("A")); // add vertex A
+/// G.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I"), 8); // add vertex I
+/// G.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
@@ -502,15 +502,15 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // creates an undirected graph
+/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A"), 0); // add vertex A
-/// G.add_vertex(String::from("B"), 1); // add vertex B
+/// G.add_vertex(String::from("A")); // add vertex A
+/// G.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I"), 8); // add vertex I
+/// G.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///

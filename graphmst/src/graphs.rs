@@ -121,7 +121,7 @@ impl Graph {
     ///
     /// # Return value
     ///
-    /// This function returns Graph - directed or undirected based on the parameter passed (Graph<V> )
+    /// This function returns Graph - directed or undirected based on the parameter passed (Graph)
     ///
     /// # Example
     ///
@@ -129,11 +129,11 @@ impl Graph {
     ///
     /// 1. Undirected graph:
     /// ```
-    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(false);
+    /// let mut g: graphs::Graph = graphs::Graph::new(false);
     /// ```
     /// 2. Directed graph:
     /// ```
-    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(true);
+    /// let mut g: graphs::Graph = graphs::Graph::new(true);
     /// ```
     pub fn new(directed: bool) -> Graph {
         //Create an empty graph.
@@ -155,7 +155,7 @@ impl Graph {
     ///
     /// # usage:
     /// ```
-    /// let mut g: graphs::Graph<i32> = graphs::Graph::new(false); // creates undirected graph
+    /// let mut g: graphs::Graph = graphs::Graph::new(false); // creates undirected graph
     /// g.print() // prints the graph
     /// ```
     pub fn print(&self) {
@@ -234,8 +234,8 @@ impl Graph {
     /// # Example
     ///
     /// ```
-    /// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // create undirected graph
-    /// G.add_vertex(String::from("A"), 0); // add vertex to the graph with label A and value 0
+    /// let mut G: graphs::Graph = graphs::Graph::new(false); // create undirected graph
+    /// G.add_vertex(String::from("A")); // add vertex to the graph with label A and value 0
     /// ```
     pub fn add_vertex(&mut self, label: VLT) {
         //Add vertex to graph.

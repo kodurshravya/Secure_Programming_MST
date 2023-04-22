@@ -9,15 +9,15 @@ mod util;
 fn main() {
     //let mut g = graphs::Graph::new(false);
     //
-    //g.add_vertex(String::from("A"), 0);
-    //g.add_vertex(String::from("B"), 1);
-    //g.add_vertex(String::from("C"), 2);
-    //g.add_vertex(String::from("D"), 3);
-    //g.add_vertex(String::from("E"), 4);
-    //g.add_vertex(String::from("F"), 5);
-    //g.add_vertex(String::from("G"), 6);
-    //g.add_vertex(String::from("H"), 7);
-    //g.add_vertex(String::from("I"), 8);
+    //g.add_vertex(String::from("A"));
+    //g.add_vertex(String::from("B"));
+    //g.add_vertex(String::from("C"));
+    //g.add_vertex(String::from("D"));
+    //g.add_vertex(String::from("E"));
+    //g.add_vertex(String::from("F"));
+    //g.add_vertex(String::from("G"));
+    //g.add_vertex(String::from("H"));
+    //g.add_vertex(String::from("I"));
     //
     //// Integers - i32
     //g.add_edge(
