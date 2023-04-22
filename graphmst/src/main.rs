@@ -240,18 +240,18 @@ fn main() {
 
     //    }
 
-    fn get_graph() -> graphs::Graph<i32> {
+    fn get_graph() -> graphs::Graph {
         //Generates a graph with 2 connected components.
-        let mut G: graphs::Graph<i32> = graphs::Graph::new(false);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut G: graphs::Graph = graphs::Graph::new(false);
+        G.add_vertex(String::from("A"));
+        G.add_vertex(String::from("B"));
+        G.add_vertex(String::from("C"));
+        G.add_vertex(String::from("D"));
+        G.add_vertex(String::from("E"));
+        G.add_vertex(String::from("F"));
+        G.add_vertex(String::from("G"));
+        G.add_vertex(String::from("H"));
+        G.add_vertex(String::from("I"));
 
         // Integers - i32
         G.add_edge(

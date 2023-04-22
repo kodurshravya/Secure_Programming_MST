@@ -19,8 +19,8 @@ type VLT = String; // vertex label type
 
 const INF: f64 = f64::INFINITY;
 
-type TMPV = f64; // Should be V, but I'm being specific so I can debug.
-pub fn dijkstra<E>(mut g: Graph<TMPV>, start_vertex: VLT)
+//type TMPV = f64; // Should be V, but I'm being specific so I can debug.
+pub fn dijkstra<E>(mut g: Graph, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
@@ -54,8 +54,8 @@ where
 
 //TODO: Test this function
 // pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
-pub fn dfs<V: Clone + Debug>(G: &mut Graph<V>, start_vertex: VLT) -> HashMap<VLT, bool> {
-    let mut stack: VecDeque<Vertex<V>> = VecDeque::new();
+pub fn dfs(G: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
+    let mut stack: VecDeque<Vertex> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
     for (lbl, _) in G.get_vertices().iter() {
         visited.insert((*lbl).clone(), false);
@@ -73,10 +73,9 @@ pub fn dfs<V: Clone + Debug>(G: &mut Graph<V>, start_vertex: VLT) -> HashMap<VLT
     visited
 }
 
-pub fn bellman_ford<V, E>(mut g: Graph<V>, start_vertex: VLT)
+pub fn bellman_ford<E>(mut g: Graph, start_vertex: VLT)
 where
     E: Clone,
-    V: Clone,
 {
     println!("Beginning the Bellman-Ford algorithm.");
 }
@@ -126,10 +125,9 @@ where
 ///
 /// ```
 ///
-pub fn kruskals<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
-where
-    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone + Debug,
+pub fn kruskals(mut g: Graph) -> Result<Graph, String>
+    // E: Clone + std::cmp::PartialOrd + Display + Debug,
+    // E will have int or float values so we need to mark the Ord to compare them
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -181,8 +179,8 @@ where
         // check if they are in different sets
         if set.find(&u) != set.find(&v) {
             // If they are in different sets then we join them using union and also use the edge in MST
-            mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-            mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+            mst.add_vertex(u.clone()); // add vertex u to mst
+            mst.add_vertex(v.clone()); // add vertex v to mst
             mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
             set.union(&u, &v);
         }
@@ -256,10 +254,8 @@ where
 ///
 /// ```
 ///
-pub fn boruvka<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
-where
+pub fn boruvka(mut g: Graph) -> Result<Graph, String>
     // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone + Debug,
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -335,8 +331,8 @@ where
                           // check if they are in different sets
             if set.find(&u) != set.find(&v) {
                 // If they are in different sets then we join them using union and also use the edge in MST
-                mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-                mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+                mst.add_vertex(u.clone()); // add vertex u to mst
+                mst.add_vertex(v.clone()); // add vertex v to mst
                 mst.add_edge((u.clone(), v.clone()), edge.weight.clone());
                 added_edges.push(edge.clone());
                 set.union(&u, &v);
@@ -360,8 +356,8 @@ where
         let v = in_between.endpoints.1.clone();
         if set.find(&u) != set.find(&v) {
             // If they are in different sets then we join them using union and also use the edge in MST
-            mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone()); // add vertex u to mst
-            mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone()); // add vertex v to mst
+            mst.add_vertex(u.clone()); // add vertex u to mst
+            mst.add_vertex(v.clone()); // add vertex v to mst
             mst.add_edge((u.clone(), v.clone()), in_between.weight.clone());
             set.union(&u, &v);
         }
@@ -434,11 +430,7 @@ where
 ///
 /// ```
 ///
-pub fn reverse_delete<V>(mut G: Graph<V>) -> Result<Graph<V>, String>
-where
-    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone + Debug,
-{
+pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
     // Reverse delete only works for undirected graphs.
     let is_directed = match G.edge_type {
         EdgeType::Directed => {
@@ -539,10 +531,9 @@ where
 ///
 /// ```
 ///
-pub fn prims<V>(mut g: Graph<V>) -> Result<Graph<V>, String>
-where
-    // E: Clone + std::cmp::Ord + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-    V: Clone + Debug,
+pub fn prims(mut g: Graph) -> Result<Graph, String>
+    // E: Clone + std::cmp::Ord + Display + Debug,
+    // E will have int or float values so we need to mark the Ord to compare them
 {
     // check if graph has directed edges - Prims works on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -600,8 +591,8 @@ where
         }
 
         // Add the vertices and edge to the MST
-        mst.add_vertex(u.clone(), g.vertices.get(&u).unwrap().value.clone());
-        mst.add_vertex(v.clone(), g.vertices.get(&v).unwrap().value.clone());
+        mst.add_vertex(u.clone());
+        mst.add_vertex(v.clone());
         mst.add_edge(
             (u.clone(), v.clone()),
             edge.weight.clone(),
@@ -643,18 +634,18 @@ where
 #[cfg(test)]
 mod algos_tests {
     use super::*;
-    fn get_test_graph_1(directed: bool) -> Graph<i32> {
+    fn get_test_graph_1(directed: bool) -> Graph {
         // Generate a connected undirected graph.
-        let mut G: Graph<i32> = Graph::new(directed);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut G: Graph = Graph::new(directed);
+        G.add_vertex(String::from("A"));
+        G.add_vertex(String::from("B"));
+        G.add_vertex(String::from("C"));
+        G.add_vertex(String::from("D"));
+        G.add_vertex(String::from("E"));
+        G.add_vertex(String::from("F"));
+        G.add_vertex(String::from("G"));
+        G.add_vertex(String::from("H"));
+        G.add_vertex(String::from("I"));
 
         // Integers - i32
         G.add_edge(
@@ -716,7 +707,7 @@ mod algos_tests {
         G
     }
 
-    fn get_test_graph_2(directed: bool) -> Graph<i32> {
+    fn get_test_graph_2(directed: bool) -> Graph {
         //Generates a graph with 2 connected components.
         let mut G = get_test_graph_1(directed);
         G.remove_vertex(String::from("I"));
@@ -725,18 +716,18 @@ mod algos_tests {
         G
     }
 
-    fn get_mst_of_graph_1() -> Graph<i32> {
+    fn get_mst_of_graph_1() -> Graph {
         //Generate solution to test graph 1.
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("A"));
+        G.add_vertex(String::from("B"));
+        G.add_vertex(String::from("C"));
+        G.add_vertex(String::from("D"));
+        G.add_vertex(String::from("E"));
+        G.add_vertex(String::from("F"));
+        G.add_vertex(String::from("G"));
+        G.add_vertex(String::from("H"));
+        G.add_vertex(String::from("I"));
         G.add_edge(
             (String::from("A"), String::from('B')),
             graphs::Number::I32(4),
@@ -800,15 +791,15 @@ mod algos_tests {
 
     #[test]
     fn test_reverse_delete_on_empty() {
-        let mut G: Graph<i32> = Graph::new(false);
+        let mut G: Graph = Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_reverse_delete_on_trivial() {
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("Banana"), 0);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
         assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 1);
     }
@@ -843,15 +834,15 @@ mod algos_tests {
 
     #[test]
     fn test_boruvka_on_empty() {
-        let mut G: Graph<i32> = Graph::new(false);
+        let mut G: Graph = Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(boruvka(G).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_boruvka_on_trivial() {
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("Banana"), 0);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
         assert_eq!(boruvka(G).unwrap().get_vertices().len(), 1);
     }
@@ -886,15 +877,15 @@ mod algos_tests {
 
     #[test]
     fn test_kruskals_on_empty() {
-        let mut G: Graph<i32> = Graph::new(false);
+        let mut G: Graph = Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(kruskals(G).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_kruskals_on_trivial() {
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("Banana"), 0);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
         assert_eq!(kruskals(G).unwrap().get_vertices().len(), 1);
     }

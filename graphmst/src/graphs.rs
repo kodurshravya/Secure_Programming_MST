@@ -102,22 +102,13 @@ impl fmt::Display for Number {
 /// # Edge Type
 ///
 /// edge_type: EdgeType - Directed or Undirected
-pub struct Graph<V>
-where
-    V: Clone,
-    // E: Clone,
-{
-    pub vertices: HashMap<VLT, Vertex<V>>,
+pub struct Graph {
+    pub vertices: HashMap<VLT, Vertex>,
     pub edges: HashMap<(VLT, VLT), Edge>,
     pub edge_type: EdgeType,
 }
 
-impl<V> Graph<V>
-// impl<V, E: Clone> Graph<V>
-where
-    // E: Clone + Debug,
-    V: Clone + Debug,
-{
+impl Graph {
     /// Creates a new Graph
     ///
     /// # Parameters:
@@ -144,16 +135,16 @@ where
     /// ```
     /// let mut g: graphs::Graph<i32> = graphs::Graph::new(true);
     /// ```
-    pub fn new(directed: bool) -> Graph<V> {
+    pub fn new(directed: bool) -> Graph {
         //Create an empty graph.
-        let v: HashMap<VLT, Vertex<V>> = HashMap::new();
+        let v: HashMap<VLT, Vertex> = HashMap::new();
         let e: HashMap<(VLT, VLT), Edge> = HashMap::new();
         let edge_type = if directed {
             EdgeType::Directed
         } else {
             EdgeType::Undirected
         };
-        Graph::<V> {
+        Graph {
             vertices: v,
             edges: e,
             edge_type: edge_type,
@@ -184,7 +175,7 @@ where
     pub fn get_topological_order(&mut self) -> Vec<VLT> {
         //FIXME: Function not finished.
         //TODO: Consider moving to utils.
-        let mut g: Graph<f64> = Graph::new(true);
+        let mut g: Graph = Graph::new(true);
         let nodes = g.get_vertices().keys();
         // let nodes =  g.edges;
         let mut order: Vec<VLT> = vec![];
@@ -202,7 +193,7 @@ where
 
     pub fn get_order(&mut self, node: &VLT, order: &mut Vec<VLT>) {
         //TODO: Consider moving to utils.
-        let mut g: Graph<f64> = Graph::new(true);
+        let mut g: Graph = Graph::new(true);
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
 
@@ -220,7 +211,7 @@ where
         }
     }
 
-    pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex<V>> {
+    pub fn get_vertices(&mut self) -> &mut HashMap<VLT, Vertex> {
         &mut self.vertices
     }
 
@@ -246,7 +237,7 @@ where
     /// let mut G: graphs::Graph<i32> = graphs::Graph::new(false); // create undirected graph
     /// G.add_vertex(String::from("A"), 0); // add vertex to the graph with label A and value 0
     /// ```
-    pub fn add_vertex(&mut self, label: VLT, value: V) {
+    pub fn add_vertex(&mut self, label: VLT) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
             // self.vertices.iter().any(|vert| vert.label.eq(&label)){
@@ -257,7 +248,7 @@ where
                 label.clone(),
                 Vertex {
                     label: label,
-                    value: value,
+                    value: 0f64
                 },
             );
         }
@@ -567,7 +558,7 @@ where
     /// ```
     /// let vertex_A = g.get_vertex(String::from("A")); // this wil return the vertex A which is mutable (We can change the value of the vertex)
     /// ```
-    pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex<V>> {
+    pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex> {
         self.vertices.get_mut(label)
     }
     /*
@@ -647,8 +638,6 @@ where
     //TODO: Add function to print graph.
 }
 
-//GPH MARKER
-
 
 /// Vertex Structure
 ///
@@ -658,25 +647,26 @@ where
 ///
 /// Label is a string and value is a generic
 #[derive(Debug, Clone)]
-pub struct Vertex<T> {
+pub struct Vertex {
     pub label: VLT,
-    pub value: T,
+    pub value: f64
 }
 
 // FIXME: This is here for debugging.
-impl Vertex<f64> {
+
+impl Vertex {
     pub fn get_value(&self) -> f64 {
         self.value
     }
 }
 
-impl<V> Vertex<V> {
-    pub fn set_value(&mut self, new_value: V) {
+impl Vertex {
+    pub fn set_value(&mut self, new_value: f64) {
         self.value = new_value;
     }
 }
 
-impl<V> PartialEq for Vertex<V> {
+impl PartialEq for Vertex {
     //Two vertices are equal if they have the same label.
     fn eq(&self, other: &Self) -> bool {
         self.label == other.label
@@ -756,8 +746,8 @@ impl PartialEq for Edge {
 macro_rules! ev {
     ( $G:expr, [$a:literal, $b:literal, $c:literal] ) => {
         {
-            $G.add_vertex(String::from($a), 0);
-            $G.add_vertex(String::from($c), 0);
+            $G.add_vertex(String::from($a));
+            $G.add_vertex(String::from($c));
             $G.add_edge((String::from($a), String::from($c)), Number::I32($b));
             println!( "{}, {}, {}", $a, $b, $c );
         }
@@ -767,7 +757,7 @@ macro_rules! ev {
         {
             {   
                 $(
-                    $G.add_vertex(String::from($x), 0);
+                    $G.add_vertex(String::from($x));
                     println!("{}", String::from($x));
                 )*
             }
@@ -781,7 +771,7 @@ macro_rules! ev {
 macro_rules! gph {
     ( {$($sub:tt),*} ) => { //iterate over every token. Could be a single string or an edge tuple.
         {
-            let mut G: Graph<i32> = Graph::new(false);
+            let mut G: Graph = Graph::new(false);
             $(
                 ev!(&mut G, $sub);
             )*
@@ -790,11 +780,10 @@ macro_rules! gph {
     };
     ( $($x:expr ),* ) => {
         {
-            let mut G: Graph<i32> = Graph::new(false);
+            let mut G: Graph = Graph::new(false);
             {   
                 $(
-                    println!("{}", String::from($x));
-                    G.add_vertex(String::from($x), 0);
+                    G.add_vertex(String::from($x));
                 )*
                 G
             }
@@ -813,35 +802,6 @@ fn main() {
 */
 
 
-
-
-
-/*
-#[macro_export]
-macro_rules! gph {
-    ( {$($edg:tt),*} ) => {
-        {
-            let mut G: Graph<i32> = Graph::new(false);
-            $(
-                G.add_edge((String::from(edg(0)), String::from(edg(1))), edg(2));
-            )*
-            G
-        }
-    };
-    ( $($x:expr ),* ) => {
-        {
-            let mut G: Graph<i32> = Graph::new(false);
-            {   
-                $(
-                    G.add_vertex(String::from($x), 0);
-                )*
-                G
-            }
-        }
-    };
-}
-*/
-
 /// Test cases
 #[cfg(test)]
 mod graph_tests {
@@ -849,27 +809,26 @@ mod graph_tests {
     //use graphs::Graph;
     use super::*;
 
-    fn get_test_graph_1() -> Graph<f64> {
-        let mut g: Graph<f64> = Graph::new(false);
-        g.add_vertex(String::from("A"), 0.);
-        g.add_vertex(String::from("B"), 1.);
-        g.add_vertex(String::from("C"), 2.);
-        g.add_vertex(String::from("D"), 3.);
-        g.add_vertex(String::from("E"), 4.);
-        g.add_vertex(String::from("F"), 5.);
-        g.add_vertex(String::from("G"), 6.);
-        g.add_vertex(String::from("H"), 7.);
-        g.add_vertex(String::from("I"), 8.);
+    fn get_test_graph_1() -> Graph {
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("A"));
+        g.add_vertex(String::from("B"));
+        g.add_vertex(String::from("C"));
+        g.add_vertex(String::from("D"));
+        g.add_vertex(String::from("E"));
+        g.add_vertex(String::from("F"));
+        g.add_vertex(String::from("G"));
+        g.add_vertex(String::from("H"));
+        g.add_vertex(String::from("I"));
         g
     }
 
     #[test]
     fn add_one_vertex() {
-        let mut g: Graph<f64> = Graph::new(false);
-        g.add_vertex(String::from("A"), 0f64);
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("A"));
         assert_eq!(g.get_vertices().len(), 1);
         assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
-        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0f64);
     }
 
     #[test]
@@ -877,15 +836,10 @@ mod graph_tests {
         let mut g = get_test_graph_1();
         assert_eq!(g.get_vertices().len(), 9);
         assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
-        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0.);
         assert_eq!(g.get_vertex(&String::from("C")).unwrap().label, "C");
-        assert_eq!(g.get_vertex(&String::from("C")).unwrap().get_value(), 2.);
         assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
-        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
         assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
-        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7.);
         assert_eq!(g.get_vertex(&String::from("I")).unwrap().label, "I");
-        assert_eq!(g.get_vertex(&String::from("I")).unwrap().get_value(), 8.);
     }
 
     #[test]
@@ -919,7 +873,7 @@ mod graph_tests {
     #[test]
     fn add_one_undirected_edge() {
         let mut G = get_test_graph_1();
-        G.add_edge((String::from("A"), String::from('B')), Number::F64((4.)));
+        G.add_edge((String::from("A"), String::from('B')), Number::F64(4.));
         assert_eq!(G.get_edges().len(), 1);
     }
     
