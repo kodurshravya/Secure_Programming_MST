@@ -21,3 +21,7 @@
 - Ashwinkumar Ajithkumar Pillai
 - Micheal Williams
 - Vinaya Birajdar
+
+# Note
+
+Test Cases are added in algo.rs file and lib.rs file
