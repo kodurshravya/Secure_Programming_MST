@@ -645,7 +645,7 @@ macro_rules! edg_or_vert {
         {
             $G.add_vertex(String::from($a));
             $G.add_vertex(String::from($c));
-            $G.add_edge((String::from($a), String::from($c)), Number::I32($b));
+            $G.add_edge((String::from($a), String::from($c)), GNumber::I32($b));
             println!( "{}, {}, {}", $a, $b, $c );
         }
     };
@@ -898,7 +898,7 @@ mod graph_tests {
     #[test]
     fn add_one_undirected_edge() {
         let mut G = get_test_graph_1();
-        G.add_edge((String::from("A"), String::from('B')), Number::F64(4.));
+        G.add_edge((String::from("A"), String::from('B')), GNumber::F64(4.));
         assert_eq!(G.get_edges().len(), 1);
     }
 

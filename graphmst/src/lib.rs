@@ -15,18 +15,18 @@ mod graph_tests {
         graphs::{self, *},
     };
 
-    fn get_test_graph_1(directed: bool) -> Graph<i32> {
+    fn get_test_graph_1(directed: bool) -> Graph {
         // Generate a connected undirected graph.
-        let mut G: Graph<i32> = Graph::new(directed);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut G: Graph = Graph::new(directed);
+        G.add_vertex(String::from("A"));
+        G.add_vertex(String::from("B"));
+        G.add_vertex(String::from("C"));
+        G.add_vertex(String::from("D"));
+        G.add_vertex(String::from("E"));
+        G.add_vertex(String::from("F"));
+        G.add_vertex(String::from("G"));
+        G.add_vertex(String::from("H"));
+        G.add_vertex(String::from("I"));
 
         // Integers - i32
         G.add_edge(
@@ -88,7 +88,7 @@ mod graph_tests {
         G
     }
 
-    fn get_test_graph_2(directed: bool) -> Graph<i32> {
+    fn get_test_graph_2(directed: bool) -> Graph {
         //Generates a graph with 2 connected components.
         let mut G = get_test_graph_1(directed);
         G.remove_vertex(String::from("I"));
@@ -97,18 +97,18 @@ mod graph_tests {
         G
     }
 
-    fn get_mst_of_graph_1() -> Graph<i32> {
+    fn get_mst_of_graph_1() -> Graph {
         //Generate solution to test graph 1.
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("A"));
+        G.add_vertex(String::from("B"));
+        G.add_vertex(String::from("C"));
+        G.add_vertex(String::from("D"));
+        G.add_vertex(String::from("E"));
+        G.add_vertex(String::from("F"));
+        G.add_vertex(String::from("G"));
+        G.add_vertex(String::from("H"));
+        G.add_vertex(String::from("I"));
         G.add_edge(
             (String::from("A"), String::from('B')),
             graphs::GNumber::I32(4),
@@ -146,8 +146,8 @@ mod graph_tests {
 
     #[test]
     fn add_one_vertex() {
-        let mut g: Graph<f64> = Graph::new(false);
-        g.add_vertex(String::from("A"), 0f64);
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("A"));
         assert_eq!(g.get_vertices().len(), 1);
         assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
         assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0f64);
@@ -158,15 +158,15 @@ mod graph_tests {
         let mut g = get_test_graph_1(false);
         assert_eq!(g.get_vertices().len(), 9);
         assert_eq!(g.get_vertex(&String::from("A")).unwrap().label, "A");
-        assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0);
+        //assert_eq!(g.get_vertex(&String::from("A")).unwrap().get_value(), 0);
         assert_eq!(g.get_vertex(&String::from("C")).unwrap().label, "C");
-        assert_eq!(g.get_vertex(&String::from("C")).unwrap().get_value(), 2);
+        //assert_eq!(g.get_vertex(&String::from("C")).unwrap().get_value(), 2);
         assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
-        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7);
+        //assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7);
         assert_eq!(g.get_vertex(&String::from("H")).unwrap().label, "H");
-        assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7);
+        //assert_eq!(g.get_vertex(&String::from("H")).unwrap().get_value(), 7);
         assert_eq!(g.get_vertex(&String::from("I")).unwrap().label, "I");
-        assert_eq!(g.get_vertex(&String::from("I")).unwrap().get_value(), 8);
+        //assert_eq!(g.get_vertex(&String::from("I")).unwrap().get_value(), 8);
     }
 
     #[test]
@@ -199,9 +199,9 @@ mod graph_tests {
 
     #[test]
     // fn add_one_undirected_edge() {
-    //     let mut g: Graph<i32> = Graph::new(false);
-    //     g.add_vertex(String::from("A"), 0);
-    //     g.add_vertex(String::from("B"), 1);
+    //     let mut g: Graph = Graph::new(false);
+    //     g.add_vertex(String::from("A"));
+    //     g.add_vertex(String::from("B"));
     //     g.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
     //     assert_eq!(g.get_edges().len(), 1);
     // }
@@ -234,15 +234,15 @@ mod graph_tests {
 
     #[test]
     fn test_kruskals_on_empty() {
-        let mut G: Graph<i32> = Graph::new(false);
+        let mut G: Graph= Graph::new(false);
         //TODO: Come up with a better check.
         assert_eq!(kruskals(G).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_kruskals_on_trivial() {
-        let mut G: Graph<i32> = Graph::new(false);
-        G.add_vertex(String::from("Banana"), 0);
+        let mut G: Graph = Graph::new(false);
+        G.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
         assert_eq!(kruskals(G).unwrap().get_vertices().len(), 1);
     }

@@ -114,7 +114,7 @@ where
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::GNumber::I32(4),
+///     GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -243,7 +243,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::GNumber::I32(4),
+///     GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -419,7 +419,7 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::GNumber::I32(4),
+///     GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -520,7 +520,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::GNumber::I32(4),
+///     GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -691,35 +691,35 @@ mod algos_tests {
         G.add_vertex(String::from("I"));
         G.add_edge(
             (String::from("A"), String::from('B')),
-            graphs::Number::I32(4),
+            GNumber::I32(4),
         );
         G.add_edge(
             (String::from("B"), String::from('C')),
-            graphs::Number::I32(8),
+            GNumber::I32(8),
         );
         G.add_edge(
             (String::from("C"), String::from('D')),
-            graphs::Number::I32(7),
+            GNumber::I32(7),
         );
         G.add_edge(
             (String::from("D"), String::from('E')),
-            graphs::Number::I32(10),
+            GNumber::I32(10),
         );
         G.add_edge(
             (String::from("F"), String::from('G')),
-            graphs::Number::I32(2),
+            GNumber::I32(2),
         );
         G.add_edge(
             (String::from("G"), String::from('H')),
-            graphs::Number::I32(1),
+            GNumber::I32(1),
         );
         G.add_edge(
             (String::from("C"), String::from('I')),
-            graphs::Number::I32(2),
+            GNumber::I32(2),
         );
         G.add_edge(
             (String::from("C"), String::from('F')),
-            graphs::Number::I32(4),
+            GNumber::I32(4),
         );
         G
     }
