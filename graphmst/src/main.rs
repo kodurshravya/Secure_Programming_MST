@@ -245,80 +245,80 @@ fn main() {
 
     fn get_graph() -> graphs::Graph {
         //Generates a graph with 2 connected components.
-        let mut G: graphs::Graph = graphs::Graph::new(false);
-        G.add_vertex(String::from("A"));
-        G.add_vertex(String::from("B"));
-        G.add_vertex(String::from("C"));
-        G.add_vertex(String::from("D"));
-        G.add_vertex(String::from("E"));
-        G.add_vertex(String::from("F"));
-        G.add_vertex(String::from("G"));
-        G.add_vertex(String::from("H"));
-        G.add_vertex(String::from("I"));
+        let mut g: graphs::Graph = graphs::Graph::new(false);
+        g.add_vertex(String::from("A"));
+        g.add_vertex(String::from("B"));
+        g.add_vertex(String::from("C"));
+        g.add_vertex(String::from("D"));
+        g.add_vertex(String::from("E"));
+        g.add_vertex(String::from("F"));
+        g.add_vertex(String::from("G"));
+        g.add_vertex(String::from("H"));
+        g.add_vertex(String::from("I"));
 
         // Integers - i32
-        G.add_edge(
+        g.add_edge(
             (String::from("A"), String::from('B')),
             graphs::GNumber::I32(4),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("B"), String::from('C')),
             graphs::GNumber::I32(8),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('D')),
             graphs::GNumber::I32(7),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("D"), String::from('E')),
             graphs::GNumber::I32(9),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("E"), String::from('F')),
             graphs::GNumber::I32(10),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("F"), String::from('G')),
             graphs::GNumber::I32(2),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("G"), String::from('H')),
             graphs::GNumber::I32(1),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("H"), String::from('I')),
             graphs::GNumber::I32(7),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("H"), String::from('A')),
             graphs::GNumber::I32(8),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("B"), String::from('H')),
             graphs::GNumber::I32(11),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('I')),
             graphs::GNumber::I32(2),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('F')),
             graphs::GNumber::I32(4),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("D"), String::from('F')),
             graphs::GNumber::I32(14),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("G"), String::from('I')),
             graphs::GNumber::I32(6),
         );
-        G
+        g
     }
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----boruvka START -----\n\n");
-    let mst_boruvka = algos::boruvka(G);
+    let mst_boruvka = algos::boruvka(g);
     match mst_boruvka {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -326,9 +326,9 @@ fn main() {
     }
     println!("\n\n----boruvka END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----KRUSKALS START -----\n\n");
-    let mst_kruskals = algos::kruskals(G);
+    let mst_kruskals = algos::kruskals(g);
     match mst_kruskals {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -336,9 +336,9 @@ fn main() {
     }
     println!("\n\n----KRUSKALS END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----REVERSE DELETE START -----\n\n");
-    let mst_rd = algos::reverse_delete(G);
+    let mst_rd = algos::reverse_delete(g);
     match mst_rd {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -346,9 +346,9 @@ fn main() {
     }
     println!("\n\n----REVERSE DELETE END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----PRIMS START -----\n\n");
-    let mst_prims = algos::prims(G);
+    let mst_prims = algos::prims(g);
     match mst_prims {
         Ok(g) => g.print(),
         Err(e) => println!("{}", e),

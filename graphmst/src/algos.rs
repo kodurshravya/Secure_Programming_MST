@@ -47,26 +47,26 @@ where
 
 //TODO: Test this function
 // pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
-pub fn dfs(G: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
+pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
-    for (lbl, _) in G.get_vertices().iter() {
+    for (lbl, _) in g.get_vertices().iter() {
         visited.insert((*lbl).clone(), false);
     }
-    stack.push_front(G.get_vertex(&start_vertex).unwrap().clone());
+    stack.push_front(g.get_vertex(&start_vertex).unwrap().clone());
     while !stack.is_empty() {
-        let V = stack.pop_front().unwrap();
-        if !visited.get(&V.label).unwrap() {
-            visited.insert(V.label.clone(), true);
-            for neighbor in G.get_neighbors(&V.label).iter() {
-                stack.push_front((*G.get_vertex(neighbor).unwrap()).clone());
+        let v = stack.pop_front().unwrap();
+        if !visited.get(&v.label).unwrap() {
+            visited.insert(v.label.clone(), true);
+            for neighbor in g.get_neighbors(&v.label).iter() {
+                stack.push_front((*g.get_vertex(neighbor).unwrap()).clone());
             }
         }
     }
     visited
 }
 
-pub fn bellman_ford<E>(mut g: Graph, start_vertex: VLT)
+pub fn bellman_ford<E>(mut _g: Graph, _start_vertex: VLT)
 where
     E: Clone,
 {
@@ -93,16 +93,16 @@ where
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A")); // add vertex A
-/// G.add_vertex(String::from("B")); // add vertex B
+/// g.add_vertex(String::from("A")); // add vertex A
+/// g.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I")); // add vertex I
+/// g.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
 /// // Add multiple edges
-/// G.add_edge(
+/// g.add_edge(
 ///     (String::from("A"), String::from('B')),
 ///     GNumber::I32(4),
 /// );
@@ -222,16 +222,16 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A")); // add vertex A
-/// G.add_vertex(String::from("B")); // add vertex B
+/// g.add_vertex(String::from("A")); // add vertex A
+/// g.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I")); // add vertex I
+/// g.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
 /// // Add multiple edges
-/// G.add_edge(
+/// g.add_edge(
 ///     (String::from("A"), String::from('B')),
 ///     GNumber::I32(4),
 /// );
@@ -398,16 +398,16 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A")); // add vertex A
-/// G.add_vertex(String::from("B")); // add vertex B
+/// g.add_vertex(String::from("A")); // add vertex A
+/// g.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I")); // add vertex I
+/// g.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
 /// // Add multiple edges
-/// G.add_edge(
+/// g.add_edge(
 ///     (String::from("A"), String::from('B')),
 ///     GNumber::I32(4),
 /// );
@@ -423,9 +423,9 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 ///
 /// ```
 ///
-pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
+pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
     // Reverse delete only works for undirected graphs.
-    let is_directed = match G.edge_type {
+    let _is_directed = match g.edge_type {
         EdgeType::Directed => {
             return Err(String::from(
                 "Reverse delete only work on undirected graphs!",
@@ -435,14 +435,14 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
     };
 
     // Check for empty or trivial graph
-    if G.get_vertices().len() <= 1 {
-        return Ok(G);
+    if g.get_vertices().len() <= 1 {
+        return Ok(g);
     }
 
     // Check for connected graph
     //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
-    let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
-    if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
+    let start_vertex_lbl = g.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+    if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
         return Err(String::from("Graph is not connected."));
     }
 
@@ -450,7 +450,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
     let mut edges: Vec<Edge> = Vec::new();
 
     // fill the vector with edges in graph
-    for (_, edge) in G.get_edges().iter() {
+    for (_, edge) in g.get_edges().iter() {
         edges.push(edge.clone());
     }
 
@@ -459,16 +459,16 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 
     // iterate over edges - largest to smallest weight
     for edge in edges.iter() {
-        let w = G.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
-        G.remove_edge(edge.endpoints.clone());
-        let start_vertex_lbl = G.get_vertices().keys().next().unwrap().clone();
-        if !dfs(&mut G, start_vertex_lbl).values().all(|&x| x) {
-            G.add_edge(edge.endpoints.clone(), w);
+        let w = g.get_edges().get(&edge.endpoints).unwrap().weight.clone(); //TODO: This isn't pretty. Better is to have remove_edge return the edge that was removed.
+        g.remove_edge(edge.endpoints.clone());
+        let start_vertex_lbl = g.get_vertices().keys().next().unwrap().clone();
+        if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
+            g.add_edge(edge.endpoints.clone(), w);
         }
     }
 
     println!("\nMST: \n");
-    for (_, edge) in &G.edges {
+    for (_, edge) in &g.edges {
         println!(
             "({}) -------[{}]------- ({})",
             edge.endpoints.0.clone(),
@@ -477,7 +477,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
         );
     }
 
-    Ok(G)
+    Ok(g)
 }
 
 /// Prim's Algorithm - Generate MST for any graph using the Prim's Algorithm
@@ -499,16 +499,16 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 ///
 /// // Add vertices
 ///
-/// G.add_vertex(String::from("A")); // add vertex A
-/// G.add_vertex(String::from("B")); // add vertex B
+/// g.add_vertex(String::from("A")); // add vertex A
+/// g.add_vertex(String::from("B")); // add vertex B
 /// ...
 /// ...
-/// G.add_vertex(String::from("I")); // add vertex I
+/// g.add_vertex(String::from("I")); // add vertex I
 ///
 /// // Add edges
 ///
 /// // Add multiple edges
-/// G.add_edge(
+/// g.add_edge(
 ///     (String::from("A"), String::from('B')),
 ///     GNumber::I32(4),
 /// );
@@ -524,7 +524,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 ///
 /// ```
 ///
-pub fn prims(mut g: Graph) -> Result<Graph, String>
+pub fn prims(g: Graph) -> Result<Graph, String>
 // E: Clone + std::cmp::Ord + Display + Debug,
     // E will have int or float values so we need to mark the Ord to compare them
 {
@@ -629,80 +629,80 @@ mod algos_tests {
     use super::*;
     fn get_test_graph_1(directed: bool) -> Graph {
         // Generate a connected undirected graph.
-        let mut G: Graph = Graph::new(directed);
-        G.add_vertex(String::from("A"));
-        G.add_vertex(String::from("B"));
-        G.add_vertex(String::from("C"));
-        G.add_vertex(String::from("D"));
-        G.add_vertex(String::from("E"));
-        G.add_vertex(String::from("F"));
-        G.add_vertex(String::from("G"));
-        G.add_vertex(String::from("H"));
-        G.add_vertex(String::from("I"));
+        let mut g: Graph = Graph::new(directed);
+        g.add_vertex(String::from("A"));
+        g.add_vertex(String::from("B"));
+        g.add_vertex(String::from("C"));
+        g.add_vertex(String::from("D"));
+        g.add_vertex(String::from("E"));
+        g.add_vertex(String::from("F"));
+        g.add_vertex(String::from("G"));
+        g.add_vertex(String::from("H"));
+        g.add_vertex(String::from("I"));
 
         // Integers - i32
-        G.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
-        G.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
-        G.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
-        G.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
-        G.add_edge((String::from("E"), String::from('F')), GNumber::I32(11));
-        G.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
-        G.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
-        G.add_edge((String::from("H"), String::from('I')), GNumber::I32(7));
-        G.add_edge((String::from("H"), String::from('A')), GNumber::I32(9));
-        G.add_edge((String::from("B"), String::from('H')), GNumber::I32(12));
-        G.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
-        G.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
-        G.add_edge((String::from("D"), String::from('F')), GNumber::I32(14));
-        G.add_edge((String::from("G"), String::from('I')), GNumber::I32(6));
-        G
+        g.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
+        g.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
+        g.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
+        g.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
+        g.add_edge((String::from("E"), String::from('F')), GNumber::I32(11));
+        g.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
+        g.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
+        g.add_edge((String::from("H"), String::from('I')), GNumber::I32(7));
+        g.add_edge((String::from("H"), String::from('A')), GNumber::I32(9));
+        g.add_edge((String::from("B"), String::from('H')), GNumber::I32(12));
+        g.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
+        g.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
+        g.add_edge((String::from("D"), String::from('F')), GNumber::I32(14));
+        g.add_edge((String::from("G"), String::from('I')), GNumber::I32(6));
+        g
     }
 
     fn get_test_graph_2(directed: bool) -> Graph {
         //Generates a graph with 2 connected components.
-        let mut G = get_test_graph_1(directed);
-        G.remove_vertex(String::from("I"));
-        G.remove_edge((String::from("B"), String::from('C')));
-        G.remove_edge((String::from("F"), String::from('G')));
-        G
+        let mut g = get_test_graph_1(directed);
+        g.remove_vertex(String::from("I"));
+        g.remove_edge((String::from("B"), String::from('C')));
+        g.remove_edge((String::from("F"), String::from('G')));
+        g
     }
 
     fn get_mst_of_graph_1() -> Graph {
         //Generate solution to test graph 1.
-        let mut G: Graph = Graph::new(false);
-        G.add_vertex(String::from("A"));
-        G.add_vertex(String::from("B"));
-        G.add_vertex(String::from("C"));
-        G.add_vertex(String::from("D"));
-        G.add_vertex(String::from("E"));
-        G.add_vertex(String::from("F"));
-        G.add_vertex(String::from("G"));
-        G.add_vertex(String::from("H"));
-        G.add_vertex(String::from("I"));
-        G.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
-        G.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
-        G.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
-        G.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
-        G.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
-        G.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
-        G.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
-        G.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
-        G
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("A"));
+        g.add_vertex(String::from("B"));
+        g.add_vertex(String::from("C"));
+        g.add_vertex(String::from("D"));
+        g.add_vertex(String::from("E"));
+        g.add_vertex(String::from("F"));
+        g.add_vertex(String::from("G"));
+        g.add_vertex(String::from("H"));
+        g.add_vertex(String::from("I"));
+        g.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
+        g.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
+        g.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
+        g.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
+        g.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
+        g.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
+        g.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
+        g.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
+        g
     }
 
     //Test depth-first search.
     #[test]
     fn test_dfs_on_connected() {
-        let mut G = get_test_graph_1(false);
-        let res = dfs(&mut G, String::from("A"));
+        let mut g = get_test_graph_1(false);
+        let res = dfs(&mut g, String::from("A"));
         assert!(res.values().all(|&x| x));
         println!("dfs result: {:?}", res);
     }
 
     #[test]
     fn test_dfs_on_disconnected() {
-        let mut G = get_test_graph_2(false);
-        let res = dfs(&mut G, String::from("A"));
+        let mut g = get_test_graph_2(false);
+        let res = dfs(&mut g, String::from("A"));
         assert!(res.get(&String::from("G")).unwrap());
         assert!(!res.get(&String::from("E")).unwrap());
     }
@@ -710,37 +710,37 @@ mod algos_tests {
     //Test reverse delete algorithm.
     #[test]
     fn test_reverse_delete_on_directed() {
-        let mut G = get_test_graph_1(true);
+        let g = get_test_graph_1(true);
         //TODO: Figure out how to check assertion error.
-        assert!(reverse_delete(G).is_err());
+        assert!(reverse_delete(g).is_err());
         //assert_eq!(reverse_delete(G).unwrap_err(), "Reverse delete only work on undirected graphs!");
     }
 
     #[test]
     fn test_reverse_delete_on_empty() {
-        let mut G: Graph = Graph::new(false);
+        let g: Graph = Graph::new(false);
         //TODO: Come up with a better check.
-        assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 0);
+        assert_eq!(reverse_delete(g).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_reverse_delete_on_trivial() {
-        let mut G: Graph = Graph::new(false);
-        G.add_vertex(String::from("Banana"));
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
-        assert_eq!(reverse_delete(G).unwrap().get_vertices().len(), 1);
+        assert_eq!(reverse_delete(g).unwrap().get_vertices().len(), 1);
     }
 
     #[test]
     fn test_reverse_delete_disconnected() {
-        let mut G = get_test_graph_2(false);
-        assert!(reverse_delete(G).is_err());
+        let g = get_test_graph_2(false);
+        assert!(reverse_delete(g).is_err());
     }
 
     #[test]
     fn test_reverse_delete_on_non_trivial() {
-        let mut G = get_test_graph_1(false);
-        let mut mst = reverse_delete(G).unwrap();
+        let g = get_test_graph_1(false);
+        let mut mst = reverse_delete(g).unwrap();
         let mut solution = get_mst_of_graph_1();
         println!("{:?}", mst.get_edges().keys());
         println!("{:?}", solution.get_edges().keys());
@@ -753,37 +753,37 @@ mod algos_tests {
     //Test boruvka's algorithm.
     #[test]
     fn test_boruvka_on_directed() {
-        let mut G = get_test_graph_1(true);
+        let g = get_test_graph_1(true);
         //TODO: Figure out how to check assertion error.
-        assert!(boruvka(G).is_err());
+        assert!(boruvka(g).is_err());
         //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
     }
 
     #[test]
     fn test_boruvka_on_empty() {
-        let mut G: Graph = Graph::new(false);
+        let g: Graph = Graph::new(false);
         //TODO: Come up with a better check.
-        assert_eq!(boruvka(G).unwrap().get_vertices().len(), 0);
+        assert_eq!(boruvka(g).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_boruvka_on_trivial() {
-        let mut G: Graph = Graph::new(false);
-        G.add_vertex(String::from("Banana"));
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
-        assert_eq!(boruvka(G).unwrap().get_vertices().len(), 1);
+        assert_eq!(boruvka(g).unwrap().get_vertices().len(), 1);
     }
 
     #[test]
     fn test_boruvka_disconnected() {
-        let mut G = get_test_graph_2(false);
-        assert!(boruvka(G).is_err());
+        let g = get_test_graph_2(false);
+        assert!(boruvka(g).is_err());
     }
 
     #[test]
     fn test_boruvka_on_non_trivial() {
-        let mut G = get_test_graph_1(false);
-        let mut mst = boruvka(G).unwrap();
+        let g = get_test_graph_1(false);
+        let mut mst = boruvka(g).unwrap();
         let mut solution = get_mst_of_graph_1();
         println!("{:?}", mst.get_edges().keys());
         println!("{:?}", solution.get_edges().keys());
@@ -796,37 +796,37 @@ mod algos_tests {
     //Test Kruskal's algorithm.
     #[test]
     fn test_kruskals_on_directed() {
-        let mut G = get_test_graph_1(true);
+        let g = get_test_graph_1(true);
         //TODO: Figure out how to check assertion error.
-        assert!(kruskals(G).is_err());
+        assert!(kruskals(g).is_err());
         //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
     }
 
     #[test]
     fn test_kruskals_on_empty() {
-        let mut G: Graph = Graph::new(false);
+        let g: Graph = Graph::new(false);
         //TODO: Come up with a better check.
-        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 0);
+        assert_eq!(kruskals(g).unwrap().get_vertices().len(), 0);
     }
 
     #[test]
     fn test_kruskals_on_trivial() {
-        let mut G: Graph = Graph::new(false);
-        G.add_vertex(String::from("Banana"));
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("Banana"));
         //TODO: Come up with a better check.
-        assert_eq!(kruskals(G).unwrap().get_vertices().len(), 1);
+        assert_eq!(kruskals(g).unwrap().get_vertices().len(), 1);
     }
 
     #[test]
     fn test_kruskals_disconnected() {
-        let mut G = get_test_graph_2(false);
-        assert!(kruskals(G).is_err());
+        let g = get_test_graph_2(false);
+        assert!(kruskals(g).is_err());
     }
 
     #[test]
     fn test_kruskals_on_non_trivial() {
-        let mut G = get_test_graph_1(false);
-        let mut mst = kruskals(G).unwrap();
+        let g = get_test_graph_1(false);
+        let mut mst = kruskals(g).unwrap();
         let mut solution = get_mst_of_graph_1();
         println!("{:?}", mst.get_edges().keys());
         println!("{:?}", solution.get_edges().keys());

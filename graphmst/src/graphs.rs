@@ -179,7 +179,7 @@ impl Graph {
         let nodes = g.get_vertices().keys();
         // let nodes =  g.edges;
         let mut order: Vec<VLT> = vec![];
-        let mut visited_vertex: HashMap<VLT, bool> = HashMap::new();
+        let visited_vertex: HashMap<VLT, bool> = HashMap::new();
 
         for node in nodes {
             if visited_vertex.get(node) == None {
@@ -197,7 +197,7 @@ impl Graph {
         //let coming_nodes = self.get_vertices().get(node);
         let coming_nodes = g.get_vertices().keys();
 
-        for value in coming_nodes {
+        for _value in coming_nodes {
             self.get_order(node, order)
         }
         // if new_graph.get(node) == None {
@@ -235,7 +235,7 @@ impl Graph {
     ///
     /// ```
     /// let mut G: graphs::Graph = graphs::Graph::new(false); // create undirected graph
-    /// G.add_vertex(String::from("A")); // add vertex to the graph with label A and value 0
+    /// g.add_vertex(String::from("A")); // add vertex to the graph with label A and value 0
     /// ```
     pub fn add_vertex(&mut self, label: VLT) {
         //Add vertex to graph.
@@ -263,7 +263,7 @@ impl Graph {
     /// # Example
     ///
     /// ```
-    /// G.remove_vertex(String::from("A")); // Remove vertex A from the graph G
+    /// g.remove_vertex(String::from("A")); // Remove vertex A from the graph G
     /// ```
     ///  
     pub fn remove_vertex(&mut self, label: VLT) {
@@ -449,7 +449,7 @@ impl Graph {
     /// # Example
     ///
     /// ```
-    /// G.get_out_neighbors(String::from("A")) // returns all the  outgoing neighbors of A
+    /// g.get_out_neighbors(String::from("A")) // returns all the  outgoing neighbors of A
     ///
     /// // example return: ["B", "C", "D"].
     /// // A -> B, A -> C, A -> D
@@ -635,6 +635,7 @@ impl Graph {
 
 //Internal macro that matches the pattern of a single expession (indicating the user would like to add a vertex,
 //or a tuple-like pattern (str, i32, str), indicating the user would like an edge.
+#[allow(unused_macros)]
 macro_rules! edg_or_vert {
     ( $G:expr, ($a:literal, $b:literal, $c:literal) ) => {
         {
@@ -695,20 +696,20 @@ macro_rules! edg_or_vert {
 macro_rules! gph {
     ( $($sub:tt),* ) => { //iterate over every token. Could be a single string or an edge tuple.
         {
-            let mut G: Graph = Graph::new(false);
+            let mut g: Graph = Graph::new(false);
             $(
-                edg_or_vert!(&mut G, $sub);
+                edg_or_vert!(&mut g, $sub);
             )*
-            G
+            g
         }
     };
     /*
     ( $($x:expr ),* ) => {
         {
-            let mut G: Graph = Graph::new(false);
+            let mut g: Graph = Graph::new(false);
             {
                 $(
-                    G.add_vertex(String::from($x));
+                    g.add_vertex(String::from($x));
                 )*
                 G
             }
@@ -841,37 +842,37 @@ mod graph_tests {
 
     #[test]
     fn remove_multiple_vertices() {
-        let mut G = get_test_graph_1();
-        G.remove_vertex(String::from("I"));
-        G.remove_vertex(String::from("H"));
-        assert_eq!(G.get_vertices().len(), 7);
-        G.remove_vertex(String::from("E"));
-        assert_eq!(G.get_vertices().len(), 6);
-        G.remove_vertex(String::from("A"));
-        G.remove_vertex(String::from("B"));
-        assert_eq!(G.get_vertices().len(), 4);
-        G.remove_vertex(String::from("I"));
-        assert_eq!(G.get_vertices().len(), 4);
-        G.remove_vertex(String::from("G"));
-        G.remove_vertex(String::from("F"));
-        G.remove_vertex(String::from("D"));
-        G.remove_vertex(String::from("C"));
-        assert_eq!(G.get_vertices().len(), 0);
+        let mut g = get_test_graph_1();
+        g.remove_vertex(String::from("I"));
+        g.remove_vertex(String::from("H"));
+        assert_eq!(g.get_vertices().len(), 7);
+        g.remove_vertex(String::from("E"));
+        assert_eq!(g.get_vertices().len(), 6);
+        g.remove_vertex(String::from("A"));
+        g.remove_vertex(String::from("B"));
+        assert_eq!(g.get_vertices().len(), 4);
+        g.remove_vertex(String::from("I"));
+        assert_eq!(g.get_vertices().len(), 4);
+        g.remove_vertex(String::from("G"));
+        g.remove_vertex(String::from("F"));
+        g.remove_vertex(String::from("D"));
+        g.remove_vertex(String::from("C"));
+        assert_eq!(g.get_vertices().len(), 0);
     }
 
     #[test]
     fn add_one_undirected_edge() {
-        let mut G = get_test_graph_1();
-        G.add_edge((String::from("A"), String::from('B')), GNumber::F64(4.));
-        assert_eq!(G.get_edges().len(), 1);
+        let mut g = get_test_graph_1();
+        g.add_edge((String::from("A"), String::from('B')), GNumber::F64(4.));
+        assert_eq!(g.get_edges().len(), 1);
     }
 
     #[test]
     fn make_from_macro() {
-        let mut G = gph!("A", "B");
-        assert_eq!(G.get_vertices().len(), 2);
-        let mut G = gph!("C", ("A", 5, "B"));
-        assert_eq!(G.get_vertices().len(), 3);
-        assert_eq!(G.get_edges().len(), 1);
+        let mut g = gph!("A", "B");
+        assert_eq!(g.get_vertices().len(), 2);
+        let mut g = gph!("C", ("A", 5, "B"));
+        assert_eq!(g.get_vertices().len(), 3);
+        assert_eq!(g.get_edges().len(), 1);
     }
 }
