@@ -575,7 +575,7 @@ pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
 ///
 /// ```
 ///
-pub fn prims(g: Graph) -> Result<Graph, String>
+pub fn prims(mut g: Graph) -> Result<Graph, String>
 // E: Clone + std::cmp::Ord + Display + Debug,
     // E will have int or float values so we need to mark the Ord to compare them
 {
@@ -590,6 +590,18 @@ pub fn prims(g: Graph) -> Result<Graph, String>
         return Err(String::from(
             "Prims only works properly on undirected graphs!",
         ));
+    }
+
+    // Check for empty or trivial graph
+    if g.get_vertices().len() <= 1 {
+        return Ok(g);
+    }
+
+    // Check for connected graph
+    //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
+    let start_vertex_lbl = g.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+    if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
+        return Err(String::from("Graph is not connected."));
     }
 
     // vector to collect all edge values
