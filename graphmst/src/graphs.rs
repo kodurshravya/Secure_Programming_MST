@@ -102,6 +102,7 @@ impl fmt::Display for GNumber {
 /// # Edge Type
 ///
 /// edge_type: EdgeType - Directed or Undirected
+#[derive(Clone)]
 pub struct Graph {
     pub vertices: HashMap<VLT, Vertex>,
     pub edges: HashMap<(VLT, VLT), Edge>,

@@ -338,7 +338,7 @@ fn main() {
 
     let mut G = get_graph();
     println!("\n\n----REVERSE DELETE START -----\n\n");
-    let mst_rd = algos::kruskals(G);
+    let mst_rd = algos::reverse_delete(G);
     match mst_rd {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -359,4 +359,10 @@ fn main() {
 
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));
+    
+
+    let mut G = get_graph();
+    let res = algos::dfs(&mut G, String::from("A"));
+    println!("dfs result: {:?}", res);
+
 }

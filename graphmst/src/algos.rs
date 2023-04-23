@@ -56,7 +56,7 @@ where
 }
 
 //TODO: Test this function
-// pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
+/*
 pub fn dfs(G: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
@@ -74,6 +74,69 @@ pub fn dfs(G: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
         }
     }
     visited
+}
+*/
+use std::thread;
+use std::sync::{Arc, Mutex, MutexGuard};
+pub fn dfs(
+    G: &mut Graph,
+    start_vertex: VLT,
+) -> HashMap<VLT, bool> {
+    println!("dfs start");
+    let mut stack: Arc<Mutex<VecDeque<Vertex>>> = Arc::new(Mutex::new(VecDeque::new()));
+    let mut visited: Arc<Mutex<HashMap<VLT, bool>>> = Arc::new(Mutex::new(HashMap::new()));
+    for (lbl, _) in G.get_vertices().iter() {
+        (*visited).lock().unwrap().insert((*lbl).clone(), false);
+    }
+    (*stack).lock().unwrap().push_front(G.get_vertex(&start_vertex).unwrap().clone());
+
+    let mut H = Arc::new(Mutex::new(G.clone()));
+    
+    let mut handlers: Vec<thread::JoinHandle<_>> = vec![];
+    while !(*(*stack).lock().unwrap()).is_empty() { //Arc::clone(&stack).lock().unwrap()
+        println!("spot0");
+        let stack_clone = Arc::clone(&stack);
+        let visited_clone = Arc::clone(&visited);
+        let G_clone = Arc::clone(&H);
+        let handler = thread::spawn(move || {
+            println!("spot1");
+            let V = stack_clone.lock().unwrap().pop_front().unwrap();
+            println!("spot2");
+            if !visited_clone.lock().unwrap().get(&V.label).unwrap() {
+                println!("spot3");
+                visited_clone.lock().unwrap().insert(V.label.clone(), true);
+                println!("spot4");
+                G_clone.lock().unwrap();
+                println!("spot5");
+                for neighbor in G_clone.lock().unwrap().get_neighbors(&V.label).iter() {
+                    println!("spot6");
+                    stack_clone.lock().unwrap().push_front((G_clone.lock().unwrap().get_vertex(neighbor).unwrap()).clone());
+                    println!("spot7");
+                }
+            }  
+        });
+        handlers.push(handler);
+    };
+    
+    for handle in handlers {
+        handle.join();
+    }
+    
+    /*
+    match Arc::try_unwrap(visited) {
+        Err(e) => panic!("The hashmap should exist."),
+        Ok(mtx) => mtx.lock().unwrap()
+    }
+    */
+    let x = (*visited.lock().unwrap()).clone();
+    x
+    
+    
+    //let x = *(*visited);
+    //x.lock().unwrap()
+    
+    //let x: HashMap<VLT, bool> = HashMap::new();
+    //x
 }
 
 pub fn bellman_ford<E>(mut g: Graph, start_vertex: VLT)
