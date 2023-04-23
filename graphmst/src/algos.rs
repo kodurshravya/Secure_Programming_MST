@@ -8,6 +8,9 @@ use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::fmt::Debug;
 
+use std::thread;
+use std::sync::{Arc, Mutex, MutexGuard};
+
 type VLT = String; // vertex label type
 
 const INF: f64 = f64::INFINITY;
@@ -46,8 +49,7 @@ where
 }
 
 
-use std::thread;
-use std::sync::{Arc, Mutex, MutexGuard};
+
 pub fn dfs(
     G: &mut Graph,
     start_vertex: VLT,
