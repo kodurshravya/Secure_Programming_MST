@@ -77,11 +77,11 @@ where
 ///
 /// # Parameters:
 ///
-/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+/// 1. g - the graph that needs to be converted to MST. This will be of type `Graph`
 ///
 /// # Return Value:
 ///
-/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a `Error<String>` in case of any error.
 ///
 /// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
 ///
@@ -206,11 +206,11 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 ///
 /// # Parameters:
 ///
-/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+/// 1. g - the graph that needs to be converted to MST. This will be of type `Graph`
 ///
 /// # Return Value:
 ///
-/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a `Error<String>` in case of any error.
 ///
 /// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
 ///
@@ -383,11 +383,11 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 ///
 /// # Parameters:
 ///
-/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+/// 1. g - the graph that needs to be converted to MST. This will be of type `Graph`
 ///
 /// # Return Value:
 ///
-/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a `Error<String>` in case of any error.
 ///
 /// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
 ///
@@ -484,11 +484,11 @@ pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
 ///
 /// # Parameters:
 ///
-/// 1. g - the graph that needs to be converted to MST. This will be of type Graph<V>
+/// 1. g - the graph that needs to be converted to MST. This will be of type `Graph`
 ///
 /// # Return Value:
 ///
-/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a Error<String> in case of any error.
+/// This function returns a result, which will be either a Graph - the MST that was generated using the algo or a `Error<String>` in case of any error.
 ///
 /// The common errors would be - if graph is directed or if MST cannot be generated for the given graph
 ///

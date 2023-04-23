@@ -492,7 +492,7 @@ impl Graph {
     }
 
     // TODO: Documentation
-    /// Reads an adjacency matrix from a file and returns it as a Vec<Vec<u32>>
+    /// Reads an adjacency matrix from a file and returns it as a `Vec<Vec<u32>>`
     pub fn read_adjacency_matrix(filename: &str) -> Result<Vec<Vec<u32>>, Error> {
         // Open the file for reading.
         let file = File::open(filename)?;
@@ -546,7 +546,7 @@ impl Graph {
     ///
     /// # Return Type:
     ///
-    /// Returns an Option of type mutable Vertex<V>. If there are no vertex with the provided label - None will be returned
+    /// Returns an Option of type mutable `Vertex`. If there are no vertex with the provided label - None will be returned
     ///
     /// # Example
     ///
