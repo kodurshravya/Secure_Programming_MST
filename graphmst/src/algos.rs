@@ -45,66 +45,51 @@ where
     //println!("{}", (*vertex).get_value());
 }
 
-//TODO: Test this function
-// pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
-/*
-pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
-    let mut stack: VecDeque<Vertex> = VecDeque::new();
-    let mut visited: HashMap<VLT, bool> = HashMap::new();
-    for (lbl, _) in g.get_vertices().iter() {
-        visited.insert((*lbl).clone(), false);
-    }
-    stack.push_front(g.get_vertex(&start_vertex).unwrap().clone());
-    while !stack.is_empty() {
-        let v = stack.pop_front().unwrap();
-        if !visited.get(&v.label).unwrap() {
-            visited.insert(v.label.clone(), true);
-            for neighbor in g.get_neighbors(&v.label).iter() {
-                stack.push_front((*g.get_vertex(neighbor).unwrap()).clone());
-            }
-        }
-    }
-    visited
-}
-*/
+
 use std::thread;
 use std::sync::{Arc, Mutex, MutexGuard};
-use std::time::Duration;
 pub fn dfs(
     G: &mut Graph,
     start_vertex: VLT,
 ) -> HashMap<VLT, bool> {
+    //Stack will hold all vertices. Algorithm will end when all vertices have been popped.
     let mut stack: Arc<Mutex<VecDeque<Vertex>>> = Arc::new(Mutex::new(VecDeque::new()));
+    //Hashmap letting us know which vertices have been visited by dfs.
     let mut visited: Arc<Mutex<HashMap<VLT, bool>>> = Arc::new(Mutex::new(HashMap::new()));
+    //Initialize visited.
     for (lbl, _) in G.get_vertices().iter() {
         (*visited).lock().unwrap().insert((*lbl).clone(), false);
     }
+    //Populate stack.
     (*stack).lock().unwrap().push_front(G.get_vertex(&start_vertex).unwrap().clone());
 
+    //Because of interactions between lifetimes and Arc's, we have to clone the graph.
+    //It could greatly speed up our algorithm if we found a way to avoid this.
     let mut H = Arc::new(Mutex::new(G.clone()));
     
-    let mut handles: Vec<thread::JoinHandle<_>> = vec![];
+    let mut handles: Vec<thread::JoinHandle<_>> = vec![]; //Vector of thread handles.
     let max_num_threads = 10; //Maximum number of theads allowed at a time.
     let num_threads = Arc::new(Mutex::new(0)); //Counter to keep track of number of threads.
-    while !(*(*stack).lock().unwrap()).is_empty() { //Arc::clone(&stack).lock().unwrap()
+    while !(*(*stack).lock().unwrap()).is_empty() { //While stack is not empty
         let stack_clone = Arc::clone(&stack);
         let visited_clone = Arc::clone(&visited);
         let G_clone = Arc::clone(&H);
         
-        println!("{}", *num_threads.lock().unwrap());
-        
         let num_threads = Arc::clone(&num_threads);
-        if *num_threads.lock().unwrap() < max_num_threads {
+        if *num_threads.lock().unwrap() < max_num_threads { //Limit the number of threads.
             {*num_threads.lock().unwrap() += 1;}
             let handler = thread::spawn(move || {
                 let mut sc = stack_clone.lock().unwrap();
-                if let Some(V) = sc.pop_front() {
+                if let Some(V) = sc.pop_front() { //Pop vertex off of stack.
                     let mut vis = visited_clone.lock().unwrap();
-                    if !vis.get(&V.label).unwrap() {
-                        vis.insert(V.label.clone(), true);
+                    if !vis.get(&V.label).unwrap() { //If vertex has not already been visited:
+                        vis.insert(V.label.clone(), true); //Label vertex as visited.
                         let mut int_G = G_clone.lock().unwrap();
                         for neighbor in int_G.get_neighbors(&V.label).iter() {
-                            sc.push_front((int_G.get_vertex(neighbor).unwrap()).clone());
+                            //Push all unvisited neighbors onto the stack.
+                            if !vis.get(neighbor).unwrap() {
+                                sc.push_front((int_G.get_vertex(neighbor).unwrap()).clone());
+                            }
                         }
                     } 
                 } else {
@@ -116,10 +101,12 @@ pub fn dfs(
         }
     };
     
+    //Make sure all threads have finished.
     for handle in handles {
         handle.join();
     }
     
+    //Return the visited hashmap.
     let x = (*visited.lock().unwrap()).clone();
     x
 }
