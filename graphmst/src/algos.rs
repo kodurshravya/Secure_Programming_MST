@@ -1,22 +1,12 @@
-// use crate::graphs;
 use crate::graphs::*;
 use crate::util::DisjointSet;
-// use crate::graphs::Edge;
-// use crate::graphs::EdgeType;
-
-// use super::graphs::Graph;
-// use super::graphs::Vertex;
-
-// use super::util::DisjointSet;
 
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
-use std::f32::INFINITY;
 use std::fmt::Debug;
-use std::fmt::Display;
 
 type VLT = String; // vertex label type
 
@@ -129,7 +119,7 @@ where
 /// ```
 ///
 pub fn kruskals(mut g: Graph) -> Result<Graph, String>
-    // E: Clone + std::cmp::PartialOrd + Display + Debug,
+// E: Clone + std::cmp::PartialOrd + Display + Debug,
     // E will have int or float values so we need to mark the Ord to compare them
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
@@ -258,7 +248,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// ```
 ///
 pub fn boruvka(mut g: Graph) -> Result<Graph, String>
-    // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
+// E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
 {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
@@ -535,7 +525,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 /// ```
 ///
 pub fn prims(mut g: Graph) -> Result<Graph, String>
-    // E: Clone + std::cmp::Ord + Display + Debug,
+// E: Clone + std::cmp::Ord + Display + Debug,
     // E will have int or float values so we need to mark the Ord to compare them
 {
     // check if graph has directed edges - Prims works on undirected graph and not directed
@@ -689,38 +679,14 @@ mod algos_tests {
         G.add_vertex(String::from("G"));
         G.add_vertex(String::from("H"));
         G.add_vertex(String::from("I"));
-        G.add_edge(
-            (String::from("A"), String::from('B')),
-            GNumber::I32(4),
-        );
-        G.add_edge(
-            (String::from("B"), String::from('C')),
-            GNumber::I32(8),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('D')),
-            GNumber::I32(7),
-        );
-        G.add_edge(
-            (String::from("D"), String::from('E')),
-            GNumber::I32(10),
-        );
-        G.add_edge(
-            (String::from("F"), String::from('G')),
-            GNumber::I32(2),
-        );
-        G.add_edge(
-            (String::from("G"), String::from('H')),
-            GNumber::I32(1),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('I')),
-            GNumber::I32(2),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('F')),
-            GNumber::I32(4),
-        );
+        G.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
+        G.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
+        G.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
+        G.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
+        G.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
+        G.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
+        G.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
+        G.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
         G
     }
 

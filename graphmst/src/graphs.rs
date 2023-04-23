@@ -248,7 +248,7 @@ impl Graph {
                 label.clone(),
                 Vertex {
                     label: label,
-                    value: 0f64
+                    value: 0f64,
                 },
             );
         }
@@ -281,11 +281,6 @@ impl Graph {
         //Remove central vertex.
         self.vertices.remove(&label);
     }
-
-    // //FIXME: VLT ~is~ a String. This function isn't needed.
-    // pub fn get_vertices_from_edge(e: (VLT, VLT)) -> (String, String) {
-    //     (e.0, e.1)
-    // }
 
     /// Adds an edge to the graph (Endpoint vertices must be present in graph)
     ///
@@ -649,10 +644,10 @@ macro_rules! edg_or_vert {
             println!( "{}, {}, {}", $a, $b, $c );
         }
     };
-    
+
     ( $G:expr, $($x:expr ),* ) => {
         {
-            {   
+            {
                 $(
                     $G.add_vertex(String::from($x));
                     println!("{}", String::from($x));
@@ -660,30 +655,30 @@ macro_rules! edg_or_vert {
             }
         }
     };
-    
+
 }
 
-    /// Function to check if the given vertex is present in the graph
-    ///
-    /// # Parameters
-    ///
-    /// 1. label - Label of the vertex - type String
-    ///
-    /// # Return Type
-    ///
-    /// Returns a boolean value.
-    ///
-    /// true - if the vertex is present in the graph
-    ///
-    /// false - if the vertex is not present in the graph
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// if g.contains_vertex(String::from("A")){
-    ///     // Do something
-    /// }
-    /// ```
+/// Function to check if the given vertex is present in the graph
+///
+/// # Parameters
+///
+/// 1. label - Label of the vertex - type String
+///
+/// # Return Type
+///
+/// Returns a boolean value.
+///
+/// true - if the vertex is present in the graph
+///
+/// false - if the vertex is not present in the graph
+///
+/// # Example
+///
+/// ```
+/// if g.contains_vertex(String::from("A")){
+///     // Do something
+/// }
+/// ```
 
 ///Build an undirected graph
 ///
@@ -711,7 +706,7 @@ macro_rules! gph {
     ( $($x:expr ),* ) => {
         {
             let mut G: Graph = Graph::new(false);
-            {   
+            {
                 $(
                     G.add_vertex(String::from($x));
                 )*
@@ -732,10 +727,8 @@ macro_rules! gph {
 #[derive(Debug, Clone)]
 pub struct Vertex {
     pub label: VLT,
-    pub value: f64
+    pub value: f64,
 }
-
-// FIXME: This is here for debugging.
 
 impl Vertex {
     pub fn get_value(&self) -> f64 {
@@ -756,32 +749,6 @@ impl PartialEq for Vertex {
     }
 }
 
-//  -------- OLD CODE START--------
-
-//impl<E: Eq> PartialEq for Edge<E> {
-//fn eq(&self, other: &Self) -> bool {
-//self.weight.eq(&other.weight)
-//}
-//}
-
-// impl<E: Eq> Eq for Edge<E> {}
-
-// impl<E: Ord> Ord for Edge<E> {
-//     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-//         self.weight.cmp(&other.weight)
-//     }
-// }
-
-// impl<E: PartialOrd> PartialOrd for Edge<E> {
-//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-//         self.weight.partial_cmp(&other.weight)
-//     }
-// }
-
-//  -------- OLD CODE END--------
-
-//  -------- NEW CODE START--------
-
 impl Eq for Edge {}
 
 impl Ord for Edge {
@@ -795,8 +762,6 @@ impl PartialOrd for Edge {
         self.weight.partial_cmp(&other.weight)
     }
 }
-
-//  -------- NEW CODE END--------
 
 /// Edge Structure
 ///
@@ -825,7 +790,6 @@ impl PartialEq for Edge {
         }
     }
 }
-
 
 /// Test cases
 #[cfg(test)]
