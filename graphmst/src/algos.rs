@@ -654,6 +654,13 @@ pub fn prims(g: Graph) -> Result<Graph, String>
         }
     }
 
+    // check if MST is successfull
+    if mst.edges.len() != mst.vertices.len() - 1 {
+        return Err(String::from(
+            "MST doesn't exist for this graph since it is not connected",
+        ));
+    }
+
     println!("\nMST: \n");
 
     for (_, edge) in &mst.edges {
