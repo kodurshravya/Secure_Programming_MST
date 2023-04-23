@@ -47,6 +47,7 @@ where
 
 //TODO: Test this function
 // pub fn dfs<V: Clone + Debug, E: Clone + Debug>(
+/*
 pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     let mut stack: VecDeque<Vertex> = VecDeque::new();
     let mut visited: HashMap<VLT, bool> = HashMap::new();
@@ -64,6 +65,63 @@ pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
         }
     }
     visited
+}
+*/
+use std::thread;
+use std::sync::{Arc, Mutex, MutexGuard};
+use std::time::Duration;
+pub fn dfs(
+    G: &mut Graph,
+    start_vertex: VLT,
+) -> HashMap<VLT, bool> {
+    let mut stack: Arc<Mutex<VecDeque<Vertex>>> = Arc::new(Mutex::new(VecDeque::new()));
+    let mut visited: Arc<Mutex<HashMap<VLT, bool>>> = Arc::new(Mutex::new(HashMap::new()));
+    for (lbl, _) in G.get_vertices().iter() {
+        (*visited).lock().unwrap().insert((*lbl).clone(), false);
+    }
+    (*stack).lock().unwrap().push_front(G.get_vertex(&start_vertex).unwrap().clone());
+
+    let mut H = Arc::new(Mutex::new(G.clone()));
+    
+    let mut handles: Vec<thread::JoinHandle<_>> = vec![];
+    let max_num_threads = 10; //Maximum number of theads allowed at a time.
+    let num_threads = Arc::new(Mutex::new(0)); //Counter to keep track of number of threads.
+    while !(*(*stack).lock().unwrap()).is_empty() { //Arc::clone(&stack).lock().unwrap()
+        let stack_clone = Arc::clone(&stack);
+        let visited_clone = Arc::clone(&visited);
+        let G_clone = Arc::clone(&H);
+        
+        println!("{}", *num_threads.lock().unwrap());
+        
+        let num_threads = Arc::clone(&num_threads);
+        if *num_threads.lock().unwrap() < max_num_threads {
+            {*num_threads.lock().unwrap() += 1;}
+            let handler = thread::spawn(move || {
+                let mut sc = stack_clone.lock().unwrap();
+                if let Some(V) = sc.pop_front() {
+                    let mut vis = visited_clone.lock().unwrap();
+                    if !vis.get(&V.label).unwrap() {
+                        vis.insert(V.label.clone(), true);
+                        let mut int_G = G_clone.lock().unwrap();
+                        for neighbor in int_G.get_neighbors(&V.label).iter() {
+                            sc.push_front((int_G.get_vertex(neighbor).unwrap()).clone());
+                        }
+                    } 
+                } else {
+                    //This means the algorithm has finished, and we can begin wrapping up threads.
+                }
+                *num_threads.lock().unwrap() -= 1;
+            });  
+            handles.push(handler);
+        }
+    };
+    
+    for handle in handles {
+        handle.join();
+    }
+    
+    let x = (*visited.lock().unwrap()).clone();
+    x
 }
 
 pub fn bellman_ford<E>(mut _g: Graph, _start_vertex: VLT)
