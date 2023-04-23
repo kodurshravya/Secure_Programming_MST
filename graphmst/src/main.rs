@@ -1,10 +1,13 @@
-use ::graphs::Graph;
+// use ::graphs::Graph;
+// use ::
 
-use crate::algos::boruvka;
+// use crate::algos::boruvka;
 
-mod algos;
-mod graphs;
-mod util;
+// mod algos;
+// mod graphs;
+// mod util;
+
+use graphalgos::{algos, graphs};
 
 fn main() {
     //let mut g = graphs::Graph::new(false);
@@ -256,59 +259,59 @@ fn main() {
         // Integers - i32
         G.add_edge(
             (String::from("A"), String::from('B')),
-            graphs::Number::I32(4),
+            graphs::GNumber::I32(4),
         );
         G.add_edge(
             (String::from("B"), String::from('C')),
-            graphs::Number::I32(8),
+            graphs::GNumber::I32(8),
         );
         G.add_edge(
             (String::from("C"), String::from('D')),
-            graphs::Number::I32(7),
+            graphs::GNumber::I32(7),
         );
         G.add_edge(
             (String::from("D"), String::from('E')),
-            graphs::Number::I32(9),
+            graphs::GNumber::I32(9),
         );
         G.add_edge(
             (String::from("E"), String::from('F')),
-            graphs::Number::I32(10),
+            graphs::GNumber::I32(10),
         );
         G.add_edge(
             (String::from("F"), String::from('G')),
-            graphs::Number::I32(2),
+            graphs::GNumber::I32(2),
         );
         G.add_edge(
             (String::from("G"), String::from('H')),
-            graphs::Number::I32(1),
+            graphs::GNumber::I32(1),
         );
         G.add_edge(
             (String::from("H"), String::from('I')),
-            graphs::Number::I32(7),
+            graphs::GNumber::I32(7),
         );
         G.add_edge(
             (String::from("H"), String::from('A')),
-            graphs::Number::I32(8),
+            graphs::GNumber::I32(8),
         );
         G.add_edge(
             (String::from("B"), String::from('H')),
-            graphs::Number::I32(11),
+            graphs::GNumber::I32(11),
         );
         G.add_edge(
             (String::from("C"), String::from('I')),
-            graphs::Number::I32(2),
+            graphs::GNumber::I32(2),
         );
         G.add_edge(
             (String::from("C"), String::from('F')),
-            graphs::Number::I32(4),
+            graphs::GNumber::I32(4),
         );
         G.add_edge(
             (String::from("D"), String::from('F')),
-            graphs::Number::I32(14),
+            graphs::GNumber::I32(14),
         );
         G.add_edge(
             (String::from("G"), String::from('I')),
-            graphs::Number::I32(6),
+            graphs::GNumber::I32(6),
         );
         G
     }
@@ -351,7 +354,7 @@ fn main() {
         Err(e) => println!("{}", e),
     }
     println!("\n\n----PRIMS END -----\n\n");
-    
+
     //gph!("A", "B");
 
     // Kruskals(g, 5);

@@ -21,9 +21,9 @@ pub enum EdgeType {
 ///
 /// Weight can only be a numeric type
 ///
-/// eg: Number::I32(10)
+/// eg: GNumber::I32(10)
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub enum Number {
+pub enum GNumber {
     U16(u16),
     U32(u32),
     U64(u64),
@@ -34,17 +34,17 @@ pub enum Number {
     F64(f64),
 }
 
-impl fmt::Display for Number {
+impl fmt::Display for GNumber {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Number::U16(x) => write!(f, "{}", x),
-            Number::U32(x) => write!(f, "{}", x),
-            Number::U64(x) => write!(f, "{}", x),
-            Number::I16(x) => write!(f, "{}", x),
-            Number::I32(x) => write!(f, "{}", x),
-            Number::I64(x) => write!(f, "{}", x),
-            Number::F32(x) => write!(f, "{}", x),
-            Number::F64(x) => write!(f, "{}", x),
+            GNumber::U16(x) => write!(f, "{}", x),
+            GNumber::U32(x) => write!(f, "{}", x),
+            GNumber::U64(x) => write!(f, "{}", x),
+            GNumber::I16(x) => write!(f, "{}", x),
+            GNumber::I32(x) => write!(f, "{}", x),
+            GNumber::I64(x) => write!(f, "{}", x),
+            GNumber::F32(x) => write!(f, "{}", x),
+            GNumber::F64(x) => write!(f, "{}", x),
         }
     }
 }
@@ -94,7 +94,7 @@ impl fmt::Display for Number {
 /// ```
 /// pub struct Edge {
 ///     pub endpoints: (VLT, VLT),
-///     pub weight: Number,
+///     pub weight: GNumber,
 ///     pub edge_type: EdgeType,
 ///}
 /// ```
@@ -301,22 +301,22 @@ impl Graph {
     /// // Edge with I32 weights having endpoints "A" and "B"
     ///  g.add_edge(
     ///     (String::from("A"), String::from('B')),
-    ///     graphs::Number::I32(4),
+    ///     graphs::GNumber::I32(4),
     /// );
     ///
     /// // Edge with F32 weights having endpoints "A" and "B"
     /// g2.add_edge(
     ///     (String::from("A"), String::from('B')),
-    ///     graphs::Number::F32(4.),
+    ///     graphs::GNumber::F32(4.),
     /// );
     ///
     /// // Edge with U32 weights having endpoints "A" and "B"
     /// g3.add_edge(
     ///     (String::from("A"), String::from('B')),
-    ///     graphs::Number::U32(2),
+    ///     graphs::GNumber::U32(2),
     /// );
     /// ```
-    pub fn add_edge(&mut self, e: (VLT, VLT), weight: Number) {
+    pub fn add_edge(&mut self, e: (VLT, VLT), weight: GNumber) {
         let edge_type = self.edge_type;
 
         let is_undirected = match edge_type {
@@ -360,10 +360,10 @@ impl Graph {
     /// // This will update the value of the edge with endpoint (A, B) to 10 (I32 value)
     ///  g.update_edge(
     ///     (String::from("A"), String::from('B')),
-    ///     graphs::Number::I32(10),
+    ///     graphs::GNumber::I32(10),
     /// );
     /// ```
-    pub fn update_edge(&mut self, e: (VLT, VLT), weight: Number) {
+    pub fn update_edge(&mut self, e: (VLT, VLT), weight: GNumber) {
         if self.contains_edge(&e) {
             self.edges.insert(
                 e.clone(),
@@ -722,7 +722,6 @@ macro_rules! gph {
     */
 }
 
-
 /// Vertex Structure
 ///
 /// The structure of the vertex
@@ -740,7 +739,7 @@ pub struct Vertex {
 
 impl Vertex {
     pub fn get_value(&self) -> f64 {
-        self.value
+        self.value.clone()
     }
 }
 
@@ -804,12 +803,12 @@ impl PartialOrd for Edge {
 /// Edges have three fields
 ///
 /// 1. endpoints (a,b) - this contains the info of the two vertices of the edge (A -- B)
-/// 2. weight - the weight of the edge. It's of type number
+/// 2. weight - the weight of the edge. It's of type GNumber
 /// 3. edge_type - the type of the edge (Directed / Undirected)
 #[derive(Debug, Clone)]
 pub struct Edge {
     pub endpoints: (VLT, VLT),
-    pub weight: Number,
+    pub weight: GNumber,
     pub edge_type: EdgeType,
 }
 
@@ -902,12 +901,11 @@ mod graph_tests {
         G.add_edge((String::from("A"), String::from('B')), Number::F64(4.));
         assert_eq!(G.get_edges().len(), 1);
     }
-    
+
     #[test]
     fn make_from_macro() {
         let mut G = gph!("A", "B");
         assert_eq!(G.get_vertices().len(), 2);
-        
         let mut G = gph!("C", ("A", 5, "B"));
         assert_eq!(G.get_vertices().len(), 3);
         assert_eq!(G.get_edges().len(), 1);

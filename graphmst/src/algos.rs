@@ -1,19 +1,22 @@
-use crate::graphs;
-use crate::graphs::Edge;
-use crate::graphs::EdgeType;
+// use crate::graphs;
+use crate::graphs::*;
+use crate::util::DisjointSet;
+// use crate::graphs::Edge;
+// use crate::graphs::EdgeType;
 
-use super::graphs::Graph;
-use super::graphs::Vertex;
+// use super::graphs::Graph;
+// use super::graphs::Vertex;
+
+// use super::util::DisjointSet;
+
 use std::cmp::Reverse;
+use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::f32::INFINITY;
 use std::fmt::Debug;
 use std::fmt::Display;
-
-use super::util::DisjointSet;
-use std::collections::BinaryHeap;
 
 type VLT = String; // vertex label type
 
@@ -111,7 +114,7 @@ where
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::Number::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -160,7 +163,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
     edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
     // The graph that we are going to return
-    let mut mst = graphs::Graph::new(false);
+    let mut mst = Graph::new(false);
 
     // Use Disjoint set for union find algorithm
     let mut set = DisjointSet::new();
@@ -240,7 +243,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::Number::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -303,7 +306,7 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
     }
 
     //Minimum spanning graph initialization
-    let mut mst = graphs::Graph::new(true);
+    let mut mst = Graph::new(true);
 
     // Add the first vertex to the visited set
     let first_vertex = g.vertices.keys().next().unwrap().clone();
@@ -416,7 +419,7 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::Number::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -517,7 +520,7 @@ pub fn reverse_delete(mut G: Graph) -> Result<Graph, String> {
 /// // Add multiple edges
 /// G.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     graphs::Number::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
 /// ...
 /// ...
@@ -557,7 +560,7 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
     }
 
     // The graph that we are going to return
-    let mut mst = graphs::Graph::new(false);
+    let mut mst = Graph::new(false);
 
     // set to keep track of visited nodes
     let mut visited = HashSet::new();
@@ -648,62 +651,20 @@ mod algos_tests {
         G.add_vertex(String::from("I"));
 
         // Integers - i32
-        G.add_edge(
-            (String::from("A"), String::from('B')),
-            graphs::Number::I32(4),
-        );
-        G.add_edge(
-            (String::from("B"), String::from('C')),
-            graphs::Number::I32(8),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('D')),
-            graphs::Number::I32(7),
-        );
-        G.add_edge(
-            (String::from("D"), String::from('E')),
-            graphs::Number::I32(10),
-        );
-        G.add_edge(
-            (String::from("E"), String::from('F')),
-            graphs::Number::I32(11),
-        );
-        G.add_edge(
-            (String::from("F"), String::from('G')),
-            graphs::Number::I32(2),
-        );
-        G.add_edge(
-            (String::from("G"), String::from('H')),
-            graphs::Number::I32(1),
-        );
-        G.add_edge(
-            (String::from("H"), String::from('I')),
-            graphs::Number::I32(7),
-        );
-        G.add_edge(
-            (String::from("H"), String::from('A')),
-            graphs::Number::I32(9),
-        );
-        G.add_edge(
-            (String::from("B"), String::from('H')),
-            graphs::Number::I32(12),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('I')),
-            graphs::Number::I32(2),
-        );
-        G.add_edge(
-            (String::from("C"), String::from('F')),
-            graphs::Number::I32(4),
-        );
-        G.add_edge(
-            (String::from("D"), String::from('F')),
-            graphs::Number::I32(14),
-        );
-        G.add_edge(
-            (String::from("G"), String::from('I')),
-            graphs::Number::I32(6),
-        );
+        G.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
+        G.add_edge((String::from("B"), String::from('C')), GNumber::I32(8));
+        G.add_edge((String::from("C"), String::from('D')), GNumber::I32(7));
+        G.add_edge((String::from("D"), String::from('E')), GNumber::I32(10));
+        G.add_edge((String::from("E"), String::from('F')), GNumber::I32(11));
+        G.add_edge((String::from("F"), String::from('G')), GNumber::I32(2));
+        G.add_edge((String::from("G"), String::from('H')), GNumber::I32(1));
+        G.add_edge((String::from("H"), String::from('I')), GNumber::I32(7));
+        G.add_edge((String::from("H"), String::from('A')), GNumber::I32(9));
+        G.add_edge((String::from("B"), String::from('H')), GNumber::I32(12));
+        G.add_edge((String::from("C"), String::from('I')), GNumber::I32(2));
+        G.add_edge((String::from("C"), String::from('F')), GNumber::I32(4));
+        G.add_edge((String::from("D"), String::from('F')), GNumber::I32(14));
+        G.add_edge((String::from("G"), String::from('I')), GNumber::I32(6));
         G
     }
 
