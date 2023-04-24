@@ -58,7 +58,7 @@ const INF: f64 = f64::INFINITY;
 ///
 /// ```
 ///
-pub fn dijkstra<E>(mut g: Graph, start_vertex: VLT)
+fn _dijkstra<E>(mut g: Graph, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
