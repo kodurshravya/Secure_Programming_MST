@@ -2,6 +2,8 @@
 name = "graphmst"
 version = "0.1.0"
 edition = "2021"
+description = "This crate allows you to generate minimum spanning tree from a graph using Prims, Kruskals, Boruvkas and Reverse Delete algotithms"
+repository = "https://github.com/kodurshravya/Secure_Programming_MST"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
