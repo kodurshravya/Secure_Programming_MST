@@ -177,11 +177,13 @@ mod graph_tests {
         assert_eq!(g.get_vertices().get("F").is_none(), true);
     }
 
-
     #[test]
     fn update_edge_test() {
         let mut g = get_mst_of_graph_1();
-        g.update_edge((String::from("B"), String::from("C")),  graphs::GNumber::I32(-0),);
+        g.update_edge(
+            (String::from("B"), String::from("C")),
+            graphs::GNumber::I32(-0),
+        );
     }
 
     #[test]
@@ -217,16 +219,16 @@ mod graph_tests {
     //     let mut G = gph!("A", "B");
     //     assert_eq!(G.get_vertices().len(), 2);
     // }
-   
+
     #[test]
     fn add_topologicalorder_test() {
-        let mut expected: Vec<String> = Vec::new();
-        let mut G = get_test_graph_1(false);
-        G.add_edge((String::from("A"), String::from('B')), GNumber::F64(4.));
-        G.add_edge((String::from("B"), String::from('C')), GNumber::F64(1.));
-        G.add_edge((String::from("A"), String::from('D')), GNumber::F64(1.));
-        G.add_edge((String::from("S"), String::from('C')), GNumber::F64(1.));
-        let answer = G.get_topological_order();
+        let expected: Vec<String> = Vec::new();
+        let mut g = get_test_graph_1(false);
+        g.add_edge((String::from("A"), String::from('B')), GNumber::F64(4.));
+        g.add_edge((String::from("B"), String::from('C')), GNumber::F64(1.));
+        g.add_edge((String::from("A"), String::from('D')), GNumber::F64(1.));
+        g.add_edge((String::from("S"), String::from('C')), GNumber::F64(1.));
+        let answer = g.get_topological_order();
         assert_eq!(expected, answer);
     }
 
@@ -244,13 +246,14 @@ mod graph_tests {
         gh.add_vertex(String::from("F"));
         gh.add_vertex(String::from("C"));
         gh.add_edge(
-        (String::from("C"), String::from('F')),
-        graphs::GNumber::I32(4), );
+            (String::from("C"), String::from('F')),
+            graphs::GNumber::I32(4),
+        );
 
-        for (lbl, vertex) in gh.get_vertices().iter_mut() {
-            let xyz = (*vertex).set_value(1.2);
-             let xyz = (*vertex).get_value();
-             assert_eq!(xyz, 1.2);
+        for (_lbl, vertex) in gh.get_vertices().iter_mut() {
+            let _xyz = (*vertex).set_value(1.2);
+            let xyz = (*vertex).get_value();
+            assert_eq!(xyz, 1.2);
         }
     }
 
@@ -260,16 +263,17 @@ mod graph_tests {
         test.add_vertex(String::from("F"));
         test.add_vertex(String::from("C"));
         test.add_edge(
-        (String::from("C"), String::from('F')),
-        graphs::GNumber::I32(4), );
+            (String::from("C"), String::from('F')),
+            graphs::GNumber::I32(4),
+        );
         let no_vertex = test.get_in_neighbors(&String::from("A"));
         let no_neighbour = test.get_out_neighbors(&String::from("A"));
         let no_neighbour_variable = test.get_neighbors(&String::from("A"));
         let expected: Vec<String> = Vec::new();
         //expecting empty vec since graph don't have vertex "A"
-        assert_eq!(expected , no_vertex);
-        assert_eq!(expected , no_neighbour);
-        assert_eq!(expected , no_neighbour_variable);
+        assert_eq!(expected, no_vertex);
+        assert_eq!(expected, no_neighbour);
+        assert_eq!(expected, no_neighbour_variable);
     }
 
     #[test]
@@ -278,7 +282,7 @@ mod graph_tests {
         assert_eq!(g.get_edges().len(), 8);
         //removes two edges from vertex A
         g.remove_vertex(String::from("A"));
-        //trying to remove non-existant edge A-B 
+        //trying to remove non-existant edge A-B
         g.remove_edge((String::from("A"), String::from("B")));
         assert_eq!(g.get_edges().len(), 7);
         //removing edge in wrong order C-B insted of B-C
@@ -410,16 +414,12 @@ mod graph_tests {
     //Test Prim's algorithm on a non-trivial graph
     #[test]
     fn test_prims_on_non_trivial() {
-       let g = get_test_graph_1(false);
-       let mut mst = prims(g).unwrap();
-       let mut solution = get_mst_of_graph_1();
-       assert!(mst
+        let g = get_test_graph_1(false);
+        let mut mst = prims(g).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        assert!(mst
             .get_edges()
             .keys()
             .all(|y| solution.get_edges().contains_key(y)));
     }
-
-
-
 }
-
