@@ -16,6 +16,48 @@ type VLT = String; // vertex label type
 const INF: f64 = f64::INFINITY;
 
 //type TMPV = f64; // Should be V, but I'm being specific so I can debug.
+/// Dijkstra Algorithm - Find the single source shortest path given a graph and a starting vertex
+///
+/// # Parameters:
+///
+/// 1. g - the graph that needs to be traversed. This will be of type `Graph`
+/// 2. start_vertex - the source vertex from which you want to find the shortest distance of all other vertex
+///
+/// # Return Value:
+///
+/// Void
+///
+///
+/// # Example Usage:
+///
+/// ```
+///
+/// use graphalgos::algos;
+/// use graphalgos::graphs;
+///
+/// let mut g: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
+///
+/// // Add vertices
+///
+/// g.add_vertex(String::from("A")); // add vertex A
+/// g.add_vertex(String::from("B")); // add vertex B
+/// ...
+/// ...
+/// g.add_vertex(String::from("I")); // add vertex I
+///
+/// // Add edges
+///
+/// // Add multiple edges
+/// g.add_edge(
+///     (String::from("A"), String::from('B')),
+///     graphs::GNumber::I32(4),
+/// );
+/// ...
+/// ...
+/// algos::dijkstra(g);
+///
+/// ```
+///
 pub fn dijkstra<E>(mut g: Graph, start_vertex: VLT)
 where
     E: Clone + Debug,
@@ -48,7 +90,7 @@ where
     //println!("{}", (*vertex).get_value());
 }
 
-pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
+fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     //Stack will hold all vertices. Algorithm will end when all vertices have been popped.
     let stack: Arc<Mutex<VecDeque<Vertex>>> = Arc::new(Mutex::new(VecDeque::new()));
     //Hashmap letting us know which vertices have been visited by dfs.
@@ -117,12 +159,12 @@ pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     x
 }
 
-pub fn bellman_ford<E>(mut _g: Graph, _start_vertex: VLT)
-where
-    E: Clone,
-{
-    println!("Beginning the Bellman-Ford algorithm.");
-}
+// pub fn bellman_ford<E>(mut _g: Graph, _start_vertex: VLT)
+// where
+//     E: Clone,
+// {
+//     println!("Beginning the Bellman-Ford algorithm.");
+// }
 
 /// Kruskals Algorithm - Generate MST for any graph using the Kruskal's Algorithm
 ///

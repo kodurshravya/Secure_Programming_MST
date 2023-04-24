@@ -2,7 +2,7 @@
 name = "graphmst"
 version = "0.1.2"
 edition = "2021"
-description = "This crate allows you to generate minimum spanning tree from a graph using Prims, Kruskals, Boruvkas and Reverse Delete algotithms"
+description = "This crate allows you to generate minimum spanning tree from a graph using Prims, Kruskals, Boruvkas and Reverse Delete algorithms"
 repository = "https://github.com/kodurshravya/Secure_Programming_MST"
 license = "MIT"
 readme = "README.md"
