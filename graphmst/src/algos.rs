@@ -591,6 +591,17 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
             "Prims only works properly on undirected graphs!",
         ));
     }
+    // Check for empty or trivial graph
+    if g.get_vertices().len() <= 1 {
+        return Ok(g);
+    }
+
+    // Check for connected graph
+    //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
+    let start_vertex_lbl = g.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
+    if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
+        return Err(String::from("Graph is not connected."));
+    }
 
     // Check for empty or trivial graph
     if g.get_vertices().len() <= 1 {
@@ -670,12 +681,7 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
         }
     }
 
-    // check if MST is successfull
-    if mst.edges.len() != mst.vertices.len() - 1 {
-        return Err(String::from(
-            "MST doesn't exist for this graph since it is not connected",
-        ));
-    }
+    
 
     println!("\nMST: \n");
 
@@ -692,6 +698,7 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
 
     Ok(mst)
 }
+
 
 /// Tests
 #[cfg(test)]
@@ -905,4 +912,41 @@ mod algos_tests {
             .keys()
             .all(|y| solution.get_edges().contains_key(y)));
     }
+    // Test Prim's algorithm on an empty graph
+    #[test]
+    fn test_prims_on_empty() {
+        let g: Graph = Graph::new(false);
+        assert_eq!(prims(g).unwrap().get_vertices().len(), 0);
+    }
+
+    // Test Prim's algorithm on a trivial graph
+    #[test]
+    fn test_prims_on_trivial() {
+        let mut g: Graph = Graph::new(false);
+        g.add_vertex(String::from("Apple"));
+        assert_eq!(prims(g).unwrap().get_vertices().len(), 1);
+    }
+
+    // Test Prim's algorithm on a disconnected graph
+    #[test]
+    fn test_prims_disconnected() {
+        let g = get_test_graph_2(false);
+        assert!(prims(g).is_err());
+    }
+
+    // Test Prim's algorithm on a non-trivial graph
+    #[test]
+    fn test_prims_on_non_trivial() {
+        let g = get_test_graph_1(false);
+        let mut mst = prims(g).unwrap();
+        let mut solution = get_mst_of_graph_1();
+        assert!(mst
+            .get_edges()
+            .keys()
+            .all(|y| solution.get_edges().contains_key(y)));
+    }
+
+
+
+
 }

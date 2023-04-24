@@ -11,7 +11,7 @@ use std::io::{BufRead, BufReader, Error};
 type VLT = String;
 
 /// Edge Type - Directed and Undirected Edge
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum EdgeType {
     Directed,
     Undirected,
