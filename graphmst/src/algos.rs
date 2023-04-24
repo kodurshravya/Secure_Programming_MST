@@ -575,10 +575,7 @@ pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
 ///
 /// ```
 ///
-pub fn prims(mut g: Graph) -> Result<Graph, String>
-// E: Clone + std::cmp::Ord + Display + Debug,
-    // E will have int or float values so we need to mark the Ord to compare them
-{
+pub fn prims(mut g: Graph) -> Result<Graph, String> {
     // check if graph has directed edges - Prims works on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
@@ -591,18 +588,6 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
             "Prims only works properly on undirected graphs!",
         ));
     }
-    // Check for empty or trivial graph
-    if g.get_vertices().len() <= 1 {
-        return Ok(g);
-    }
-
-    // Check for connected graph
-    //TODO: Consider removing this check for speed and instead check that resulting MST is connected.
-    let start_vertex_lbl = g.get_vertices().keys().next().unwrap().clone(); //Get an arbitrary start vertex.
-    if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
-        return Err(String::from("Graph is not connected."));
-    }
-
     // Check for empty or trivial graph
     if g.get_vertices().len() <= 1 {
         return Ok(g);
@@ -638,10 +623,13 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
 
     // Add all edges from the first vertex to the priority queue
     for (endpoint, edge) in &g.edges {
-        if endpoint.0 == first_vertex {
+        if endpoint.0 == first_vertex || endpoint.1 == first_vertex {
             pq.push(Reverse(edge.clone()));
         }
     }
+    
+    //Sort the edges
+    //edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
     // Iterate until we have visited all vertices
     while visited.len() != g.vertices.len() {
@@ -675,7 +663,8 @@ pub fn prims(mut g: Graph) -> Result<Graph, String>
 
         // Add all edges from the new visited vertex to the priority queue
         for (endpoint, edge) in &g.edges {
-            if visited.contains(&endpoint.0) && !visited.contains(&endpoint.1) {
+            if visited.contains(&endpoint.0) && !visited.contains(&endpoint.1)
+                || visited.contains(&endpoint.1) && !visited.contains(&endpoint.0) {
                 pq.push(Reverse(edge.clone()));
             }
         }
