@@ -1,23 +1,26 @@
-use ::graphs::Graph;
+// use ::graphs::Graph;
+// use ::
 
-use crate::algos::boruvka;
+// use crate::algos::boruvka;
 
-mod algos;
-mod graphs;
-mod util;
+// mod algos;
+// mod graphs;
+// mod util;
+
+use graphalgos::{algos, graphs};
 
 fn main() {
     //let mut g = graphs::Graph::new(false);
     //
-    //g.add_vertex(String::from("A"), 0);
-    //g.add_vertex(String::from("B"), 1);
-    //g.add_vertex(String::from("C"), 2);
-    //g.add_vertex(String::from("D"), 3);
-    //g.add_vertex(String::from("E"), 4);
-    //g.add_vertex(String::from("F"), 5);
-    //g.add_vertex(String::from("G"), 6);
-    //g.add_vertex(String::from("H"), 7);
-    //g.add_vertex(String::from("I"), 8);
+    //g.add_vertex(String::from("A"));
+    //g.add_vertex(String::from("B"));
+    //g.add_vertex(String::from("C"));
+    //g.add_vertex(String::from("D"));
+    //g.add_vertex(String::from("E"));
+    //g.add_vertex(String::from("F"));
+    //g.add_vertex(String::from("G"));
+    //g.add_vertex(String::from("H"));
+    //g.add_vertex(String::from("I"));
     //
     //// Integers - i32
     //g.add_edge(
@@ -240,82 +243,82 @@ fn main() {
 
     //    }
 
-    fn get_graph() -> graphs::Graph<i32> {
+    fn get_graph() -> graphs::Graph {
         //Generates a graph with 2 connected components.
-        let mut G: graphs::Graph<i32> = graphs::Graph::new(false);
-        G.add_vertex(String::from("A"), 0);
-        G.add_vertex(String::from("B"), 1);
-        G.add_vertex(String::from("C"), 2);
-        G.add_vertex(String::from("D"), 3);
-        G.add_vertex(String::from("E"), 4);
-        G.add_vertex(String::from("F"), 5);
-        G.add_vertex(String::from("G"), 6);
-        G.add_vertex(String::from("H"), 7);
-        G.add_vertex(String::from("I"), 8);
+        let mut g: graphs::Graph = graphs::Graph::new(false);
+        g.add_vertex(String::from("A"));
+        g.add_vertex(String::from("B"));
+        g.add_vertex(String::from("C"));
+        g.add_vertex(String::from("D"));
+        g.add_vertex(String::from("E"));
+        g.add_vertex(String::from("F"));
+        g.add_vertex(String::from("G"));
+        g.add_vertex(String::from("H"));
+        g.add_vertex(String::from("I"));
 
         // Integers - i32
-        G.add_edge(
+        g.add_edge(
             (String::from("A"), String::from('B')),
-            graphs::Number::I32(4),
+            graphs::GNumber::I32(4),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("B"), String::from('C')),
-            graphs::Number::I32(8),
+            graphs::GNumber::I32(8),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('D')),
-            graphs::Number::I32(7),
+            graphs::GNumber::I32(7),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("D"), String::from('E')),
-            graphs::Number::I32(9),
+            graphs::GNumber::I32(9),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("E"), String::from('F')),
-            graphs::Number::I32(10),
+            graphs::GNumber::I32(10),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("F"), String::from('G')),
-            graphs::Number::I32(2),
+            graphs::GNumber::I32(2),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("G"), String::from('H')),
-            graphs::Number::I32(1),
+            graphs::GNumber::I32(1),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("H"), String::from('I')),
-            graphs::Number::I32(7),
+            graphs::GNumber::I32(7),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("H"), String::from('A')),
-            graphs::Number::I32(8),
+            graphs::GNumber::I32(8),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("B"), String::from('H')),
-            graphs::Number::I32(11),
+            graphs::GNumber::I32(11),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('I')),
-            graphs::Number::I32(2),
+            graphs::GNumber::I32(2),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("C"), String::from('F')),
-            graphs::Number::I32(4),
+            graphs::GNumber::I32(4),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("D"), String::from('F')),
-            graphs::Number::I32(14),
+            graphs::GNumber::I32(14),
         );
-        G.add_edge(
+        g.add_edge(
             (String::from("G"), String::from('I')),
-            graphs::Number::I32(6),
+            graphs::GNumber::I32(6),
         );
-        G
+        g
     }
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----boruvka START -----\n\n");
-    let mst_boruvka = algos::boruvka(G);
+    let mst_boruvka = algos::boruvka(g);
     match mst_boruvka {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -323,9 +326,9 @@ fn main() {
     }
     println!("\n\n----boruvka END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----KRUSKALS START -----\n\n");
-    let mst_kruskals = algos::kruskals(G);
+    let mst_kruskals = algos::kruskals(g);
     match mst_kruskals {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -333,9 +336,9 @@ fn main() {
     }
     println!("\n\n----KRUSKALS END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----REVERSE DELETE START -----\n\n");
-    let mst_rd = algos::kruskals(G);
+    let mst_rd = algos::reverse_delete(g);
     match mst_rd {
         // Ok(g) => println!("MST generated successfully!"),
         Ok(g) => g.print(),
@@ -343,14 +346,16 @@ fn main() {
     }
     println!("\n\n----REVERSE DELETE END -----\n\n");
 
-    let mut G = get_graph();
+    let g = get_graph();
     println!("\n\n----PRIMS START -----\n\n");
-    let mst_prims = algos::prims(G);
+    let mst_prims = algos::prims(g);
     match mst_prims {
         Ok(g) => g.print(),
         Err(e) => println!("{}", e),
     }
     println!("\n\n----PRIMS END -----\n\n");
+
+    //gph!("A", "B");
 
     // Kruskals(g, 5);
     //algos::BellmanFord(g, String::from("A"));

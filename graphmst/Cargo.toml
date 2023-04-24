@@ -7,7 +7,18 @@ edition = "2021"
 
 [dependencies]
 
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 3
+
+# [lib]
+# name = "graphs"
+# path = "src/graphs.rs"
+# doctest = true
 
 [lib]
-name = "graphs"
-path = "src/graphs.rs"
+name = "graphalgos"
+path = "src/lib.rs"
+doctest = false
