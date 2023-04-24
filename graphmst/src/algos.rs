@@ -140,7 +140,11 @@ where
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
+///
+/// use graphalgos::algos;
+/// use graphalgos::graphs;
+///
+/// let mut g: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
 ///
 /// // Add vertices
 ///
@@ -155,14 +159,14 @@ where
 /// // Add multiple edges
 /// g.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     GNumber::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
 /// ...
 /// ...
-/// let mst = algos::kruskals(G); // get the mst using kruskals algorithm
+/// let mst = algos::kruskals(g); // get the mst using kruskals algorithm
 ///
 /// // kruskals returns results, so use match statement to process it
-/// match mst_kruskals {
+/// match mst{
 ///     Ok(g) => g.print(), // print the MST if generated successfully
 ///     Err(e) => println!("{}", e), // print the error if any
 /// }
@@ -269,39 +273,39 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
-///
+/// use graphalgos::algos;
+/// use graphalgos::graphs;
+
+/// let mut g: graphs::Graph = graphs::Graph::new(false); /// creates an undirected graph
+
 /// // Add vertices
-///
+
 /// g.add_vertex(String::from("A")); // add vertex A
 /// g.add_vertex(String::from("B")); // add vertex B
-/// ...
-/// ...
+
 /// g.add_vertex(String::from("I")); // add vertex I
-///
+
 /// // Add edges
-///
+
 /// // Add multiple edges
 /// g.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     GNumber::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
-/// ...
-/// ...
-/// let mst = algos::boruvka(G); // get the mst using kruskals algorithm
-///
-/// // boruvka returns results, so use match statement to process it
-/// match mst_kruskals {
-///     Ok(g) => g.print(), // print the MST if generated successfully
+
+/// let mst = algos::boruvka(g); // get the mst using boruvkas algorithm
+
+/// // boruvkas returns results, so use match statement to process it
+/// match mst {
+///     Ok(g) => g.print(),          // print the MST if generated successfully
 ///     Err(e) => println!("{}", e), // print the error if any
 /// }
-///
 /// ```
 ///
 pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 // E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
 {
-    // check if graph has directed edges - Kruskals work on undirected graph and not directed
+    // check if graph has directed edges - boruvkas work on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
         EdgeType::Undirected => false,
@@ -445,33 +449,33 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
-///
+/// use graphalgos::algos;
+/// use graphalgos::graphs;
+
+/// let mut g: graphs::Graph = graphs::Graph::new(false); /// creates an undirected graph
+
 /// // Add vertices
-///
+
 /// g.add_vertex(String::from("A")); // add vertex A
 /// g.add_vertex(String::from("B")); // add vertex B
-/// ...
-/// ...
+
 /// g.add_vertex(String::from("I")); // add vertex I
-///
+
 /// // Add edges
-///
+
 /// // Add multiple edges
 /// g.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     GNumber::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
-/// ...
-/// ...
-/// let mst = algos::reverse_delete(G); // get the mst using reverse_delete algorithm
-///
-/// // reverse_delete returns results, so use match statement to process it
-/// match mst_kruskals {
-///     Ok(g) => g.print(), // print the MST if generated successfully
+
+/// let mst = algos::reverse_delete(g); // get the mst using reverse delete algorithm
+
+/// // reverse delete returns results, so use match statement to process it
+/// match mst {
+///     Ok(g) => g.print(),          // print the MST if generated successfully
 ///     Err(e) => println!("{}", e), // print the error if any
 /// }
-///
 /// ```
 ///
 pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
@@ -546,33 +550,33 @@ pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
 /// # Example Usage:
 ///
 /// ```
-/// let mut G: graphs::Graph = graphs::Graph::new(false); // creates an undirected graph
-///
+/// use graphalgos::algos;
+/// use graphalgos::graphs;
+
+/// let mut g: graphs::Graph = graphs::Graph::new(false); /// creates an undirected graph
+
 /// // Add vertices
-///
+
 /// g.add_vertex(String::from("A")); // add vertex A
 /// g.add_vertex(String::from("B")); // add vertex B
-/// ...
-/// ...
+
 /// g.add_vertex(String::from("I")); // add vertex I
-///
+
 /// // Add edges
-///
+
 /// // Add multiple edges
 /// g.add_edge(
 ///     (String::from("A"), String::from('B')),
-///     GNumber::I32(4),
+///     graphs::GNumber::I32(4),
 /// );
-/// ...
-/// ...
-/// let mst = algos::prims(G); // get the mst using prims algorithm
-///
+
+/// let mst = algos::boruvka(g); // get the mst using prims algorithm
+
 /// // prims returns results, so use match statement to process it
-/// match mst_kruskals {
-///     Ok(g) => g.print(), // print the MST if generated successfully
+/// match mst {
+///     Ok(g) => g.print(),          // print the MST if generated successfully
 ///     Err(e) => println!("{}", e), // print the error if any
 /// }
-///
 /// ```
 ///
 pub fn prims(mut g: Graph) -> Result<Graph, String> {
@@ -627,7 +631,7 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
             pq.push(Reverse(edge.clone()));
         }
     }
-    
+
     //Sort the edges
     //edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
@@ -664,13 +668,12 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
         // Add all edges from the new visited vertex to the priority queue
         for (endpoint, edge) in &g.edges {
             if visited.contains(&endpoint.0) && !visited.contains(&endpoint.1)
-                || visited.contains(&endpoint.1) && !visited.contains(&endpoint.0) {
+                || visited.contains(&endpoint.1) && !visited.contains(&endpoint.0)
+            {
                 pq.push(Reverse(edge.clone()));
             }
         }
     }
-
-    
 
     println!("\nMST: \n");
 
@@ -687,7 +690,6 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
 
     Ok(mst)
 }
-
 
 /// Tests
 #[cfg(test)]
@@ -934,8 +936,4 @@ mod algos_tests {
             .keys()
             .all(|y| solution.get_edges().contains_key(y)));
     }
-
-
-
-
 }
