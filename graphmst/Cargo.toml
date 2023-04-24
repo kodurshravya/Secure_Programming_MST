@@ -5,6 +5,7 @@ edition = "2021"
 description = "This crate allows you to generate minimum spanning tree from a graph using Prims, Kruskals, Boruvkas and Reverse Delete algotithms"
 repository = "https://github.com/kodurshravya/Secure_Programming_MST"
 license = "MIT"
+readme = "https://github.com/kodurshravya/Secure_Programming_MST/blob/main/README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
