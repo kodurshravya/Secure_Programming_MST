@@ -1,6 +1,6 @@
 [package]
 name = "graphmst"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "This crate allows you to generate minimum spanning tree from a graph using Prims, Kruskals, Boruvkas and Reverse Delete algorithms"
 repository = "https://github.com/kodurshravya/Secure_Programming_MST"
