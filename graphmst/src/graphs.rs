@@ -201,12 +201,7 @@ impl Graph {
         for _value in coming_nodes {
             self.get_order(node, order)
         }
-        // if new_graph.get(node) == None {
-        // if coming_nodes != None {
-        //     for value in coming_nodes. {
-        //         self.get_order(value, order);
-        //     }
-        // }
+
         if !order.contains(node) {
             order.push(node.to_string()); //FIXME: Is .to_string needed here?
         }
@@ -220,9 +215,9 @@ impl Graph {
         &mut self.edges
     }
 
-    //pub fn get_edge(&mut self, e: (VLT, VLT)) -> &mut Edge<E> {
-    //    &mut self.edges.get(&e).unwrap()
-    //}
+    pub fn get_edge(&mut self, e: &(VLT, VLT)) -> &mut Edge {
+        self.edges.get_mut(&e).unwrap()
+    }
 
     /// Add vertex to the graph
     ///
@@ -242,7 +237,6 @@ impl Graph {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
             //TODO: Create more sophosticated handling.
-            //println!("Vertex '{}' already in graph", label);
         } else {
             self.vertices.insert(
                 label.clone(),
@@ -320,6 +314,7 @@ impl Graph {
         };
 
         if self.contains_edge(&e) {
+            self.get_edge(&e).set_weight(weight);
             println!("Edge '{}'-'{}' already in graph", e.0, e.1);
             return;
         }
@@ -776,6 +771,12 @@ pub struct Edge {
     pub endpoints: (VLT, VLT),
     pub weight: GNumber,
     pub edge_type: EdgeType,
+}
+
+impl Edge {
+    fn set_weight(&mut self, weight: GNumber) {
+        self.weight = weight;
+    }
 }
 
 impl PartialEq for Edge {
