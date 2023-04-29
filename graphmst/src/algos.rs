@@ -15,14 +15,12 @@ type VLT = String; // vertex label type
 
 const INF: f64 = f64::INFINITY;
 
-//type TMPV = f64; // Should be V, but I'm being specific so I can debug.
 pub fn dijkstra<E>(mut g: Graph, start_vertex: VLT)
 where
     E: Clone + Debug,
 {
-    println!("Beginning Dikstra's algorithm.");
+    //println!("Beginning Dikstra's algorithm.");
 
-    // let prev: HashMap<Vertex<TMPV>, Option<Vertex<TMPV>>> = HashMap::new();
     let mut prev: HashMap<VLT, Option<VLT>> = HashMap::new();
 
     for (lbl, vertex) in g.get_vertices().iter_mut() {
@@ -35,17 +33,10 @@ where
     }
 
     //Initialize distance to start as 0.
-    //(*g.get_vertices().get_mut(&start_vertex).unwrap()).set_value(0.0);
     g.get_vertex(&start_vertex).unwrap().set_value(0.0);
 
     //Can maybe convert to binary heap so we have ordering.
     //let heap: BinaryHeap<_> = g.get_vertices().values().collect();
-
-    //g.get_vertices().iter();
-    //let num = (*vertex).get_value();
-    //println!("{}", (*vertex).get_value());
-    //(*vertex).set_value(44);
-    //println!("{}", (*vertex).get_value());
 }
 
 pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
@@ -117,13 +108,6 @@ pub fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
     x
 }
 
-pub fn bellman_ford<E>(mut _g: Graph, _start_vertex: VLT)
-where
-    E: Clone,
-{
-    println!("Beginning the Bellman-Ford algorithm.");
-}
-
 /// Kruskals Algorithm - Generate MST for any graph using the Kruskal's Algorithm
 ///
 /// # Parameters:
@@ -169,10 +153,7 @@ where
 ///
 /// ```
 ///
-pub fn kruskals(mut g: Graph) -> Result<Graph, String>
-// E: Clone + std::cmp::PartialOrd + Display + Debug,
-    // E will have int or float values so we need to mark the Ord to compare them
-{
+pub fn kruskals(mut g: Graph) -> Result<Graph, String> {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
@@ -190,8 +171,6 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
     if g.get_vertices().len() <= 1 {
         return Ok(g);
     }
-
-    // println!("{}", g.edges.len());
 
     // vector to collect all edge values
     let mut edges: Vec<Edge> = Vec::new();
@@ -236,19 +215,6 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
             "MST doesn't exist for this graph since it is not connected",
         ));
     }
-
-    println!("\nMST generated using Kruskal's algorithm: \n");
-
-    for (_, edge) in &mst.edges {
-        println!(
-            "({}) -------[{}]------- ({})",
-            edge.endpoints.0.clone(),
-            edge.weight,
-            edge.endpoints.1.clone()
-        );
-    }
-
-    println!("");
 
     Ok(mst)
 }
@@ -298,9 +264,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 ///
 /// ```
 ///
-pub fn boruvka(mut g: Graph) -> Result<Graph, String>
-// E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-{
+pub fn boruvka(mut g: Graph) -> Result<Graph, String> {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
@@ -414,19 +378,6 @@ pub fn boruvka(mut g: Graph) -> Result<Graph, String>
         ));
     }
 
-    println!("\nMST generated using Boruvka's algorithm: \n");
-
-    for (_, edge) in &mst.edges {
-        println!(
-            "({}) -------[{}]------- ({})",
-            edge.endpoints.0.clone(),
-            edge.weight,
-            edge.endpoints.1.clone()
-        );
-    }
-
-    println!("");
-
     Ok(mst)
 }
 
@@ -516,16 +467,6 @@ pub fn reverse_delete(mut g: Graph) -> Result<Graph, String> {
         if !dfs(&mut g, start_vertex_lbl).values().all(|&x| x) {
             g.add_edge(edge.endpoints.clone(), w);
         }
-    }
-
-    println!("\nMST: \n");
-    for (_, edge) in &g.edges {
-        println!(
-            "({}) -------[{}]------- ({})",
-            edge.endpoints.0.clone(),
-            edge.weight,
-            edge.endpoints.1.clone()
-        );
     }
 
     Ok(g)
@@ -627,9 +568,6 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
             pq.push(Reverse(edge.clone()));
         }
     }
-    
-    //Sort the edges
-    //edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
     // Iterate until we have visited all vertices
     while visited.len() != g.vertices.len() {
@@ -669,21 +607,6 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
             }
         }
     }
-
-    
-
-    println!("\nMST: \n");
-
-    for (_, edge) in &mst.edges {
-        println!(
-            "({}) -------{}------- ({})",
-            edge.endpoints.0.clone(),
-            edge.weight,
-            edge.endpoints.1.clone()
-        );
-    }
-
-    println!("");
 
     Ok(mst)
 }
@@ -777,9 +700,7 @@ mod algos_tests {
     #[test]
     fn test_reverse_delete_on_directed() {
         let g = get_test_graph_1(true);
-        //TODO: Figure out how to check assertion error.
         assert!(reverse_delete(g).is_err());
-        //assert_eq!(reverse_delete(G).unwrap_err(), "Reverse delete only work on undirected graphs!");
     }
 
     #[test]
@@ -820,9 +741,7 @@ mod algos_tests {
     #[test]
     fn test_boruvka_on_directed() {
         let g = get_test_graph_1(true);
-        //TODO: Figure out how to check assertion error.
         assert!(boruvka(g).is_err());
-        //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
     }
 
     #[test]
@@ -863,9 +782,7 @@ mod algos_tests {
     #[test]
     fn test_kruskals_on_directed() {
         let g = get_test_graph_1(true);
-        //TODO: Figure out how to check assertion error.
         assert!(kruskals(g).is_err());
-        //assert_eq!(reverse_delete(G).unwrap_err(), "Boruvka only work on undirected graphs!");
     }
 
     #[test]

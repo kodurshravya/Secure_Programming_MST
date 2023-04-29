@@ -241,9 +241,8 @@ impl Graph {
     pub fn add_vertex(&mut self, label: VLT) {
         //Add vertex to graph.
         if self.contains_vertex(&label) {
-            // self.vertices.iter().any(|vert| vert.label.eq(&label)){
             //TODO: Create more sophosticated handling.
-            println!("Vertex '{}' already in graph", label);
+            //println!("Vertex '{}' already in graph", label);
         } else {
             self.vertices.insert(
                 label.clone(),
