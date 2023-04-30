@@ -58,7 +58,7 @@ const INF: f64 = f64::INFINITY;
 ///
 /// ```
 ///
-fn _dijkstra<E>(mut g: Graph, start_vertex: VLT)
+fn _dijkstra<E>(mut g: Graph, start_vertex: VLT) {
     //FIXME: Finish implementation.
     println!("Beginning Dikstra's algorithm.");
 
