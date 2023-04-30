@@ -637,6 +637,8 @@ impl Graph {
 //Internal macro that matches the pattern of a single expession (indicating the user would like to add a vertex,
 //or a tuple-like pattern (str, i32, str), indicating the user would like an edge.
 #[allow(unused_macros)]
+#[macro_export]
+#[doc(hidden)]
 macro_rules! edg_or_vert {
     ( $G:expr, ($a:literal, $b:literal, $c:literal) ) => {
         {
@@ -657,7 +659,6 @@ macro_rules! edg_or_vert {
             }
         }
     };
-
 }
 
 /// Function to check if the given vertex is present in the graph
@@ -684,6 +685,7 @@ macro_rules! edg_or_vert {
 
 ///Build an undirected graph
 ///
+///Requires importing graphalgos::graphs::Graph.
 ///This macro can make both vertices and edges.
 ///For a vertex, simple pass a string literal to be that vertex's label.
 ///For an edge, write a pattern of the form (str, i32, str) where the first and last element represent the label of a vertex, and the middle value is the edges weight.
@@ -699,7 +701,7 @@ macro_rules! gph {
         {
             let mut g: Graph = Graph::new(false);
             $(
-                edg_or_vert!(&mut g, $sub);
+                $crate::edg_or_vert!(&mut g, $sub);
             )*
             g
         }
