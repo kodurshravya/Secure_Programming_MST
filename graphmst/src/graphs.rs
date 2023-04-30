@@ -220,10 +220,6 @@ impl Graph {
         &mut self.edges
     }
 
-    //pub fn get_edge(&mut self, e: (VLT, VLT)) -> &mut Edge<E> {
-    //    &mut self.edges.get(&e).unwrap()
-    //}
-
     /// Add vertex to the graph
     ///
     /// # Parameters:
@@ -557,25 +553,6 @@ impl Graph {
     pub fn get_vertex(&mut self, label: &VLT) -> Option<&mut Vertex> {
         self.vertices.get_mut(label)
     }
-    /*
-    fn get_vertex(&self, label: &VLT) -> Result<&Vertex<V>, String> {
-        //Input vertex label and return reference to vertex.
-
-        self.vertices.get(label);
-
-        if self.contains_vertex(label) {
-            for vert in &self.vertices {
-                if vert.label.eq(label) {
-                    return Ok(vert)
-                }
-            }
-        }
-
-        //Ok(&Vertex { label: String::from("TEST"), value: val })
-        //todo: Return proper error.
-        Err(String::from("Vertex not in graph."))
-    }
-    */
 
     /// Function to check if the given vertex is present in the graph
     ///
@@ -630,8 +607,6 @@ impl Graph {
         //Check if graph contain an edge.
         self.edges.contains_key(e)
     }
-
-    //TODO: Add function to print graph.
 }
 
 //Internal macro that matches the pattern of a single expession (indicating the user would like to add a vertex,

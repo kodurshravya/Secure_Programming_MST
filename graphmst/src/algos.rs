@@ -59,9 +59,7 @@ const INF: f64 = f64::INFINITY;
 /// ```
 ///
 fn _dijkstra<E>(mut g: Graph, start_vertex: VLT)
-where
-    E: Clone + Debug,
-{
+    //FIXME: Finish implementation.
     println!("Beginning Dikstra's algorithm.");
 
     // let prev: HashMap<Vertex<TMPV>, Option<Vertex<TMPV>>> = HashMap::new();
@@ -77,17 +75,10 @@ where
     }
 
     //Initialize distance to start as 0.
-    //(*g.get_vertices().get_mut(&start_vertex).unwrap()).set_value(0.0);
     g.get_vertex(&start_vertex).unwrap().set_value(0.0);
 
     //Can maybe convert to binary heap so we have ordering.
     //let heap: BinaryHeap<_> = g.get_vertices().values().collect();
-
-    //g.get_vertices().iter();
-    //let num = (*vertex).get_value();
-    //println!("{}", (*vertex).get_value());
-    //(*vertex).set_value(44);
-    //println!("{}", (*vertex).get_value());
 }
 
 fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
@@ -215,10 +206,7 @@ fn dfs(g: &mut Graph, start_vertex: VLT) -> HashMap<VLT, bool> {
 ///
 /// ```
 ///
-pub fn kruskals(mut g: Graph) -> Result<Graph, String>
-// E: Clone + std::cmp::PartialOrd + Display + Debug,
-    // E will have int or float values so we need to mark the Ord to compare them
-{
+pub fn kruskals(mut g: Graph) -> Result<Graph, String> {
     // check if graph has directed edges - Kruskals work on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
@@ -344,9 +332,7 @@ pub fn kruskals(mut g: Graph) -> Result<Graph, String>
 /// }
 /// ```
 ///
-pub fn boruvka(mut g: Graph) -> Result<Graph, String>
-// E: Clone + std::cmp::PartialOrd + Display + Debug, // E will have int or float values so we need to mark the Ord to compare them
-{
+pub fn boruvka(mut g: Graph) -> Result<Graph, String> {
     // check if graph has directed edges - boruvkas work on undirected graph and not directed
     let is_directed = match g.edge_type {
         EdgeType::Directed => true,
@@ -673,9 +659,6 @@ pub fn prims(mut g: Graph) -> Result<Graph, String> {
             pq.push(Reverse(edge.clone()));
         }
     }
-
-    //Sort the edges
-    //edges.sort_by(|a, b| a.weight.partial_cmp(&b.weight).unwrap());
 
     // Iterate until we have visited all vertices
     while visited.len() != g.vertices.len() {
