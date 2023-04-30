@@ -13,6 +13,7 @@ mod graph_tests {
     use crate::{
         algos::*,
         graphs::{self, *},
+        gph,
     };
 
     fn get_test_graph_1(directed: bool) -> Graph {
@@ -214,11 +215,11 @@ mod graph_tests {
     //     g.add_edge((String::from("A"), String::from('B')), GNumber::I32(4));
     //     assert_eq!(g.get_edges().len(), 1);
     // }
-    // #[test]
-    // fn make_from_macro() {
-    //     let mut G = gph!("A", "B");
-    //     assert_eq!(G.get_vertices().len(), 2);
-    // }
+    #[test]
+    fn make_from_macro() {
+       let mut G = gph!("A", "B");
+       assert_eq!(G.get_vertices().len(), 2);
+    }
 
     #[test]
     fn add_topologicalorder_test() {
