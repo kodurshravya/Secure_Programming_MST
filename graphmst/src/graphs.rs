@@ -660,7 +660,7 @@ macro_rules! edg_or_vert {
 
 ///Build an undirected graph
 ///
-///Requires importing graphalgos::graphs::Graph.
+///Requires importing at least graphalgos::graphs::{Graph, GNumber} and graphalgos::gph.
 ///This macro can make both vertices and edges.
 ///For a vertex, simple pass a string literal to be that vertex's label.
 ///For an edge, write a pattern of the form (str, i32, str) where the first and last element represent the label of a vertex, and the middle value is the edges weight.
