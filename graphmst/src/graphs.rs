@@ -239,7 +239,7 @@ impl Graph {
         if self.contains_vertex(&label) {
             // self.vertices.iter().any(|vert| vert.label.eq(&label)){
             //TODO: Create more sophosticated handling.
-            println!("Vertex '{}' already in graph", label);
+            //println!("Vertex '{}' already in graph", label);
         } else {
             self.vertices.insert(
                 label.clone(),
@@ -317,14 +317,14 @@ impl Graph {
         };
 
         if self.contains_edge(&e) {
-            println!("Edge '{}'-'{}' already in graph", e.0, e.1);
+            //println!("Edge '{}'-'{}' already in graph", e.0, e.1);
             return;
         }
 
         if is_undirected {
             let rev = (e.1.clone(), e.0.clone());
             if self.contains_edge(&rev) {
-                println!("Edge '{}'-'{}' already in graph", e.1, e.0);
+                //println!("Edge '{}'-'{}' already in graph", e.1, e.0);
                 return;
             }
         }
@@ -620,7 +620,6 @@ macro_rules! edg_or_vert {
             $G.add_vertex(String::from($a));
             $G.add_vertex(String::from($c));
             $G.add_edge((String::from($a), String::from($c)), GNumber::I32($b));
-            println!( "{}, {}, {}", $a, $b, $c );
         }
     };
 
@@ -629,7 +628,6 @@ macro_rules! edg_or_vert {
             {
                 $(
                     $G.add_vertex(String::from($x));
-                    println!("{}", String::from($x));
                 )*
             }
         }
@@ -681,19 +679,6 @@ macro_rules! gph {
             g
         }
     };
-    /*
-    ( $($x:expr ),* ) => {
-        {
-            let mut g: Graph = Graph::new(false);
-            {
-                $(
-                    g.add_vertex(String::from($x));
-                )*
-                G
-            }
-        }
-    };
-    */
 }
 
 /// Vertex Structure
